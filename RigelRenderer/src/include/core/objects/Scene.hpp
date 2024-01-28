@@ -9,6 +9,9 @@
 
 namespace rgr
 {	
+	/*
+	Represents the collection of objects that form a virtual environment
+	*/
 	class Scene
 	{
 	private:
@@ -16,15 +19,32 @@ namespace rgr
 		std::vector<Camera*> m_Cameras;
 		std::vector<Light*> m_Lights;
 
+		// Helps find a suitable rendering camera
 		rgr::Camera* GetMainCamera();
 	public:
+		/*
+		Publicly visible and modifiable name used to distinguish scenes from one another
+		*/
 		std::string name = "Scene";
 
 		Scene();
 		~Scene();
 
+		/*
+		Performs all graphics calculations and renderes the scene to the screen 
+		(must not be called outside rgr::Update)
+		*/
 		void Update();
+		/*
+		Adds Renderable, Camera or Light Object to the scene.
+		Note that the scene contains raw pointers to objects created outside the library
+		*/
 		void AddObject(rgr::Object* object);
+		/*
+		Removes Renderable, Camera or Light Object from the scene.
+		Note that this method DOES NOT delete an object entirely, it just 
+		removes it's pointer from the scene
+		*/
 		void RemoveObject(rgr::Object* object);
 	};
 }

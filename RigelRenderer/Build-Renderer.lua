@@ -12,6 +12,7 @@ project "RigelRenderer"
       "src",
       "src/include",
       "src/internal",
+      "src/built-in",
 
       "../Vendor/glfw/include/GLFW",
       "../Vendor/glew/include/GL",
@@ -19,6 +20,7 @@ project "RigelRenderer"
       "../Vendor/obj_loader",
       "../Vendor/stb_image",
       "../Vendor/freetype",
+      "../Vendor/gltext",
       "../Vendor"
    }
 

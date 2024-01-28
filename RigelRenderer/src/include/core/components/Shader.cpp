@@ -29,7 +29,6 @@ namespace rgr
 
 		return 1;
 	}
-
 	// Processes glsl source code in the file at the given path so it can be used as OpenGL shader source
 	std::string ProcessShaderSource(const std::string& sourcePath)
 	{
@@ -47,6 +46,8 @@ namespace rgr
 		return temp;
 	}
 
+	//const Shader Shader::Default = Shader();
+
 	Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)
 	{
 		const GLchar* vs = vertexSource.c_str();
@@ -61,14 +62,23 @@ namespace rgr
 		glCompileShader(vertexHandle);
 		glCompileShader(fragmentHandle);
 
-		if (GetShaderCompileInfo(vertexHandle) == 1)
+		//if (GetShaderCompileInfo(vertexHandle) == 1)
+		//{
+		//	glDeleteShader(vertexHandle);
+		//	return;
+		//}
+		//if (GetShaderCompileInfo(fragmentHandle) == 1)
+		//{
+		//	glDeleteShader(fragmentHandle);
+		//	return;
+		//}
+
+		if (GetShaderCompileInfo(vertexHandle) == 1 || GetShaderCompileInfo(fragmentHandle) == 1)
 		{
 			glDeleteShader(vertexHandle);
-			return;
-		}
-		if (GetShaderCompileInfo(fragmentHandle) == 1)
-		{
 			glDeleteShader(fragmentHandle);
+
+			m_ShaderErrored = true;
 			return;
 		}
 
@@ -83,6 +93,17 @@ namespace rgr
 
 		glDeleteShader(vertexHandle);
 		glDeleteShader(fragmentHandle);
+
+		//int param;
+		//glGetProgramiv(m_Handle, GL_ACTIVE_UNIFORMS, &param);
+		//std::cout << param << '\n';
+
+		//GLchar uniform_name[256];
+		//GLsizei length;
+		//GLint size;
+		//GLenum type;
+		//glGetActiveUniform(m_Handle, 0, sizeof(uniform_name), &length, &size, &type, uniform_name);
+		//std::cout << uniform_name << '\n';
 	}
 
 	Shader::~Shader()
@@ -184,7 +205,15 @@ namespace rgr
 			m_UniformsLocationCache[name] = location;
 			return location;
 		}
-		std::cout << "Unable to find uniform named: " << name << '\n';
-		return -1;
+		//std::cout << "Unable to find uniform named: " << name << '\n';
+		//return -1;
+
+		if (!m_ShaderErrored)
+		{
+			std::cout << "Unable to find uniform named: " << name << '\n';
+			m_ShaderErrored = true;
+			return -1;
+		}
+		else return -1;
 	}
 }

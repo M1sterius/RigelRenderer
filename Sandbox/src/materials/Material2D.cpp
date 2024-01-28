@@ -10,7 +10,7 @@ Material2D::Material2D(rgr::Texture* texture)
 
 void Material2D::SetUniforms()
 {
-	BindTexture("u_Texture", m_Texture, 0);
+	BindTexture("u_Textur", m_Texture, 6);
 	SetUniformVec4("u_Color", color);
 }
 

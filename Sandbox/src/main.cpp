@@ -17,9 +17,7 @@ int main()
 	const int HEIGHT = 900;
 	const char* TITLE = "It works!";
 
-	std::cout << "Test" << '\n';
-
-	if (rgr::Init(WIDTH, HEIGHT, TITLE) != UR_OK)
+	if (rgr::Init(WIDTH, HEIGHT, TITLE) != RIGEL_OK)
 		return -1;
 
 	rgr::Scene* scene = new rgr::Scene();
@@ -58,8 +56,6 @@ int main()
 		1.0f, 0.0f,
 		0.0f, 0.0f
 	};
-
-	std::vector<float> vertices{ 1, 2, 3 };
 
 	rgr::Mesh* planeMesh = new rgr::Mesh(planeVertices, planeIndices, planeTexCoords);
 	rgr::Mesh* quadMesh = new rgr::Mesh(quadVertices, quadIndices, quadTexCoords);

@@ -13,14 +13,17 @@ namespace rgr
 	{
 	private:
 		unsigned int m_Handle;
+		bool m_ShaderErrored = false;
 		std::unordered_map<std::string, int> m_UniformsLocationCache;
 		
 		Shader(const std::string& vertexSource, const std::string& fragmentSource);
 	public:
 		~Shader();
 
-		static rgr::Shader* FromFiles(const std::string& vertexPath, const std::string& fragmentPath);
-		static rgr::Shader* FromSources(const std::string& vertexSource, const std::string& fragmentSource);
+		//static const Shader Default;
+
+		static Shader* FromFiles(const std::string& vertexPath, const std::string& fragmentPath);
+		static Shader* FromSources(const std::string& vertexSource, const std::string& fragmentSource);
 
 		void Bind() const;
 		void Unbind() const;
@@ -34,6 +37,7 @@ namespace rgr
 		void SetUniformMat4(const std::string& name, const bool transpose, const glm::mat4& value);
 
 		inline unsigned int GetHandle() const { return m_Handle; };
+		inline bool IsShaderErrored() const { return m_ShaderErrored; }
 		int FindUniform(const std::string& name);
 	};
 }

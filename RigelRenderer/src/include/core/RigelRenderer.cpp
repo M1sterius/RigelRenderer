@@ -4,6 +4,8 @@
 #include "glfw3.h"
 #include "glew.h"
 
+#include "BuiltInShaders.hpp"
+
 #include <map>
 #include <iostream>
 
@@ -71,7 +73,7 @@ namespace rgr
 		//glfwSetWindowAttrib(window, GLFW_RESIZABLE, GLFW_FALSE);
 		//glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 165);
 
-		return 0;
+		return RIGEL_OK;
 	}
 
 	void SetScene(rgr::Scene* scene)

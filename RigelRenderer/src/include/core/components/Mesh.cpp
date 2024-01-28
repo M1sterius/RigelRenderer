@@ -8,7 +8,9 @@
 namespace rgr
 {
 	Mesh::Mesh(const std::vector<float>& vertices, const std::vector<unsigned int>& indices, const std::vector<float>& texCoords)
-	{
+	{	
+		m_MeshType = MESH_INDEXED;
+
 		m_VertexArray = new rgr::VertexArray();
 
 		rgr::VertexBuffer verticesBuffer = rgr::VertexBuffer(vertices.data(), vertices.size() * sizeof(float));
@@ -22,7 +24,9 @@ namespace rgr
 		m_TrisCount = indices.size() / 3;
 	}
 	Mesh::Mesh(const std::string& objPath)
-	{
+	{	
+		m_MeshType = MESH_INDEXED;
+
 		objl::Loader loader = objl::Loader();
 		
 		if (!loader.LoadFile(objPath))

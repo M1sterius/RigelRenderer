@@ -8,6 +8,9 @@
 #include "mat4x4.hpp"
 #include "glew.h"
 
+//#define GLT_IMPLEMENTATION
+//#include "gltext.h"
+
 #include <iostream>
 
 namespace rgr
@@ -44,6 +47,7 @@ namespace rgr
 		{
 			rgr::Transform transform = renderable->GetTransform();
 			rgr::Material* material = renderable->GetMaterial();
+			rgr::Shader* shader = material->GetShader();
 			rgr::Mesh* mesh = renderable->GetMesh();
 			glm::mat4 model = transform.GetModelMatrix();
 
@@ -58,7 +62,7 @@ namespace rgr
 					mesh->GetIndexBuffer()->Bind();
 
 					material->SetUniforms();
-					material->GetShader()->SetUniformMat4("u_MVP", true, mvp);
+					shader->SetUniformMat4("u_MVP", true, mvp);
 
 					//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //To turn wireframe mode on
 
@@ -77,7 +81,7 @@ namespace rgr
 					mesh->GetIndexBuffer()->Bind();
 
 					material->SetUniforms();
-					material->GetShader()->SetUniformMat4("u_MVP", true, mvp);
+					shader->SetUniformMat4("u_MVP", true, mvp);
 
 					glDrawElements(GL_TRIANGLES, mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 					break;
@@ -164,7 +168,7 @@ namespace rgr
 			if (m_Cameras.size() > 0) return m_Cameras[0];
 			else
 			{
-				std::cout << "Unable to find a Camera on the scene named: " << this->name << '\n';
+				std::cout << "Scene '" << this->name << "' does not contain a suitable rendering camera!" << '\n';
 				return nullptr;
 			}
 		}
