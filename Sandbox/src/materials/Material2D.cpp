@@ -2,19 +2,18 @@
 
 #include "core/components/Shader.hpp"
 
-Material2D::Material2D(rgr::Texture* texture)
+Material2D::Material2D(rgr::Texture* texture, rgr::Shader* shader) : rgr::Material(shader)
 {
 	m_Texture = texture;
-	m_Shader = rgr::Shader::FromFiles("resources/shaders/vertex_2d.glsl", "resources/shaders/fragment_2d.glsl");
 }
 
 void Material2D::SetUniforms()
 {
-	BindTexture("u_Textur", m_Texture, 6);
+	BindTexture("u_Texture", m_Texture, 6);
 	SetUniformVec4("u_Color", color);
 }
 
 Material2D::~Material2D()
 {
-	delete m_Shader;
+
 }

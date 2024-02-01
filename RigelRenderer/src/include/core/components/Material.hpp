@@ -1,6 +1,7 @@
 #pragma once
 
 #include "glm.hpp"
+#include "internal.hpp"
 
 #include <string>
 #include <vector>
@@ -12,19 +13,18 @@ namespace rgr
 
 	class Material
 	{
+	private:
+		rgr::Shader* m_Shader;
 	public:
 		std::string name = "Material";
 
-		Material();
+		Material(rgr::Shader* shader);
 		virtual ~Material();
 
 		virtual void SetUniforms();
 		void Bind() const;
 		void Unbind() const;
-		inline rgr::Shader* GetShader() const { return m_Shader; }
 	protected:
-		rgr::Shader* m_Shader;
-
 		void BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot);
 		void SetUniform1i(const std::string& name, const int value);
 		void SetUniform1f(const std::string& name, const float value);
@@ -33,5 +33,7 @@ namespace rgr
 		void SetUniformVec4(const std::string& name, const glm::vec4& value);
 		void SetUniformMat3(const std::string& name, const bool transpose, const glm::mat3& value);
 		void SetUniformMat4(const std::string& name, const bool transpose, const glm::mat4& value);
+	INTERNAL:
+		inline rgr::Shader* GetShader() const { return m_Shader; }
 	};
 }

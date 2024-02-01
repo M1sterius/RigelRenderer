@@ -2,6 +2,7 @@
 #include "glew.h"
 #include "gtc/type_ptr.hpp"
 #include "glm.hpp"
+#include "BuiltInShaders.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -46,10 +47,8 @@ namespace rgr
 		return temp;
 	}
 
-	//const Shader Shader::Default = Shader();
-
 	Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)
-	{
+	{	
 		const GLchar* vs = vertexSource.c_str();
 		const GLchar* fs = fragmentSource.c_str();
 
@@ -62,26 +61,16 @@ namespace rgr
 		glCompileShader(vertexHandle);
 		glCompileShader(fragmentHandle);
 
-		//if (GetShaderCompileInfo(vertexHandle) == 1)
-		//{
-		//	glDeleteShader(vertexHandle);
-		//	return;
-		//}
-		//if (GetShaderCompileInfo(fragmentHandle) == 1)
-		//{
-		//	glDeleteShader(fragmentHandle);
-		//	return;
-		//}
-
 		if (GetShaderCompileInfo(vertexHandle) == 1 || GetShaderCompileInfo(fragmentHandle) == 1)
 		{
 			glDeleteShader(vertexHandle);
 			glDeleteShader(fragmentHandle);
 
-			m_ShaderErrored = true;
+			m_ShaderHasError = true;
 			return;
 		}
 
+		m_ShaderHasError = false;
 		m_Handle = glCreateProgram();
 
 		glAttachShader(m_Handle, vertexHandle);
@@ -119,12 +108,12 @@ namespace rgr
 		if (processedVertexSource.empty())
 		{
 			std::cout << "The file at path: '" << vertexPath << "' does not exist!" << '\n';
-			return nullptr;
+			return GetErroredShaderPlaceholder();
 		}
 		if (processedFragmentSource.empty())
 		{
 			std::cout << "The file at path: '" << fragmentPath << "' does not exist!" << '\n';
-			return nullptr;
+			return GetErroredShaderPlaceholder();
 		}
 
 		return new rgr::Shader(processedVertexSource, processedFragmentSource);
@@ -135,6 +124,12 @@ namespace rgr
 		return new rgr::Shader(vertexSource, fragmentSource);
 	}
 
+	Shader* Shader::GetErroredShaderPlaceholder()
+	{
+		static Shader* shader = new Shader(rgr::ErroredShaderVertex, rgr::ErroredShaderFragment);
+		return shader;
+	}
+	
 	void Shader::Bind() const
 	{
 		glUseProgram(m_Handle);
@@ -205,15 +200,7 @@ namespace rgr
 			m_UniformsLocationCache[name] = location;
 			return location;
 		}
-		//std::cout << "Unable to find uniform named: " << name << '\n';
-		//return -1;
 
-		if (!m_ShaderErrored)
-		{
-			std::cout << "Unable to find uniform named: " << name << '\n';
-			m_ShaderErrored = true;
-			return -1;
-		}
-		else return -1;
+		return -1;
 	}
 }

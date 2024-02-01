@@ -62,10 +62,13 @@ int main()
 	rgr::Mesh* cubeMesh = new rgr::Mesh("resources/objects/cube.obj");
 	rgr::Mesh* sphereMesh = new rgr::Mesh("resources/objects/sphere.obj");
 	
-	Material2D* quadMaterial = new Material2D(new rgr::Texture("resources/textures/Misterius3Dk.png"));
-	Material3D* cubeMaterial = new Material3D(new rgr::Texture("resources/textures/wall.jpg"));
-	Material3D* planeMaterial = new Material3D(new rgr::Texture("resources/textures/plane_texture.png"));
-	Material3D* sphereMaterial = new Material3D(new rgr::Texture("resources/textures/world_map.jpg"));
+	rgr::Shader* shader2D = rgr::Shader::FromFiles("resources/shaders/vertex_2d.glsl", "resources/shaders/fragment_2d.glsl");
+	rgr::Shader* shader3D = rgr::Shader::FromFiles("resources/shaders/vertex_3d.glsl", "resources/shaders/fragment_3d.glsl");
+
+	Material2D* quadMaterial = new Material2D(new rgr::Texture("resources/textures/Misterius3Dk.png"), shader2D);
+	Material3D* cubeMaterial = new Material3D(new rgr::Texture("resources/textures/wall.jpg"), shader3D);
+	Material3D* planeMaterial = new Material3D(new rgr::Texture("resources/textures/plane_texture.png"), shader3D);
+	Material3D* sphereMaterial = new Material3D(new rgr::Texture("resources/textures/world_map.jpg"), shader3D);
 
 	rgr::Renderable* quad = new rgr::Renderable(quadMesh, quadMaterial);
 	quad->GetTransform().space = SPACE_2D_SCREEN;

@@ -6,7 +6,7 @@
 class Material3D : public rgr::Material
 {
 public:
-	Material3D(rgr::Texture* texture);
+	Material3D(rgr::Texture* texture, rgr::Shader* shader);
 	~Material3D() override;
 
 	void SetUniforms() override;

@@ -4,9 +4,9 @@
 
 #include <iostream>
 
-rgr::Material::Material()
+rgr::Material::Material(rgr::Shader* shader)
 {
-	
+	m_Shader = shader;
 }
 
 rgr::Material::~Material()

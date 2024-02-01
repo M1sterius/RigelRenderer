@@ -2,10 +2,9 @@
 
 #include "core/components/Shader.hpp"
 
-Material3D::Material3D(rgr::Texture* texture)
+Material3D::Material3D(rgr::Texture* texture, rgr::Shader* shader) : rgr::Material(shader)
 {
 	m_Texture = texture;
-	m_Shader = rgr::Shader::FromFiles("resources/shaders/vertex_3d.glsl", "resources/shaders/fragment_3d.glsl");
 }
 
 void Material3D::SetUniforms()

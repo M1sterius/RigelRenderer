@@ -4,8 +4,6 @@
 #include "glfw3.h"
 #include "glew.h"
 
-#include "BuiltInShaders.hpp"
-
 #include <map>
 #include <iostream>
 

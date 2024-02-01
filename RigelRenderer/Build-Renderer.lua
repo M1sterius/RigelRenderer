@@ -29,7 +29,8 @@ project "RigelRenderer"
 
    defines 
    {
-        "GLEW_STATIC"
+        "GLEW_STATIC",
+        "INTERNAL_LIB"
    }
 
    filter "system:windows"
