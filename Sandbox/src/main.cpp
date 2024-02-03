@@ -20,8 +20,8 @@ int main()
 	if (rgr::Init(WIDTH, HEIGHT, TITLE) != RIGEL_OK)
 		return -1;
 
-	rgr::Scene* scene = new rgr::Scene();
-	rgr::SetScene(scene);
+	rgr::Scene scene = rgr::Scene();
+	rgr::SetScene(&scene);
 
 	const std::vector<float> quadVertices {
 		-50.0f, 50.0f, 0.0f,
@@ -70,40 +70,40 @@ int main()
 	Material3D* planeMaterial = new Material3D(new rgr::Texture("resources/textures/plane_texture.png"), shader3D);
 	Material3D* sphereMaterial = new Material3D(new rgr::Texture("resources/textures/world_map.jpg"), shader3D);
 
-	rgr::Renderable* quad = new rgr::Renderable(quadMesh, quadMaterial);
-	quad->GetTransform().space = SPACE_2D_SCREEN;
-	quad->GetTransform().SetPosition(glm::vec3(-610, 330, 0.0f));
-	quad->GetTransform().SetScale(glm::vec3(0.5, 0.5, 1));
+	rgr::Renderable quad = rgr::Renderable(quadMesh, quadMaterial);
+	quad.GetTransform().space = SPACE_2D_SCREEN;
+	quad.GetTransform().SetPosition(glm::vec3(-610, 330, 0.0f));
+	quad.GetTransform().SetScale(glm::vec3(0.5, 0.5, 1));
 
-	rgr::Renderable* cube = new rgr::Renderable(cubeMesh, cubeMaterial);
-	cube->GetTransform().SetPosition(glm::vec3(0, 0, 2));
+	rgr::Renderable cube = rgr::Renderable(cubeMesh, cubeMaterial);
+	cube.GetTransform().SetPosition(glm::vec3(0, 0, 2));
 
-	rgr::Renderable* plane = new rgr::Renderable(planeMesh, planeMaterial);
-	plane->GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
-	plane->GetTransform().SetScale(glm::vec3(10, 1, 10));
-	plane->GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
+	rgr::Renderable plane = rgr::Renderable(planeMesh, planeMaterial);
+	plane.GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
+	plane.GetTransform().SetScale(glm::vec3(10, 1, 10));
+	plane.GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 
-	rgr::Renderable* sphere = new rgr::Renderable(sphereMesh, sphereMaterial);
-	sphere->GetTransform().SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
-	sphere->GetTransform().SetPosition(glm::vec3(0.0, 0.0f, 0.0f));
+	rgr::Renderable sphere = rgr::Renderable(sphereMesh, sphereMaterial);
+	sphere.GetTransform().SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
+	sphere.GetTransform().SetPosition(glm::vec3(0.0, 0.0f, 0.0f));
 
-	rgr::Camera* camera = new rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
-	camera->GetTransform().SetPosition(glm::vec3(0.0f, 0, -2.0f));
-	camera->GetTransform().SetRotation(glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)));
-	camera->FlagAsMain();
+	rgr::Camera camera = rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
+	camera.GetTransform().SetPosition(glm::vec3(0.0f, 0, -2.0f));
+	camera.GetTransform().SetRotation(glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)));
+	camera.FlagAsMain();
 
-	scene->AddObject(camera);
-	scene->AddObject(quad);
-	scene->AddObject(cube);
-	scene->AddObject(plane);
-	scene->AddObject(sphere);
+	scene.AddObject(&camera);
+	scene.AddObject(&quad);
+	scene.AddObject(&cube);
+	scene.AddObject(&plane);
+	scene.AddObject(&sphere);
 
 	const float sensitivity = 0.3f;
 	const float walkSpeed = 1.5f;
 
 	float yaw = 0;
 	float pitch = 0;
-	glm::vec3 pos = camera->GetTransform().GetPosition();
+	glm::vec3 pos = camera.GetTransform().GetPosition();
 	glm::vec3 rot(0.0f);
 
 	while (!rgr::WindowShouldClose())
@@ -116,8 +116,8 @@ int main()
 		if (pitch > 1.5708f) pitch = 1.5708f;
 		else if (pitch < -1.5708f) pitch = -1.5708f;
 
-		glm::vec3 fv = camera->GetTransform().GetForwardVector();
-		glm::vec3 rv = camera->GetTransform().GetRightVector();
+		glm::vec3 fv = camera.GetTransform().GetForwardVector();
+		glm::vec3 rv = camera.GetTransform().GetRightVector();
 
 		if (rgr::Input::KeyHold(UR_KEY_W))
 			pos += fv * walkSpeed * rgr::GetDeltaTime();
@@ -133,12 +133,12 @@ int main()
 		if (rgr::Input::KeyHold(UR_KEY_E))
 			pos -= glm::vec3(0.0f, 1.0f, 0.0f) * walkSpeed * rgr::GetDeltaTime();
 
-		camera->GetTransform().SetPosition(pos);
-		camera->GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));
+		camera.GetTransform().SetPosition(pos);
+		camera.GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));
 
 		rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::GetDeltaTime();
-		cube->GetTransform().SetRotation(rot);
-		sphere->GetTransform().SetRotation(rot);
+		cube.GetTransform().SetRotation(rot);
+		sphere.GetTransform().SetRotation(rot);
 
 		rgr::Update();
 	}

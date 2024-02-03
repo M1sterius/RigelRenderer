@@ -200,7 +200,15 @@ namespace rgr
 			m_UniformsLocationCache[name] = location;
 			return location;
 		}
-
+		std::cout << "Unable to find uniform named: " << name << '\n';
+		m_UnifromsCallback++;
 		return -1;
+	}
+
+	int Shader::GetUniformsCallback()
+	{
+		int callback = m_UnifromsCallback;
+		m_UnifromsCallback = 0;
+		return callback;
 	}
 }

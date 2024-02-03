@@ -22,8 +22,6 @@ namespace rgr
 		virtual ~Material();
 
 		virtual void SetUniforms();
-		void Bind() const;
-		void Unbind() const;
 	protected:
 		void BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot);
 		void SetUniform1i(const std::string& name, const int value);
@@ -34,6 +32,9 @@ namespace rgr
 		void SetUniformMat3(const std::string& name, const bool transpose, const glm::mat3& value);
 		void SetUniformMat4(const std::string& name, const bool transpose, const glm::mat4& value);
 	INTERNAL:
+		void Bind() const;
+		void Unbind() const;
+
 		inline rgr::Shader* GetShader() const { return m_Shader; }
 	};
 }

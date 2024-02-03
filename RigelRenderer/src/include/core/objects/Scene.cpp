@@ -57,12 +57,19 @@ namespace rgr
 				{
 					glm::mat4 mvp = perspProj * view * model;
 
-					material->Bind();
 					mesh->GetVertexArray()->Bind();
 					mesh->GetIndexBuffer()->Bind();
 
+					material->Bind();
 					material->SetUniforms();
 					shader->SetUniformMat4("u_MVP", true, mvp);
+
+					if (shader->GetUniformsCallback() != 0)
+					{
+						material->Unbind();
+						rgr::Shader::GetErroredShaderPlaceholder()->Bind();
+						rgr::Shader::GetErroredShaderPlaceholder()->SetUniformMat4("u_MVP", true, mvp);
+					}
 
 					//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //To turn wireframe mode on
 
@@ -82,6 +89,13 @@ namespace rgr
 
 					material->SetUniforms();
 					shader->SetUniformMat4("u_MVP", true, mvp);
+
+					if (shader->GetUniformsCallback() != 0)
+					{
+						material->Unbind();
+						rgr::Shader::GetErroredShaderPlaceholder()->Bind();
+						rgr::Shader::GetErroredShaderPlaceholder()->SetUniformMat4("u_MVP", true, mvp);
+					}
 
 					glDrawElements(GL_TRIANGLES, mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 					break;

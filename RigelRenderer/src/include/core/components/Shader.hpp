@@ -16,6 +16,7 @@ namespace rgr
 	private:
 		unsigned int m_Handle;
 		bool m_ShaderHasError;
+		int m_UnifromsCallback;
 		std::unordered_map<std::string, int> m_UniformsLocationCache;
 		
 		Shader(const std::string& vertexSource, const std::string& fragmentSource);
@@ -40,6 +41,7 @@ namespace rgr
 
 		inline unsigned int GetHandle() const { return m_Handle; }
 		int FindUniform(const std::string& name);
+		int GetUniformsCallback();
 
 		static Shader* GetErroredShaderPlaceholder();
 	};
