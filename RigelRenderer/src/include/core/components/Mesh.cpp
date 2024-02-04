@@ -9,7 +9,7 @@ namespace rgr
 {
 	Mesh::Mesh(const std::vector<float>& vertices, const std::vector<unsigned int>& indices, const std::vector<float>& texCoords)
 	{	
-		m_MeshType = MESH_INDEXED;
+		m_MeshType = MeshType::INDEXED;
 
 		m_VertexArray = new rgr::VertexArray();
 
@@ -25,7 +25,7 @@ namespace rgr
 	}
 	Mesh::Mesh(const std::string& objPath)
 	{	
-		m_MeshType = MESH_INDEXED;
+		m_MeshType = MeshType::INDEXED;
 
 		objl::Loader loader = objl::Loader();
 		

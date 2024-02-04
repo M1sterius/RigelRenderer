@@ -11,6 +11,14 @@ namespace rgr
 	class Camera : public rgr::Object
 	{
 	public:
+		enum class ViewMode
+		{
+			FILL,
+			WIREFRAME
+		};
+
+		ViewMode viewMode = ViewMode::FILL;
+
 		Camera(float fov, float width, float height, float near, float far);
 		~Camera() override;
 
@@ -19,9 +27,9 @@ namespace rgr
 		inline bool IsMain() const { return m_IsMain; }
 
 		glm::mat4& GetView();
+		glm::vec3 GetForwardVector();
 		inline glm::mat4& GetPerspective() const { return m_Perspective; }
 		inline glm::mat4& GetOrthographic() const { return m_Orthographic; }
-		glm::vec3 GetForwardVector();
 	private:
 		bool m_IsMain;
 

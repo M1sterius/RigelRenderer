@@ -108,12 +108,12 @@ namespace rgr
 		if (processedVertexSource.empty())
 		{
 			std::cout << "The file at path: '" << vertexPath << "' does not exist!" << '\n';
-			return GetErroredShaderPlaceholder();
+			return GetPlainColorShader();
 		}
 		if (processedFragmentSource.empty())
 		{
 			std::cout << "The file at path: '" << fragmentPath << "' does not exist!" << '\n';
-			return GetErroredShaderPlaceholder();
+			return GetPlainColorShader();
 		}
 
 		return new rgr::Shader(processedVertexSource, processedFragmentSource);
@@ -124,9 +124,9 @@ namespace rgr
 		return new rgr::Shader(vertexSource, fragmentSource);
 	}
 
-	Shader* Shader::GetErroredShaderPlaceholder()
+	Shader* Shader::GetPlainColorShader()
 	{
-		static Shader* shader = new Shader(rgr::ErroredShaderVertex, rgr::ErroredShaderFragment);
+		static Shader* shader = new Shader(rgr::PlainColorVertex, rgr::PlainColorFragment);
 		return shader;
 	}
 	

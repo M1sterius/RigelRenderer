@@ -43,7 +43,7 @@ namespace rgr
 		int FindUniform(const std::string& name);
 		int GetUniformsCallback();
 
-		static Shader* GetErroredShaderPlaceholder();
+		static Shader* GetPlainColorShader();
 	};
 }
 

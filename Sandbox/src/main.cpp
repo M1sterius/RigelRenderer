@@ -71,7 +71,7 @@ int main()
 	Material3D* sphereMaterial = new Material3D(new rgr::Texture("resources/textures/world_map.jpg"), shader3D);
 
 	rgr::Renderable quad = rgr::Renderable(quadMesh, quadMaterial);
-	quad.GetTransform().space = SPACE_2D_SCREEN;
+	quad.GetTransform().space = rgr::Transform::Space::SCREEN_2D;
 	quad.GetTransform().SetPosition(glm::vec3(-610, 330, 0.0f));
 	quad.GetTransform().SetScale(glm::vec3(0.5, 0.5, 1));
 
@@ -88,6 +88,7 @@ int main()
 	sphere.GetTransform().SetPosition(glm::vec3(0.0, 0.0f, 0.0f));
 
 	rgr::Camera camera = rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
+	//camera.viewMode = rgr::Camera::ViewMode::WIREFRAME;
 	camera.GetTransform().SetPosition(glm::vec3(0.0f, 0, -2.0f));
 	camera.GetTransform().SetRotation(glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)));
 	camera.FlagAsMain();

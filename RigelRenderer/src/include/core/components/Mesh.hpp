@@ -3,9 +3,6 @@
 #include <string>
 #include <vector>
 
-#define MESH_INDEXED 0
-#define MESH_ARRAY 1
-
 namespace rgr
 {	
 	class VertexArray;
@@ -16,13 +13,19 @@ namespace rgr
 	*/
 	class Mesh
 	{
+	public:
+		enum class MeshType
+		{
+			INDEXED,
+			ARRAY
+		};
 	private:
 		rgr::VertexArray* m_VertexArray;
 		rgr::IndexBuffer* m_IndexBuffer;
 
 		int m_VertsCount = 0;
 		int m_TrisCount = 0;
-		int m_MeshType;
+		MeshType m_MeshType;
 	public:
 		/*
 		Creates a mesh directly from vertex positions, indices and texture coordinates
@@ -47,6 +50,6 @@ namespace rgr
 		/*
 		Returns the type of this mesh (either MESH_INDEXED or MESH_ARRAY)
 		*/
-		inline int GetMeshType() const { return m_MeshType; }
+		inline MeshType GetMeshType() const { return m_MeshType; }
 	};
 }

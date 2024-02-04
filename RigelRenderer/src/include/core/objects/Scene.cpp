@@ -4,9 +4,11 @@
 
 #include "glAbstraction/GlAbstraction.hpp"
 #include "gtx/string_cast.hpp"
+#include "glm.hpp"
 #include "glfw3.h"
-#include "mat4x4.hpp"
 #include "glew.h"
+
+#include "render/Render.hpp"
 
 //#define GLT_IMPLEMENTATION
 //#include "gltext.h"
@@ -53,51 +55,34 @@ namespace rgr
 
 			switch (transform.space)
 			{
-				case SPACE_3D:
+				case rgr::Transform::Space::WORLD_3D:
 				{
-					glm::mat4 mvp = perspProj * view * model;
+					RenderData data = RenderData(
+						material,
+						mesh,
+						perspProj * view * model,
+						camera->viewMode
+					);
+					//data.material = material;
+					//data.mesh = mesh;
+					//data.mvp = perspProj * view * model;
+					//data.viewMode = camera->viewMode;
 
-					mesh->GetVertexArray()->Bind();
-					mesh->GetIndexBuffer()->Bind();
-
-					material->Bind();
-					material->SetUniforms();
-					shader->SetUniformMat4("u_MVP", true, mvp);
-
-					if (shader->GetUniformsCallback() != 0)
-					{
-						material->Unbind();
-						rgr::Shader::GetErroredShaderPlaceholder()->Bind();
-						rgr::Shader::GetErroredShaderPlaceholder()->SetUniformMat4("u_MVP", true, mvp);
-					}
-
-					//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //To turn wireframe mode on
-
-					glDrawElements(GL_TRIANGLES, mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-					
-					//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //To turn wireframe mode off
+					rgr::Render(data);
 					
 					break;
 				}
-				case SPACE_2D_SCREEN:
+				case rgr::Transform::Space::SCREEN_2D:
 				{
-					glm::mat4 mvp = orthoProj * model;
+					RenderData data = RenderData(
+						material,
+						mesh,
+						orthoProj * model,
+						camera->viewMode
+					);
 
-					material->Bind();
-					mesh->GetVertexArray()->Bind();
-					mesh->GetIndexBuffer()->Bind();
+					rgr::Render(data);
 
-					material->SetUniforms();
-					shader->SetUniformMat4("u_MVP", true, mvp);
-
-					if (shader->GetUniformsCallback() != 0)
-					{
-						material->Unbind();
-						rgr::Shader::GetErroredShaderPlaceholder()->Bind();
-						rgr::Shader::GetErroredShaderPlaceholder()->SetUniformMat4("u_MVP", true, mvp);
-					}
-
-					glDrawElements(GL_TRIANGLES, mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 					break;
 				}
 				default:

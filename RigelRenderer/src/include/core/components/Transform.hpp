@@ -4,15 +4,18 @@
 #include "gtc/quaternion.hpp"
 #include "glm.hpp"
 
-#define SPACE_3D 0
-#define SPACE_2D_SCREEN 1
-
 namespace rgr
 {
     class Transform
     {
     public:
-        int space = SPACE_3D;
+        enum class Space
+        {
+            WORLD_3D, 
+            SCREEN_2D
+        };
+
+        Space space = Space::WORLD_3D;
 
         Transform();
         Transform(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale);
@@ -28,8 +31,8 @@ namespace rgr
         glm::vec3 GetForwardVector();
         glm::vec3 GetRightVector();
 
-        glm::mat4 GetModelMatrix();
-
+        glm::mat4& GetModelMatrix();
+        glm::mat3& GetNormalMatrix();
     private:
         glm::vec3 m_Position;
         glm::quat m_Rotation;

@@ -9,7 +9,7 @@ namespace rgr
 	Transform::Transform(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale)
 	{	
 		m_Scale = scale;
-		if (space == SPACE_2D_SCREEN)
+		if (space == Space::SCREEN_2D)
 		{
 			m_Rotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::roll(rotation)));
 			m_Position = glm::vec3(position.x, position.y, 1.0f);
@@ -27,12 +27,12 @@ namespace rgr
 
 	void Transform::SetPosition(const glm::vec3& position)
 	{
-		m_Position = space == SPACE_2D_SCREEN ? glm::vec3(position.x, position.y, 1.0f) : position;
+		m_Position = space == Space::SCREEN_2D ? glm::vec3(position.x, position.y, 1.0f) : position;
 		m_ShouldUpdate = true;
 	}
 	void Transform::SetRotation(const glm::quat& rotation)
 	{
-		m_Rotation = space == SPACE_2D_SCREEN ? glm::quat(glm::vec3(0.0f, 0.0f, glm::roll(rotation))) : rotation;
+		m_Rotation = space == Space::SCREEN_2D ? glm::quat(glm::vec3(0.0f, 0.0f, glm::roll(rotation))) : rotation;
 		m_ShouldUpdate = true;
 	}
 	void Transform::SetScale(const glm::vec3& scale)
@@ -55,7 +55,7 @@ namespace rgr
 		return glm::normalize(glm::vec3(res));
 	}
 
-	glm::mat4 Transform::GetModelMatrix()
+	glm::mat4& Transform::GetModelMatrix()
 	{
 		if (m_ShouldUpdate)
 		{
@@ -64,9 +64,15 @@ namespace rgr
 			m_ModelMatrix = glm::translate(m_ModelMatrix, m_Position);
 			m_ModelMatrix *= glm::mat4_cast(m_Rotation);
 			m_ModelMatrix = glm::scale(m_ModelMatrix, m_Scale);
+
+			m_NormalMatrix = glm::mat3(glm::transpose(glm::inverse(m_ModelMatrix)));
 		}
 
 		m_ShouldUpdate = false;
 		return m_ModelMatrix;
+	}
+	glm::mat3& Transform::GetNormalMatrix()
+	{
+		return m_NormalMatrix;
 	}
 }

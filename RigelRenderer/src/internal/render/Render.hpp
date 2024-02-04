@@ -1,11 +1,29 @@
 #pragma once
 
 #include "mat4x4.hpp"
+#include "core/components/Material.hpp"
+#include "core/components/Mesh.hpp"
+#include "core/objects/Camera.hpp"
 
 namespace rgr
-{
-	class Mesh;
-	class Material;
+{	
+	/*
+	The container for data required to make a single draw call
+	*/
+	struct RenderData
+	{
+		rgr::Material* material;
+		rgr::Mesh* mesh;
+		glm::mat4 mvp;
+		rgr::Camera::ViewMode viewMode;
 
-	void Render(rgr::Mesh* mesh, rgr::Material* material, const glm::mat4& mvp);
+		RenderData(rgr::Material* material, rgr::Mesh* mesh, 
+			const glm::mat4 mvp, const rgr::Camera::ViewMode viewMode);
+		~RenderData();
+	};
+
+	/*
+	Draws an object on the screen using the sprecified data
+	*/
+	void Render(const RenderData& data);
 }
