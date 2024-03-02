@@ -63,7 +63,7 @@ int main()
 	rgr::Mesh* sphereMesh = new rgr::Mesh("resources/objects/sphere.obj");
 	
 	rgr::Shader* shader2D = rgr::Shader::FromFiles("resources/shaders/vertex_2d.glsl", "resources/shaders/fragment_2d.glsl");
-	rgr::Shader* shader3D = rgr::Shader::FromFiles("resources/shaders/vertex_3d.glsl", "resources/shaders/fragment_3d.glsl");
+	rgr::Shader* shader3D = rgr::Shader::FromFiles("resources/shaders/vertex_3d_lit.glsl", "resources/shaders/fragment_3d_lit.glsl");
 
 	Material2D* quadMaterial = new Material2D(new rgr::Texture("resources/textures/Misterius3Dk.png"), shader2D);
 	Material3D* cubeMaterial = new Material3D(new rgr::Texture("resources/textures/wall.jpg"), shader3D);
@@ -88,16 +88,27 @@ int main()
 	sphere.GetTransform().SetPosition(glm::vec3(0.0, 0.0f, 0.0f));
 
 	rgr::Camera camera = rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
-	//camera.viewMode = rgr::Camera::ViewMode::WIREFRAME;
 	camera.GetTransform().SetPosition(glm::vec3(0.0f, 0, -2.0f));
 	camera.GetTransform().SetRotation(glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)));
 	camera.FlagAsMain();
+
+	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.3, glm::vec3(0.0, -1.0, 0.0));
+	rgr::PointLight pntLight = rgr::PointLight(
+		glm::vec3(1.0, 1.0, 1.0),
+		0.3f,
+		1.0f,
+		0.2f,
+		0.1f
+	);
 
 	scene.AddObject(&camera);
 	scene.AddObject(&quad);
 	scene.AddObject(&cube);
 	scene.AddObject(&plane);
 	scene.AddObject(&sphere);
+
+	scene.AddObject(&dirLight);
+	scene.AddObject(&pntLight);
 
 	const float sensitivity = 0.3f;
 	const float walkSpeed = 1.5f;
@@ -120,18 +131,18 @@ int main()
 		glm::vec3 fv = camera.GetTransform().GetForwardVector();
 		glm::vec3 rv = camera.GetTransform().GetRightVector();
 
-		if (rgr::Input::KeyHold(UR_KEY_W))
+		if (rgr::Input::KeyHold(RGR_KEY_W))
 			pos += fv * walkSpeed * rgr::GetDeltaTime();
-		if (rgr::Input::KeyHold(UR_KEY_S))
+		if (rgr::Input::KeyHold(RGR_KEY_S))
 			pos -= fv * walkSpeed * rgr::GetDeltaTime();
-		if (rgr::Input::KeyHold(UR_KEY_D))
+		if (rgr::Input::KeyHold(RGR_KEY_D))
 			pos += rv * walkSpeed * rgr::GetDeltaTime();
-		if (rgr::Input::KeyHold(UR_KEY_A))
+		if (rgr::Input::KeyHold(RGR_KEY_A))
 			pos -= rv * walkSpeed * rgr::GetDeltaTime();
 
-		if (rgr::Input::KeyHold(UR_KEY_Q))
+		if (rgr::Input::KeyHold(RGR_KEY_Q))
 			pos += glm::vec3(0.0f, 1.0f, 0.0f) * walkSpeed * rgr::GetDeltaTime();
-		if (rgr::Input::KeyHold(UR_KEY_E))
+		if (rgr::Input::KeyHold(RGR_KEY_E))
 			pos -= glm::vec3(0.0f, 1.0f, 0.0f) * walkSpeed * rgr::GetDeltaTime();
 
 		camera.GetTransform().SetPosition(pos);
@@ -141,8 +152,18 @@ int main()
 		cube.GetTransform().SetRotation(rot);
 		sphere.GetTransform().SetRotation(rot);
 
+		if (rgr::Input::KeyPressed(RGR_KEY_M))
+		{
+			if (camera.viewMode == rgr::Camera::ViewMode::WIREFRAME)
+				camera.viewMode = rgr::Camera::ViewMode::FILL;
+			else
+				camera.viewMode = rgr::Camera::ViewMode::WIREFRAME;
+		}
+
 		rgr::Update();
 	}
 
 	rgr::Quit();
+
+	std::cin.get();
 }

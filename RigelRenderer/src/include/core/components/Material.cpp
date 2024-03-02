@@ -18,6 +18,11 @@ void rgr::Material::SetUniforms()
 	
 }
 
+void rgr::Material::MakeLit()
+{
+	m_IsLit = true;
+}
+
 void rgr::Material::Bind() const
 {
 	m_Shader->Bind();

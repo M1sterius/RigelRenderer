@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Light.hpp"
+#include "core/objects/Light.hpp"
 #include "vec3.hpp"
 
 namespace rgr
 {
-	class PointLight : rgr::Light
+	class PointLight : public rgr::Light
 	{
 	public:
 		float constant;

@@ -31,7 +31,7 @@ namespace rgr
 		
 		if (!loader.LoadFile(objPath))
 		{
-			std::cout << "Unable to find an .obj file at path: " << objPath << '\n';
+			std::cout << "Unable to find a '.obj' file at path: " << objPath << '\n';
 		}
 
 		std::vector<float> vertices;

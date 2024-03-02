@@ -2,6 +2,7 @@
 #include "core/components/Material.hpp"
 #include "core/components/Shader.hpp"
 
+#include "core/objects/DirectionalLight.hpp"
 #include "glAbstraction/GlAbstraction.hpp"
 #include "gtx/string_cast.hpp"
 #include "glm.hpp"
@@ -40,35 +41,43 @@ namespace rgr
 
 		#pragma endregion
 
-		#pragma region Lights
-		#pragma endregion
-
 		#pragma region Render
 
 		for (const auto& renderable : m_Renderables)
 		{
 			rgr::Transform transform = renderable->GetTransform();
 			rgr::Material* material = renderable->GetMaterial();
-			rgr::Shader* shader = material->GetShader();
 			rgr::Mesh* mesh = renderable->GetMesh();
 			glm::mat4 model = transform.GetModelMatrix();
+
+			static std::vector<rgr::Light*> affectingLights(16);
 
 			switch (transform.space)
 			{
 				case rgr::Transform::Space::WORLD_3D:
-				{
+				{	
+					for (const auto& light : m_Lights)
+					{	
+						float d = glm::distance(transform.GetPosition(), light->GetTransform().GetPosition());
+						bool castRes = dynamic_cast<rgr::DirectionalLight*>(light) != nullptr;
+
+						if (d < renderable->affectedByLightDistance || castRes)
+						{
+							affectingLights.push_back(light);
+						}
+					}
+
 					RenderData data = RenderData(
 						material,
 						mesh,
 						perspProj * view * model,
-						camera->viewMode
+						camera->viewMode,
+						&affectingLights
 					);
-					//data.material = material;
-					//data.mesh = mesh;
-					//data.mvp = perspProj * view * model;
-					//data.viewMode = camera->viewMode;
 
 					rgr::Render(data);
+
+					affectingLights.clear();
 					
 					break;
 				}
@@ -78,7 +87,8 @@ namespace rgr
 						material,
 						mesh,
 						orthoProj * model,
-						camera->viewMode
+						camera->viewMode,
+						nullptr
 					);
 
 					rgr::Render(data);

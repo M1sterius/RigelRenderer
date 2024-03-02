@@ -2,5 +2,8 @@
 
 namespace rgr
 {
+	Light::~Light()
+	{
 
+	}
 }

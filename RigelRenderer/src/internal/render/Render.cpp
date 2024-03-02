@@ -4,14 +4,21 @@
 #include "glAbstraction/VertexArray.hpp"
 #include "glAbstraction/IndexBuffer.hpp"
 
+#include <vector>
+
 rgr::RenderData::RenderData(rgr::Material* material, rgr::Mesh* mesh,
-	const glm::mat4 mvp, const rgr::Camera::ViewMode viewMode)
-	: material(material), mesh(mesh), mvp(mvp), viewMode(viewMode)
+	const glm::mat4 mvp, const rgr::Camera::ViewMode viewMode, std::vector<rgr::Light*>* lights)
+	: material(material), mesh(mesh), mvp(mvp), viewMode(viewMode), lights(lights)
 {
 
 }
 
 rgr::RenderData::~RenderData()
+{
+
+}
+
+static void SetLightUniforms(rgr::Shader* shader, std::vector<rgr::Light*>* lights)
 {
 
 }
@@ -23,7 +30,7 @@ void rgr::Render(const RenderData& data)
 	rgr::Mesh* mesh = data.mesh;
 	glm::mat4 mvp = data.mvp;
 
-	// Binding the vertex array as it needs to be bound for every mesh type
+	// Binding the vertex array as it needs to be bound to render any mesh type
 	mesh->GetVertexArray()->Bind();
 
 	// Binding the index buffer only if the mesh is indexed (uses index buffer)
@@ -32,7 +39,7 @@ void rgr::Render(const RenderData& data)
 
 	/*
 	Binding the material, calling the method that sets user defined uniforms, setting mvp
-	Any uniform set errors that happen here will be caught and resolved by using placeholder shader
+	Any uniform set errors that happen here will be caught and indicated by using placeholder shader
 	*/
 	material->Bind();
 	material->SetUniforms();

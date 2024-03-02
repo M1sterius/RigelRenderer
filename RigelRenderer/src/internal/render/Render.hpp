@@ -4,6 +4,7 @@
 #include "core/components/Material.hpp"
 #include "core/components/Mesh.hpp"
 #include "core/objects/Camera.hpp"
+#include "core/objects/Light.hpp"
 
 namespace rgr
 {	
@@ -16,9 +17,10 @@ namespace rgr
 		rgr::Mesh* mesh;
 		glm::mat4 mvp;
 		rgr::Camera::ViewMode viewMode;
+		std::vector<rgr::Light*>* lights;
 
 		RenderData(rgr::Material* material, rgr::Mesh* mesh, 
-			const glm::mat4 mvp, const rgr::Camera::ViewMode viewMode);
+			const glm::mat4 mvp, const rgr::Camera::ViewMode viewMode, std::vector<rgr::Light*>* lights);
 		~RenderData();
 	};
 

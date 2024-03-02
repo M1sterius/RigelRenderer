@@ -15,6 +15,7 @@ namespace rgr
 	{
 	private:
 		rgr::Shader* m_Shader;
+		bool m_IsLit;
 	public:
 		std::string name = "Material";
 
@@ -23,6 +24,13 @@ namespace rgr
 
 		virtual void SetUniforms();
 	protected:
+		/*
+		Will make this material affected by light
+		Note: A shader attached to material marked as lit must correctly handle all light calculations,
+		otherwise compilation or uniforms set errors are possible
+		*/
+		void MakeLit();
+
 		void BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot);
 		void SetUniform1i(const std::string& name, const int value);
 		void SetUniform1f(const std::string& name, const float value);
@@ -35,6 +43,7 @@ namespace rgr
 		void Bind() const;
 		void Unbind() const;
 
+		inline bool GetIsLit() const { return m_IsLit; }
 		inline rgr::Shader* GetShader() const { return m_Shader; }
 	};
 }
