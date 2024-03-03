@@ -164,6 +164,5 @@ int main()
 	}
 
 	rgr::Quit();
-
 	std::cin.get();
 }
