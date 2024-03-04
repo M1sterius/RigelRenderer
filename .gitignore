@@ -1,4 +1,4 @@
 bin/
-build/
+CMakeBuild/
 .vscode/
 .vs/

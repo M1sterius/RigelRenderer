@@ -164,5 +164,11 @@ int main()
 	}
 
 	rgr::Quit();
-	std::cin.get();
+	std::cout << "What's going on" << '\n';
+	std::cout << "What's going on" << '\n';
+
+	#ifdef _DEBUG
+		std::cout << "Debug" << '\n';
+	#endif
+
 }

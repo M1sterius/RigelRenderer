@@ -7,10 +7,6 @@ set(CMAKE_CXX_STANDARD 20)
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.hpp")
 add_library(RigelRenderer STATIC ${SOURCES})
 
-# For now, change that according to the build variant
-# P.S. I know that's retarted but it is the only way everything works...
-#set(CMAKE_BUILD_TYPE "Debug")
-
 set_target_properties(RigelRenderer PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin/RigelRenderer/Debug"
     ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin/RigelRenderer/Release"
