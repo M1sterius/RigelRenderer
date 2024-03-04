@@ -17,7 +17,10 @@ target_compile_definitions(RigelRenderer PRIVATE "INTERNAL_LIB")
 
 include_directories(
     src
-    src/include
+    include
+    include/components
+    include/input
+    include/objects
     src/internal
     src/built-in
 

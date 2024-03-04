@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/objects/Light.hpp"
+#include "objects/Light.hpp"
 #include "vec3.hpp"
 
 namespace rgr

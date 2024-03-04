@@ -1,8 +1,8 @@
 #include "Scene.hpp"
-#include "core/components/Material.hpp"
-#include "core/components/Shader.hpp"
+#include "components/Material.hpp"
+#include "components/Shader.hpp"
 
-#include "core/objects/DirectionalLight.hpp"
+#include "objects/DirectionalLight.hpp"
 #include "glAbstraction/GlAbstraction.hpp"
 #include "gtx/string_cast.hpp"
 #include "glm.hpp"

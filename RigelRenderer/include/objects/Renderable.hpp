@@ -1,8 +1,8 @@
 #pragma once
 
-#include "core/components/Mesh.hpp"
-#include "core/components/Material.hpp"
-#include "core/objects/Object.hpp"
+#include "components/Mesh.hpp"
+#include "components/Material.hpp"
+#include "objects/Object.hpp"
 
 namespace rgr
 {

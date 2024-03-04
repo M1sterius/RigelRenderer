@@ -1,8 +1,8 @@
 #pragma once
 
-#include "core/objects/Renderable.hpp"
-#include "core/objects/Camera.hpp"
-#include "core/objects/Light.hpp"
+#include "objects/Renderable.hpp"
+#include "objects/Camera.hpp"
+#include "objects/Light.hpp"
 
 #include <vector>
 #include <string>

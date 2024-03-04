@@ -1,5 +1,4 @@
-#include "core/RigelRenderer.hpp"
-#include "core/input/Input.hpp"
+#include "RigelRenderer.hpp"
 
 #include "materials/Material2D.hpp"
 #include "materials/Material3D.hpp"
@@ -164,11 +163,4 @@ int main()
 	}
 
 	rgr::Quit();
-	std::cout << "What's going on" << '\n';
-	std::cout << "What's going on" << '\n';
-
-	#ifdef _DEBUG
-		std::cout << "Debug" << '\n';
-	#endif
-
 }

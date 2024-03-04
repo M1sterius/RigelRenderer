@@ -1,10 +1,10 @@
 #pragma once
 
 #include "mat4x4.hpp"
-#include "core/components/Material.hpp"
-#include "core/components/Mesh.hpp"
-#include "core/objects/Camera.hpp"
-#include "core/objects/Light.hpp"
+#include "components/Material.hpp"
+#include "components/Mesh.hpp"
+#include "objects/Camera.hpp"
+#include "objects/Light.hpp"
 
 namespace rgr
 {	

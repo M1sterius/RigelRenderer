@@ -1,6 +1,6 @@
 #include "Material3D.hpp"
 
-#include "core/components/Shader.hpp"
+#include "components/Shader.hpp"
 
 Material3D::Material3D(rgr::Texture* texture, rgr::Shader* shader) : rgr::Material(shader)
 {

@@ -33,7 +33,7 @@ target_link_libraries(Sandbox
     freetype
 )
 
-target_include_directories(Sandbox PUBLIC ../RigelRenderer/src/include)
+target_include_directories(Sandbox PUBLIC ../RigelRenderer/include)
 target_link_libraries(Sandbox RigelRenderer)
 
 set(COPY_OUT_DIR ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD_TYPE}/resources)

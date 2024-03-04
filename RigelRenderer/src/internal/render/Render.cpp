@@ -1,6 +1,6 @@
 #include "glew.h"
 #include "Render.hpp"
-#include "core/components/Shader.hpp"
+#include "components/Shader.hpp"
 #include "glAbstraction/VertexArray.hpp"
 #include "glAbstraction/IndexBuffer.hpp"
 

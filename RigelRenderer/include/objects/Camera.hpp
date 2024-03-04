@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gtc/matrix_transform.hpp"
-#include "core/objects/Object.hpp"
+#include "objects/Object.hpp"
 #include "gtc/quaternion.hpp"
 #include "mat4x4.hpp"
 #include "glm.hpp"

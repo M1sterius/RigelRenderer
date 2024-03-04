@@ -1,6 +1,6 @@
 #include "Material2D.hpp"
 
-#include "core/components/Shader.hpp"
+#include "components/Shader.hpp"
 
 Material2D::Material2D(rgr::Texture* texture, rgr::Shader* shader) : rgr::Material(shader)
 {

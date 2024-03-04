@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/components/Material.hpp"
-#include "core/components/Texture.hpp"
+#include "components/Material.hpp"
+#include "components/Texture.hpp"
 #include "vec4.hpp"
 
 class Material2D : public rgr::Material
