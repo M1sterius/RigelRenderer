@@ -44,6 +44,11 @@ void rgr::Material::SetUniform1i(const std::string& name, const int value)
 	m_Shader->SetUniform1i(name, value);
 }
 
+void rgr::Material::SetUniform1i(const std::string& name, const unsigned int value)
+{
+	m_Shader->SetUniform1i(name, value);
+}
+
 void rgr::Material::SetUniform1f(const std::string& name, const float value)
 {
 	m_Shader->SetUniform1f(name, value);

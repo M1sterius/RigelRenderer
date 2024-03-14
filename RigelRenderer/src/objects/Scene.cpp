@@ -35,6 +35,7 @@ namespace rgr
 		camera = GetMainCamera();
 		if (camera == nullptr) return;
 
+		glm::vec3 viewPos = camera->GetTransform().GetPosition();
 		glm::mat4 view = camera->GetView();
 		glm::mat4 perspProj = camera->GetPerspective();
 		glm::mat4 orthoProj = camera->GetOrthographic();
@@ -43,8 +44,10 @@ namespace rgr
 
 		#pragma region Render
 
-		for (const auto& renderable : m_Renderables)
-		{
+		for (size_t i = 0; i < m_Renderables.size(); i++)
+		{	
+			rgr::Renderable* renderable = m_Renderables[i];
+
 			rgr::Transform transform = renderable->GetTransform();
 			rgr::Material* material = renderable->GetMaterial();
 			rgr::Mesh* mesh = renderable->GetMesh();
@@ -56,8 +59,14 @@ namespace rgr
 			{
 				case rgr::Transform::Space::WORLD_3D:
 				{	
-					for (const auto& light : m_Lights)
+					/*
+					Finding all the lights that are close enough to an object to affect it's appearance,
+					directional lights will always be added, since they affect an object at any distance
+					*/
+					for (size_t l = 0; l < m_Lights.size(); l++)
 					{	
+						rgr::Light* light = m_Lights[l];
+
 						float d = glm::distance(transform.GetPosition(), light->GetTransform().GetPosition());
 						bool castRes = dynamic_cast<rgr::DirectionalLight*>(light) != nullptr;
 
@@ -67,31 +76,37 @@ namespace rgr
 						}
 					}
 
-					RenderData data = RenderData(
+					glm::mat4 mvp = perspProj * view * model;
+
+					RenderData3D data = RenderData3D(
 						material,
 						mesh,
-						perspProj * view * model,
+						mvp,
+						transform.GetModelMatrix(),
+						transform.GetNormalMatrix(),
 						camera->viewMode,
-						&affectingLights
+						viewPos,
+						affectingLights
 					);
 
-					rgr::Render(data);
+					rgr::Render3D(data);
 
 					affectingLights.clear();
 					
 					break;
 				}
 				case rgr::Transform::Space::SCREEN_2D:
-				{
-					RenderData data = RenderData(
+				{	
+					glm::mat4 mvp = orthoProj * model;
+
+					RenderData2D data = RenderData2D(
 						material,
 						mesh,
-						orthoProj * model,
-						camera->viewMode,
-						nullptr
+						mvp,
+						camera->viewMode
 					);
 
-					rgr::Render(data);
+					rgr::Render2D(data);
 
 					break;
 				}

@@ -12,5 +12,7 @@ public:
 	void SetUniforms() override;
 private:
 	rgr::Texture* m_Texture;
+	glm::vec3 m_Diffuse;
+	float m_Shininess;
 };
 

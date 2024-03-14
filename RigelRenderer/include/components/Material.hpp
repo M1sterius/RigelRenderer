@@ -15,7 +15,7 @@ namespace rgr
 	{
 	private:
 		rgr::Shader* m_Shader;
-		bool m_IsLit;
+		bool m_IsLit = false;
 	public:
 		std::string name = "Material";
 
@@ -33,6 +33,7 @@ namespace rgr
 
 		void BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot);
 		void SetUniform1i(const std::string& name, const int value);
+		void SetUniform1i(const std::string& name, const unsigned int value);
 		void SetUniform1f(const std::string& name, const float value);
 		void SetUniformVec2(const std::string& name, const glm::vec2& value);
 		void SetUniformVec3(const std::string& name, const glm::vec3& value);

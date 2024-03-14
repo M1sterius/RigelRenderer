@@ -9,7 +9,7 @@ namespace rgr
 	class Renderable : public rgr::Object
 	{
 	public:
-		float affectedByLightDistance = 5.0f;
+		float affectedByLightDistance = 7.0f;
 
 		Renderable(rgr::Mesh* mesh, rgr::Material* material);
 		~Renderable() override;

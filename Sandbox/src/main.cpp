@@ -39,24 +39,6 @@ int main()
 		0.0f, 0.0f
 	};
 
-	const std::vector<float> planeVertices{
-		-0.5f, 0.0f, -0.5f,
-		0.5f, 0.0f, -0.5f,
-		0.5f, 0.0f, 0.5f,
-		-0.5f, 0.0f, 0.5f
-	};
-	const std::vector<unsigned int> planeIndices{
-		0, 1, 3,
-		1, 2, 3
-	};
-	const std::vector<float> planeTexCoords{
-		0.0f, 1.0f,
-		1.0f, 1.0f,
-		1.0f, 0.0f,
-		0.0f, 0.0f
-	};
-
-	rgr::Mesh* planeMesh = new rgr::Mesh(planeVertices, planeIndices, planeTexCoords);
 	rgr::Mesh* quadMesh = new rgr::Mesh(quadVertices, quadIndices, quadTexCoords);
 	rgr::Mesh* cubeMesh = new rgr::Mesh("resources/objects/cube.obj");
 	rgr::Mesh* sphereMesh = new rgr::Mesh("resources/objects/sphere.obj");
@@ -77,10 +59,10 @@ int main()
 	rgr::Renderable cube = rgr::Renderable(cubeMesh, cubeMaterial);
 	cube.GetTransform().SetPosition(glm::vec3(0, 0, 2));
 
-	rgr::Renderable plane = rgr::Renderable(planeMesh, planeMaterial);
+	rgr::Renderable plane = rgr::Renderable(cubeMesh, planeMaterial);
 	plane.GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
-	plane.GetTransform().SetScale(glm::vec3(10, 1, 10));
-	plane.GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
+	plane.GetTransform().SetScale(glm::vec3(10, 0.01, 10));
+	plane.affectedByLightDistance = 20.0f;
 
 	rgr::Renderable sphere = rgr::Renderable(sphereMesh, sphereMaterial);
 	sphere.GetTransform().SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
@@ -91,13 +73,21 @@ int main()
 	camera.GetTransform().SetRotation(glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)));
 	camera.FlagAsMain();
 
-	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.3, glm::vec3(0.0, -1.0, 0.0));
+	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.5f, glm::vec3(0.3, -0.8, 0.3));
 	rgr::PointLight pntLight = rgr::PointLight(
-		glm::vec3(1.0, 1.0, 1.0),
-		0.3f,
+		glm::vec3(0.98, 0.76, 0.12),
+		3.0f,
 		1.0f,
-		0.2f,
-		0.1f
+		0.7f,
+		1.8f
+	);
+	pntLight.GetTransform().SetPosition(glm::vec3(0, 1.2f, 0));
+
+	rgr::SpotLight sptLight = rgr::SpotLight(
+		glm::vec3(0.0f, 1.0f, 0.0f),
+		4.0f, glm::vec3(0.0f),
+		0.9978f, 0.953f,
+		1.0f, 0.22f, 0.2f
 	);
 
 	scene.AddObject(&camera);
@@ -108,6 +98,7 @@ int main()
 
 	scene.AddObject(&dirLight);
 	scene.AddObject(&pntLight);
+	scene.AddObject(&sptLight);
 
 	const float sensitivity = 0.3f;
 	const float walkSpeed = 1.5f;
@@ -158,6 +149,9 @@ int main()
 			else
 				camera.viewMode = rgr::Camera::ViewMode::WIREFRAME;
 		}
+
+		sptLight.GetTransform().SetPosition(camera.GetTransform().GetPosition());
+		sptLight.direction = camera.GetForwardVector();
 
 		rgr::Update();
 	}

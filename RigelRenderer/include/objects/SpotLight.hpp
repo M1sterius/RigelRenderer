@@ -5,7 +5,7 @@
 
 namespace rgr
 {
-	class SpotLight : rgr::Light
+	class SpotLight : public rgr::Light
 	{
 	public:
 		glm::vec3 direction;
