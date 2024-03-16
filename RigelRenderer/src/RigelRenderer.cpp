@@ -69,6 +69,7 @@ namespace rgr
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		//glfwSetWindowAttrib(window, GLFW_RESIZABLE, GLFW_FALSE);
+		//glfwSwapInterval(0);
 		//glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 165);
 
 		return RIGEL_OK;

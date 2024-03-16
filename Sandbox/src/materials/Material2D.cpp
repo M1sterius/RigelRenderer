@@ -5,7 +5,7 @@
 Material2D::Material2D(rgr::Texture* texture, rgr::Shader* shader) : rgr::Material(shader)
 {
 	m_Texture = texture;
-	color = glm::vec4(0.1, 0.2, 0.3, 1.0);
+	color = glm::vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 void Material2D::SetUniforms()

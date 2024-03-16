@@ -11,7 +11,7 @@
 namespace rgr
 {
 	// Returns 1 if the shader was compiled with an error and prints this error to the console, returns 0 if the shader was compiled successfully
-	int GetShaderCompileInfo(const unsigned int shaderHandle)
+	static int GetShaderCompileInfo(const unsigned int shaderHandle)
 	{
 		int res;
 

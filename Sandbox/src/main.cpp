@@ -39,37 +39,41 @@ int main()
 		0.0f, 0.0f
 	};
 
-	rgr::Mesh* quadMesh = new rgr::Mesh(quadVertices, quadIndices, quadTexCoords);
-	rgr::Mesh* cubeMesh = new rgr::Mesh("resources/objects/cube.obj");
-	rgr::Mesh* sphereMesh = new rgr::Mesh("resources/objects/sphere.obj");
+	rgr::Mesh quadMesh = rgr::Mesh(quadVertices, quadIndices, quadTexCoords);
+	rgr::Mesh cubeMesh = rgr::Mesh("resources/objects/cube.obj");
+	rgr::Mesh sphereMesh = rgr::Mesh("resources/objects/sphere.obj");
 	
 	rgr::Shader* shader2D = rgr::Shader::FromFiles("resources/shaders/vertex_2d.glsl", "resources/shaders/fragment_2d.glsl");
 	rgr::Shader* shader3D = rgr::Shader::FromFiles("resources/shaders/vertex_3d_lit.glsl", "resources/shaders/fragment_3d_lit.glsl");
 
-	Material2D* quadMaterial = new Material2D(new rgr::Texture("resources/textures/Misterius3Dk.png"), shader2D);
-	Material3D* cubeMaterial = new Material3D(new rgr::Texture("resources/textures/wall.jpg"), shader3D);
-	Material3D* planeMaterial = new Material3D(new rgr::Texture("resources/textures/plane_texture.png"), shader3D);
-	Material3D* sphereMaterial = new Material3D(new rgr::Texture("resources/textures/world_map.jpg"), shader3D);
+	Material2D quadMaterial = Material2D(new rgr::Texture("resources/textures/Misterius3Dk.png"), shader2D);
+	Material3D cubeMaterial = Material3D(new rgr::Texture("resources/textures/wall.jpg"), shader3D);
+	Material3D planeMaterial = Material3D(new rgr::Texture("resources/textures/plane_texture.png"), shader3D);
+	Material3D sphereMaterial = Material3D(new rgr::Texture("resources/textures/world_map.jpg"), shader3D);
+	Material3D containerMaterial = Material3D(new rgr::Texture("resources/textures/container_diffuse.png"), shader3D);
 
-	rgr::Renderable quad = rgr::Renderable(quadMesh, quadMaterial);
+	rgr::Renderable quad = rgr::Renderable(&quadMesh, &quadMaterial);
 	quad.GetTransform().space = rgr::Transform::Space::SCREEN_2D;
-	quad.GetTransform().SetPosition(glm::vec3(-610, 330, 0.0f));
+	quad.GetTransform().SetPosition(glm::vec3(-730, 380, 0.0f));
 	quad.GetTransform().SetScale(glm::vec3(0.5, 0.5, 1));
 
-	rgr::Renderable cube = rgr::Renderable(cubeMesh, cubeMaterial);
+	rgr::Renderable cube = rgr::Renderable(&cubeMesh, &cubeMaterial);
 	cube.GetTransform().SetPosition(glm::vec3(0, 0, 2));
 
-	rgr::Renderable plane = rgr::Renderable(cubeMesh, planeMaterial);
+	rgr::Renderable plane = rgr::Renderable(&cubeMesh, &planeMaterial);
 	plane.GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
 	plane.GetTransform().SetScale(glm::vec3(10, 0.01, 10));
 	plane.affectedByLightDistance = 20.0f;
-
-	rgr::Renderable sphere = rgr::Renderable(sphereMesh, sphereMaterial);
+	
+	rgr::Renderable sphere = rgr::Renderable(&sphereMesh, &sphereMaterial);
 	sphere.GetTransform().SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
 	sphere.GetTransform().SetPosition(glm::vec3(0.0, 0.0f, 0.0f));
 
+	rgr::Renderable container = rgr::Renderable(&cubeMesh, &containerMaterial);
+	container.GetTransform().SetPosition(glm::vec3(0, 0, -2));
+
 	rgr::Camera camera = rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
-	camera.GetTransform().SetPosition(glm::vec3(0.0f, 0, -2.0f));
+	camera.GetTransform().SetPosition(glm::vec3(0.0f, 3, 0.0f));
 	camera.GetTransform().SetRotation(glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)));
 	camera.FlagAsMain();
 
@@ -83,25 +87,37 @@ int main()
 	);
 	pntLight.GetTransform().SetPosition(glm::vec3(0, 1.2f, 0));
 
+	rgr::PointLight pntLight1 = rgr::PointLight(
+		glm::vec3(1, 1, 1),
+		2.0f,
+		1.0f,
+		0.7f,
+		1.8f
+	);
+	pntLight1.GetTransform().SetPosition(glm::vec3(-2.5, -0.9f, 0));
+
 	rgr::SpotLight sptLight = rgr::SpotLight(
-		glm::vec3(0.0f, 1.0f, 0.0f),
-		4.0f, glm::vec3(0.0f),
+		glm::vec3(1.0f, 0.0f, 0.0f),
+		4.0f, glm::vec3(0.0f, -1.0f, 0.0f),
 		0.9978f, 0.953f,
 		1.0f, 0.22f, 0.2f
 	);
+	sptLight.GetTransform().SetPosition(glm::vec3(2, 0, 0));
 
 	scene.AddObject(&camera);
 	scene.AddObject(&quad);
 	scene.AddObject(&cube);
 	scene.AddObject(&plane);
 	scene.AddObject(&sphere);
+	scene.AddObject(&container);
 
 	scene.AddObject(&dirLight);
 	scene.AddObject(&pntLight);
+	scene.AddObject(&pntLight1);
 	scene.AddObject(&sptLight);
 
 	const float sensitivity = 0.3f;
-	const float walkSpeed = 1.5f;
+	const float flySpeed = 1.5f;
 
 	float yaw = 0;
 	float pitch = 0;
@@ -122,18 +138,18 @@ int main()
 		glm::vec3 rv = camera.GetTransform().GetRightVector();
 
 		if (rgr::Input::KeyHold(RGR_KEY_W))
-			pos += fv * walkSpeed * rgr::GetDeltaTime();
+			pos += fv * flySpeed * rgr::GetDeltaTime();
 		if (rgr::Input::KeyHold(RGR_KEY_S))
-			pos -= fv * walkSpeed * rgr::GetDeltaTime();
+			pos -= fv * flySpeed * rgr::GetDeltaTime();
 		if (rgr::Input::KeyHold(RGR_KEY_D))
-			pos += rv * walkSpeed * rgr::GetDeltaTime();
+			pos += rv * flySpeed * rgr::GetDeltaTime();
 		if (rgr::Input::KeyHold(RGR_KEY_A))
-			pos -= rv * walkSpeed * rgr::GetDeltaTime();
+			pos -= rv * flySpeed * rgr::GetDeltaTime();
 
 		if (rgr::Input::KeyHold(RGR_KEY_Q))
-			pos += glm::vec3(0.0f, 1.0f, 0.0f) * walkSpeed * rgr::GetDeltaTime();
+			pos += glm::vec3(0.0f, 1.0f, 0.0f) * flySpeed * rgr::GetDeltaTime();
 		if (rgr::Input::KeyHold(RGR_KEY_E))
-			pos -= glm::vec3(0.0f, 1.0f, 0.0f) * walkSpeed * rgr::GetDeltaTime();
+			pos -= glm::vec3(0.0f, 1.0f, 0.0f) * flySpeed * rgr::GetDeltaTime();
 
 		camera.GetTransform().SetPosition(pos);
 		camera.GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));
@@ -150,8 +166,9 @@ int main()
 				camera.viewMode = rgr::Camera::ViewMode::WIREFRAME;
 		}
 
-		sptLight.GetTransform().SetPosition(camera.GetTransform().GetPosition());
-		sptLight.direction = camera.GetForwardVector();
+		float x = glm::cos(rgr::GetTime() * 3);
+		float z = glm::sin(rgr::GetTime() * 3);
+		sptLight.direction = glm::vec3(x, 0.0, z);
 
 		rgr::Update();
 	}
