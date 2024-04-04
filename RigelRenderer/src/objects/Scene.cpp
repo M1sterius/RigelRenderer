@@ -10,6 +10,7 @@
 #include "glew.h"
 
 #include "render/Render.hpp"
+#include "utility/Logger.hpp"
 
 //#define GLT_IMPLEMENTATION
 //#include "gltext.h"
@@ -20,7 +21,9 @@ namespace rgr
 {
 	Scene::Scene()
 	{
-
+		lgr::Log("Some test log!");
+		lgr::Warning("Some test warning!");
+		lgr::Error("Some test error!");
 	}
 	Scene::~Scene()
 	{

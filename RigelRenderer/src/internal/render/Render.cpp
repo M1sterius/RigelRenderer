@@ -10,6 +10,11 @@
 #include <vector>
 #include <string>
 
+
+static const unsigned int MAX_DIR_LIGHTS_ARRAY_SIZE = 8;
+static const unsigned int MAX_POINT_LIGHTS_ARRAY_SIZE = 100;
+static const unsigned int MAX_SPOT_LIGHTS_ARRAY_SIZE = 36;
+
 rgr::RenderData2D::RenderData2D(rgr::Material* material, rgr::Mesh* mesh, glm::mat4& mvp,
 	const rgr::Camera::ViewMode viewMode)
 	: material(material), mesh(mesh), mvp(mvp), viewMode(viewMode)
@@ -45,6 +50,8 @@ static void ProcessLighting(rgr::Shader* shader, std::vector<rgr::Light*>& light
 	{	
 		if (dynamic_cast<rgr::DirectionalLight*>(light) != nullptr) 
 		{	
+			if (dirCount > (MAX_DIR_LIGHTS_ARRAY_SIZE - 1)) continue;
+
 			rgr::DirectionalLight* dirLight = dynamic_cast<rgr::DirectionalLight*>(light);
 
 			std::string uName = "u_DirectionalLights[" + std::to_string(dirCount) + "].";
@@ -56,6 +63,8 @@ static void ProcessLighting(rgr::Shader* shader, std::vector<rgr::Light*>& light
 		}
 		if (dynamic_cast<rgr::PointLight*>(light) != nullptr) 
 		{	
+			if (pointCount > (MAX_POINT_LIGHTS_ARRAY_SIZE - 1)) continue;
+
 			rgr::PointLight* pointLight = dynamic_cast<rgr::PointLight*>(light);
 
 			std::string uName = "u_PointLights[" + std::to_string(pointCount) + "].";
@@ -70,6 +79,8 @@ static void ProcessLighting(rgr::Shader* shader, std::vector<rgr::Light*>& light
 		}
 		else if (dynamic_cast<rgr::SpotLight*>(light) != nullptr) 
 		{	
+			if (spotCount > (MAX_SPOT_LIGHTS_ARRAY_SIZE - 1)) continue;
+
 			rgr::SpotLight* spotLight = dynamic_cast<rgr::SpotLight*>(light);
 
 			std::string uName = "u_SpotLights[" + std::to_string(spotCount) + "].";

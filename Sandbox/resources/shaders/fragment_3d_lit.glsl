@@ -43,22 +43,25 @@ in vec2 v_TexCoords;
 in vec3 v_Normal;
 in vec3 v_FragPos;
 
-// Uniforms set in material class on the CPU side
+// Uniforms that are set in material class on the CPU side
 uniform Material u_Material;
 uniform sampler2D u_Texture;
 // -----------------------------------------------
 
-uniform vec3 u_Ambient;
 uniform vec3 u_ViewPos;
 
-uniform DirectionalLight u_DirectionalLights[32];
-uniform PointLight u_PointLights[32];
-uniform SpotLight u_SpotLights[32];
+const uint MAX_DIR_LIGHTS_ARRAY_SIZE = 8;
+const uint MAX_POINT_LIGHTS_ARRAY_SIZE = 100;
+const uint MAX_SPOT_LIGHTS_ARRAY_SIZE = 36;
+
+uniform DirectionalLight u_DirectionalLights[MAX_DIR_LIGHTS_ARRAY_SIZE];
+uniform PointLight u_PointLights[MAX_POINT_LIGHTS_ARRAY_SIZE];
+uniform SpotLight u_SpotLights[MAX_SPOT_LIGHTS_ARRAY_SIZE];
 uniform uint u_DirectionalLightsCount;
 uniform uint u_PointLightsCount;
 uniform uint u_SpotLightsCount;
 
-const float ambient = 0.1f;
+const vec3 AMBIENT = vec3(0.1f);
 
 out vec4 outColor;
 
@@ -126,7 +129,7 @@ void main()
 
     vec3 color = vec3(0.0);
 
-    color += ambient * u_Material.diffuse;
+    color += AMBIENT * u_Material.diffuse;
 
     for (uint i = 0; i < u_DirectionalLightsCount; i++) {
         color += CalcDirLight(u_DirectionalLights[i], normal, viewDir);
