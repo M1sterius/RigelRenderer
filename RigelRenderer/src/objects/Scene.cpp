@@ -1,16 +1,16 @@
 #include "Scene.hpp"
 #include "components/Material.hpp"
 #include "components/Shader.hpp"
-
 #include "objects/DirectionalLight.hpp"
 #include "glAbstraction/GlAbstraction.hpp"
+
+#include "RenderUtility.hpp"
+#include "Logger.hpp"
+
 #include "gtx/string_cast.hpp"
 #include "glm.hpp"
 #include "glfw3.h"
 #include "glew.h"
-
-#include "render/Render.hpp"
-#include "utility/Logger.hpp"
 
 //#define GLT_IMPLEMENTATION
 //#include "gltext.h"
@@ -21,9 +21,7 @@ namespace rgr
 {
 	Scene::Scene()
 	{
-		lgr::Log("Some test log!");
-		lgr::Warning("Some test warning!");
-		lgr::Error("Some test error!");
+
 	}
 	Scene::~Scene()
 	{
@@ -31,97 +29,14 @@ namespace rgr
 	}
 
 	void Scene::Update()
-	{	
-		#pragma region Cameras 
-
-		rgr::Camera* camera = nullptr;
-		camera = GetMainCamera();
-		if (camera == nullptr) return;
-
-		glm::vec3 viewPos = camera->GetTransform().GetPosition();
-		glm::mat4 view = camera->GetView();
-		glm::mat4 perspProj = camera->GetPerspective();
-		glm::mat4 orthoProj = camera->GetOrthographic();
-
-		#pragma endregion
-
-		#pragma region Render
-
+	{
 		for (size_t i = 0; i < m_Renderables.size(); i++)
-		{	
+		{
 			rgr::Renderable* renderable = m_Renderables[i];
-
-			rgr::Transform transform = renderable->GetTransform();
-			rgr::Material* material = renderable->GetMaterial();
-			rgr::Mesh* mesh = renderable->GetMesh();
-			glm::mat4 model = transform.GetModelMatrix();
-
-			static std::vector<rgr::Light*> affectingLights(16);
-
-			switch (transform.space)
-			{
-				case rgr::Transform::Space::WORLD_3D:
-				{	
-					/*
-					Finding all the lights that are close enough to an object to affect it's appearance,
-					directional lights will always be added, since they affect an object at any distance
-					*/
-					for (size_t l = 0; l < m_Lights.size(); l++)
-					{	
-						rgr::Light* light = m_Lights[l];
-
-						float d = glm::distance(transform.GetPosition(), light->GetTransform().GetPosition());
-						bool castRes = dynamic_cast<rgr::DirectionalLight*>(light) != nullptr;
-
-						if (d < renderable->affectedByLightDistance || castRes)
-						{
-							affectingLights.push_back(light);
-						}
-					}
-
-					glm::mat4 mvp = perspProj * view * model;
-
-					RenderData3D data = RenderData3D(
-						material,
-						mesh,
-						mvp,
-						transform.GetModelMatrix(),
-						transform.GetNormalMatrix(),
-						camera->viewMode,
-						viewPos,
-						affectingLights
-					);
-
-					rgr::Render3D(data);
-
-					affectingLights.clear();
-					
-					break;
-				}
-				case rgr::Transform::Space::SCREEN_2D:
-				{	
-					glm::mat4 mvp = orthoProj * model;
-
-					RenderData2D data = RenderData2D(
-						material,
-						mesh,
-						mvp,
-						camera->viewMode
-					);
-
-					rgr::Render2D(data);
-
-					break;
-				}
-				default:
-				{
-					std::cout << "Invalid transform space of the Object named: " << renderable->name << '\n';
-				}
-			}
+			renderable->Render(this);
 		}
-
-		#pragma endregion
 	}
+
 	void Scene::AddObject(rgr::Object* object)
 	{
 		if (rgr::Renderable* renderablePtr = dynamic_cast<rgr::Renderable*>(object))
@@ -179,7 +94,7 @@ namespace rgr
 		}
 	}
 
-	rgr::Camera* Scene::GetMainCamera()
+	rgr::Camera* Scene::GetMainCamera() const
 	{
 		bool noMainCameraFlag = true;
 		for (const auto& cameraIterated : m_Cameras)
@@ -200,4 +115,26 @@ namespace rgr
 			}
 		}
 	}
+
+	const std::vector<Light*>& Scene::GetLightsAround(const glm::vec3 point, const float radius, const size_t maxCount /*=16*/) const
+	{
+		static std::vector<Light*> lights(16);
+
+		lights.clear();
+
+		for (size_t i = 0; i < m_Lights.size(); i++)
+		{	
+			if (lights.size() >= maxCount) return lights;
+
+			Light* light = m_Lights[i];
+
+			if (glm::distance(light->GetTransform().GetPosition(), point) < radius)
+			{
+				lights.push_back(light);
+			}
+		}
+
+		return lights;
+	}
+
 }

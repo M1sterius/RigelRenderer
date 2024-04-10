@@ -18,10 +18,12 @@ target_compile_definitions(RigelRenderer PRIVATE "INTERNAL_LIB")
 include_directories(
     src
     include
+    include/publicUtility
     include/components
     include/input
     include/objects
     src/internal
+    src/internal/utility
     src/built-in
 
     ${CMAKE_SOURCE_DIR}/dependencies/glfw/include/GLFW

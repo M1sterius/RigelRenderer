@@ -8,12 +8,14 @@
 
 #include "objects/Scene.hpp"
 #include "objects/Object.hpp"
-#include "objects/Renderable.hpp"
 #include "objects/Camera.hpp"
 #include "objects/Light.hpp"
 #include "objects/PointLight.hpp"
 #include "objects/DirectionalLight.hpp"
 #include "objects/SpotLight.hpp"
+
+#include "objects/Renderable/Renderable.hpp"
+#include "objects/Renderable/RenderableMesh.hpp"
 
 #include "input/Input.hpp"
 
@@ -32,7 +34,7 @@ namespace rgr
 	*/
 	void SetScene(rgr::Scene* scene);
 	/*
-	Main game loop function that renderes scene, processes events and updates all library modules
+	Main game loop function that renders scene, processes events and updates all library modules
 	*/
 	void Update();
 	/*
@@ -43,9 +45,9 @@ namespace rgr
 	/*
 	The time passed since rgr::Init() was called
 	*/
-	float GetTime();
+	double GetTimePassed();
 	/*
-	The time passed bewteen two previous game loop iterations
+	The time passed between two previous game loop iterations
 	*/
 	float GetDeltaTime();
 

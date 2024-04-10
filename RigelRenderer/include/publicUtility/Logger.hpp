@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LOGGER_H
+#define LOGGER_H
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -17,7 +18,7 @@ namespace lgr
 	const cout_color DEFAULT_WARNING_COLOR = 6;
 	const cout_color DEFAULT_ERROR_COLOR = 4;
 
-	void SetConsoleColor(const cout_color& color)
+	inline void SetConsoleColor(const cout_color& color)
 	{
 		#ifdef _WIN32
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -25,7 +26,7 @@ namespace lgr
 		#endif
 	}
 
-	cout_color GetConsoleColor()
+	inline cout_color GetConsoleColor()
 	{
 		#ifdef _WIN32
 		CONSOLE_SCREEN_BUFFER_INFO info;
@@ -35,7 +36,7 @@ namespace lgr
 		#endif
 	}
 
-	std::string GetFormattedTime()
+	inline std::string GetFormattedTime()
 	{
 		const auto now = std::chrono::system_clock::now();
 		const std::time_t time = std::chrono::system_clock::to_time_t(now);
@@ -94,3 +95,5 @@ namespace lgr
 		#endif
 	}
 }
+
+#endif

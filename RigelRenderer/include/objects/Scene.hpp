@@ -1,6 +1,6 @@
 #pragma once
 
-#include "objects/Renderable.hpp"
+#include "Renderable/Renderable.hpp"
 #include "objects/Camera.hpp"
 #include "objects/Light.hpp"
 
@@ -18,9 +18,6 @@ namespace rgr
 		std::vector<Renderable*> m_Renderables;
 		std::vector<Camera*> m_Cameras;
 		std::vector<Light*> m_Lights;
-
-		// Helps find a suitable rendering camera
-		rgr::Camera* GetMainCamera();
 	public:
 		/*
 		Publicly visible and modifiable name used to distinguish scenes from one another
@@ -31,7 +28,7 @@ namespace rgr
 		~Scene();
 
 		/*
-		Performs all graphics calculations and renderes the scene to the screen 
+		Performs all graphics calculations and renders the scene to the screen 
 		(must not be called outside rgr::Update)
 		*/
 		void Update();
@@ -46,6 +43,11 @@ namespace rgr
 		removes it's pointer from the scene
 		*/
 		void RemoveObject(rgr::Object* object);
+	INTERNAL:
+		// Helps find a suitable rendering camera
+		rgr::Camera* GetMainCamera() const;
+		// Returns all lights closer than radius around the point, up to maxCount of lights
+		const std::vector<Light*>& GetLightsAround(const glm::vec3 point, const float radius, const size_t maxCount = 16) const;
 	};
 }
 

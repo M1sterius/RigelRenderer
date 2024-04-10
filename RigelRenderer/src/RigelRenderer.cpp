@@ -34,8 +34,8 @@ namespace rgr
 
 	static void CalculateDeltaTime()
 	{
-		deltaTime = GetTime() - oldTime;
-		oldTime = GetTime();
+		deltaTime = GetTimePassed() - oldTime;
+		oldTime = GetTimePassed();
 	}
 
 	int Init(int width, int height, const char* title)
@@ -102,7 +102,7 @@ namespace rgr
 		glfwPollEvents(); // Should stay the last line in Update
 	}
 
-	float GetTime() { return (float)glfwGetTime(); }
+	double GetTimePassed() { return glfwGetTime(); }
 
 	float GetDeltaTime() { return deltaTime; }
 
