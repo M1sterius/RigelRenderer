@@ -33,6 +33,7 @@ namespace rgr
 
 		void SetUniform1i(const std::string& name, const int value);
 		void SetUniform1i(const std::string& name, const unsigned int value);
+		void SetUniform1i(const std::string& name, const size_t value);
 		void SetUniform1f(const std::string& name, const float value);
 		void SetUniformVec2(const std::string& name, const glm::vec2& value);
 		void SetUniformVec3(const std::string& name, const glm::vec3& value);

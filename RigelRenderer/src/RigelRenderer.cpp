@@ -4,6 +4,8 @@
 #include "glfw3.h"
 #include "glew.h"
 
+#include "Logger.hpp"
+
 #include <map>
 #include <iostream>
 
@@ -15,10 +17,21 @@ namespace rgr
 	static float oldTime;
 	static float deltaTime;
 
+	static size_t viewportWidth;
+	static size_t viewportHeight;
+
+	static void ChangeViewport(const size_t newWidth, const size_t newHeight)
+	{
+		viewportWidth = newWidth;
+		viewportHeight = newHeight;
+		glViewport(0, 0, viewportWidth, viewportHeight);
+	}
+
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	{
-		glViewport(0, 0, width, height);
+		ChangeViewport(width, height);
 	}
+
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		if (action == GLFW_PRESS) InputUtility::keys.insert(key);
@@ -38,12 +51,12 @@ namespace rgr
 		oldTime = GetTimePassed();
 	}
 
-	int Init(int width, int height, const char* title)
+	int Init(size_t width, size_t height, const char* title)
 	{
 		if (!glfwInit())
 			return -1;
 
-		window = glfwCreateWindow(width, height, title, NULL, NULL);
+		window = glfwCreateWindow(width, height, title, nullptr, nullptr);
 		if (!window)
 		{
 			glfwTerminate();
@@ -52,8 +65,8 @@ namespace rgr
 
 		glfwMakeContextCurrent(window);
 
-		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 		glfwSetKeyCallback(window, key_callback);
+		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 		glfwSetCursorPosCallback(window, cursor_position_callback);
 
 		if (glewInit() != GLEW_OK)
@@ -109,4 +122,9 @@ namespace rgr
 	bool WindowShouldClose() { return glfwWindowShouldClose(window); }
 
 	void Quit() { glfwTerminate(); }
+
+	rgr::ViewportSize GetViewportSize()
+	{
+		return ViewportSize{ viewportWidth, viewportHeight };
+	}
 }

@@ -1,5 +1,4 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#pragma once  
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -95,5 +94,3 @@ namespace lgr
 		#endif
 	}
 }
-
-#endif

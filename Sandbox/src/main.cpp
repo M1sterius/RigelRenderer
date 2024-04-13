@@ -19,8 +19,8 @@ int main()
 	if (rgr::Init(WIDTH, HEIGHT, TITLE) != RIGEL_OK)
 		return -1;
 
-	rgr::Scene scene = rgr::Scene();
-	rgr::SetScene(&scene);
+	rgr::Scene* scene = new rgr::Scene();
+	rgr::SetScene(scene);
 
 	const std::vector<float> quadVertices {
 		-50.0f, 50.0f, 0.0f,
@@ -28,6 +28,7 @@ int main()
 		 50.0f, -50.0f, 0.0f,
 		-50.0f, -50.0f, 0.0f
 	};
+
 	const std::vector<unsigned int> quadIndices {
 		0, 1, 3, 
 		1, 2, 3
@@ -71,12 +72,13 @@ int main()
 	quad->GetTransform().SetPosition(glm::vec3(-730, 380, 0.0f));
 	quad->GetTransform().SetScale(glm::vec3(0.5, 0.5, 1));
 	
-	rgr::Camera camera = rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
-	camera.GetTransform().SetPosition(glm::vec3(0.0f, 3, 0.0f));
-	camera.GetTransform().SetRotation(glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)));
-	camera.FlagAsMain();
+	rgr::Camera* camera = new rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
+	camera->GetTransform().SetPosition(glm::vec3(0.0f, 3, 0.0f));
+	camera->GetTransform().SetRotation(glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)));
+	camera->FlagAsMain();
 
-	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.5f, glm::vec3(0.3, -0.8, 0.3));
+	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.4f, glm::vec3(0.3, -0.8, 0.3));
+
 	rgr::PointLight pntLight = rgr::PointLight(
 		glm::vec3(0.98, 0.76, 0.12),
 		3.0f,
@@ -103,24 +105,34 @@ int main()
 	);
 	sptLight.GetTransform().SetPosition(glm::vec3(2, 0, 0));
 
-	scene.AddObject(&camera);
-	scene.AddObject(quad);
-	scene.AddObject(cube);
-	scene.AddObject(plane);
-	scene.AddObject(sphere);
-	scene.AddObject(container);
+	rgr::SpotLight sptLight1 = rgr::SpotLight(
+		glm::vec3(0.0f, 0.0f, 1.0f),
+		4.0f, glm::vec3(1.0f, -0.5f, 0.0f),
+		0.9978f, 0.953f,
+		1.0f, 0.22f, 0.2f
+	);
+	sptLight1.GetTransform().SetPosition(glm::vec3(-2, 0, 0));
 
-	scene.AddObject(&dirLight);
-	scene.AddObject(&pntLight);
-	scene.AddObject(&pntLight1);
-	scene.AddObject(&sptLight);
+	scene->AddObject(camera);
+	scene->AddObject(quad);
+	scene->AddObject(cube);
+	scene->AddObject(plane);
+	scene->AddObject(sphere);
+	scene->AddObject(container);
+
+	scene->AddObject(&dirLight);
+	scene->AddObject(&pntLight);
+	scene->AddObject(&pntLight1);
+	scene->AddObject(&sptLight);
+	scene->AddObject(&sptLight1);
 
 	const float sensitivity = 0.3f;
-	const float flySpeed = 1.5f;
+	const float flySpeed = 2.0f;
+	const float flySpeedBoost = 4.5f;
 
 	float yaw = 0;
 	float pitch = 0;
-	glm::vec3 pos = camera.GetTransform().GetPosition();
+	glm::vec3 pos = camera->GetTransform().GetPosition();
 	glm::vec3 rot(0.0f);
 
 	while (!rgr::WindowShouldClose())
@@ -133,36 +145,38 @@ int main()
 		if (pitch > 1.5708f) pitch = 1.5708f;
 		else if (pitch < -1.5708f) pitch = -1.5708f;
 
-		glm::vec3 fv = camera.GetTransform().GetForwardVector();
-		glm::vec3 rv = camera.GetTransform().GetRightVector();
+		glm::vec3 fv = camera->GetTransform().GetForwardVector();
+		glm::vec3 rv = camera->GetTransform().GetRightVector();
+
+		const float speed = rgr::Input::KeyHold(RGR_KEY_LEFT_SHIFT) ? flySpeedBoost : flySpeed;
 
 		if (rgr::Input::KeyHold(RGR_KEY_W))
-			pos += fv * flySpeed * rgr::GetDeltaTime();
+			pos += fv * speed * rgr::GetDeltaTime();
 		if (rgr::Input::KeyHold(RGR_KEY_S))
-			pos -= fv * flySpeed * rgr::GetDeltaTime();
+			pos -= fv * speed * rgr::GetDeltaTime();
 		if (rgr::Input::KeyHold(RGR_KEY_D))
-			pos += rv * flySpeed * rgr::GetDeltaTime();
+			pos += rv * speed * rgr::GetDeltaTime();
 		if (rgr::Input::KeyHold(RGR_KEY_A))
-			pos -= rv * flySpeed * rgr::GetDeltaTime();
+			pos -= rv * speed * rgr::GetDeltaTime();
 
 		if (rgr::Input::KeyHold(RGR_KEY_Q))
-			pos += glm::vec3(0.0f, 1.0f, 0.0f) * flySpeed * rgr::GetDeltaTime();
+			pos += glm::vec3(0.0f, 1.0f, 0.0f) * speed * rgr::GetDeltaTime();
 		if (rgr::Input::KeyHold(RGR_KEY_E))
-			pos -= glm::vec3(0.0f, 1.0f, 0.0f) * flySpeed * rgr::GetDeltaTime();
+			pos -= glm::vec3(0.0f, 1.0f, 0.0f) * speed * rgr::GetDeltaTime();
 
-		camera.GetTransform().SetPosition(pos);
-		camera.GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));
+		camera->GetTransform().SetPosition(pos);
+		camera->GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));
 
 		rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::GetDeltaTime();
 		cube->GetTransform().SetRotation(rot);
-		//sphere.GetTransform().SetRotation(rot);
+		sphere->GetTransform().SetRotation(rot);
 
 		if (rgr::Input::KeyPressed(RGR_KEY_M))
 		{
-			if (camera.viewMode == rgr::Camera::ViewMode::WIREFRAME)
-				camera.viewMode = rgr::Camera::ViewMode::FILL;
+			if (camera->viewMode == rgr::Camera::ViewMode::WIREFRAME)
+				camera->viewMode = rgr::Camera::ViewMode::FILL;
 			else
-				camera.viewMode = rgr::Camera::ViewMode::WIREFRAME;
+				camera->viewMode = rgr::Camera::ViewMode::WIREFRAME;
 		}
 
 		float x = glm::cos(rgr::GetTimePassed() * 3);

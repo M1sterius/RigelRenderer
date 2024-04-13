@@ -4,7 +4,7 @@
 
 namespace rgr
 {
-	inline std::string PlainColorVertex =
+	const std::string PlainColorVertex =
 	{
 		"#version 440 \n"
 		"layout (location = 0) in vec3 a_Pos; \n"
@@ -14,7 +14,7 @@ namespace rgr
 		"	gl_Position = vec4(a_Pos, 1.0) * u_MVP; \n"
 		"} \n"
 	};
-	inline std::string PlainColorFragment =
+	const std::string PlainColorFragment =
 	{
 		"#version 440 \n"
 		"uniform vec4 u_Color;"

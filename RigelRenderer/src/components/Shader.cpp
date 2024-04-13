@@ -154,6 +154,13 @@ namespace rgr
 		glUniform1ui(location, value);
 	}
 
+	void Shader::SetUniform1i(const std::string& name, const size_t value)
+	{
+		const int location = FindUniform(name);
+		if (location == -1) return;
+		glUniform1ui(location, value);
+	}
+
 	void Shader::SetUniform1f(const std::string& name, const float value)
 	{
 		const int location = FindUniform(name);

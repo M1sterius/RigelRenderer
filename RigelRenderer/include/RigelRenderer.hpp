@@ -23,36 +23,37 @@
 
 namespace rgr
 {	
+	struct ViewportSize
+	{
+		size_t width;
+		size_t height;
+	};
+
 	/*
 	Initializes glfw, glew, rendering context and internal library modules,
 	as well as creates the window of given size and title.
 	Returns RIGEL_OK if the initialization was successful
 	*/
-	int Init(int width, int height, const char* title);
-	/*
-	Makes the scene at given pointer active so it will be rendered and processed in rgr::Update()
-	*/
+	int Init(size_t width, size_t height, const char* title);
+
+	// Makes the scene at given pointer active so it will be rendered and processed in rgr::Update()
 	void SetScene(rgr::Scene* scene);
-	/*
-	Main game loop function that renders scene, processes events and updates all library modules
-	*/
+
+	// Main game loop function that renders scene, processes events and updates all library modules
 	void Update();
-	/*
-	Used after the game loop to properly terminate the game
-	*/
+
+	// Used after the game loop to properly terminate the game
 	void Quit();
 
-	/*
-	The time passed since rgr::Init() was called
-	*/
+	// The time passed since rgr::Init() was called
 	double GetTimePassed();
-	/*
-	The time passed between two previous game loop iterations
-	*/
+
+	// The time passed between two previous game loop iterations
 	float GetDeltaTime();
 
-	/*
-	True if the window was closed by player
-	*/
+	// True if the window was closed by player
 	bool WindowShouldClose();
+
+	// Returns the size of the viewport
+	ViewportSize GetViewportSize();
 }

@@ -13,7 +13,7 @@ namespace rgr
 		static glm::vec2 GetMousePos();
 		static glm::vec2 GetMouseDelta();
 
-		// True only in the frame in which the key was pressed down
+		// True only in the frame in which the key was pressed
 		static bool KeyPressed(int key);
 		// True during each frame the key is pressed
 		static bool KeyHold(int key);

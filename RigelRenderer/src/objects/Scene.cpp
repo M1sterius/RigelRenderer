@@ -128,7 +128,8 @@ namespace rgr
 
 			Light* light = m_Lights[i];
 
-			if (glm::distance(light->GetTransform().GetPosition(), point) < radius)
+			if (glm::distance(light->GetTransform().GetPosition(), point) < radius ||
+				static_cast<DirectionalLight*>(light) != nullptr)
 			{
 				lights.push_back(light);
 			}

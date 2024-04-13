@@ -1,9 +1,11 @@
 #include "glAbstraction/GlAbstraction.hpp"
 #include "Mesh.hpp"
 #include "obj_loader.h"
+#include "Logger.hpp"
 
 #include <vector>
 #include <iostream>
+#include <array>
 
 namespace rgr
 {
@@ -31,7 +33,7 @@ namespace rgr
 		
 		if (!loader.LoadFile(objPath))
 		{
-			std::cout << "Unable to find a '.obj' file at path: " << objPath << '\n';
+			lgr::Error("Unable to find a '.obj' file: " + objPath);
 		}
 
 		std::vector<float> vertices;
@@ -41,7 +43,7 @@ namespace rgr
 		vertices.reserve(loader.LoadedVertices.size() * 3);
 		texCoords.reserve(loader.LoadedVertices.size() * 2);
 		normals.reserve(loader.LoadedVertices.size() * 3);
-		
+
 		for (const auto& vertex : loader.LoadedVertices)
 		{
 			vertices.push_back(vertex.Position.X);
