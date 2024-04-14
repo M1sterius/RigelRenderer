@@ -126,10 +126,16 @@ namespace rgr
 
 	Shader* Shader::GetPlainColorShader()
 	{
-		static Shader* shader = new Shader(rgr::PlainColorVertex, rgr::PlainColorFragment);
-		return shader;
+		static Shader* plainColorShader = new Shader(rgr::PlainColorVertex, rgr::PlainColorFragment);
+		return plainColorShader;
 	}
 	
+	Shader* Shader::GetDepthMapShader()
+	{
+		static Shader* depthMapShader = new Shader(rgr::DepthMapVertex, rgr::DepthMapFragment);
+		return depthMapShader;
+	}
+
 	void Shader::Bind() const
 	{
 		glUseProgram(m_Handle);

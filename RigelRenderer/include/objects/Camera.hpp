@@ -18,6 +18,7 @@ namespace rgr
 		};
 
 		ViewMode viewMode = ViewMode::FILL;
+		float shadowsVisibilityDistance = 30.0f;
 
 		Camera(float fov, float width, float height, float near, float far);
 		~Camera() override;

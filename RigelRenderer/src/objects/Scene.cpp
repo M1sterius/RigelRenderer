@@ -23,13 +23,43 @@ namespace rgr
 	{
 
 	}
+
 	Scene::~Scene()
 	{
 
 	}
 
-	void Scene::Update()
+	rgr::Camera* Scene::FindMainCamera() const
 	{
+		bool noMainCameraFlag = true;
+		for (const auto& cameraIterated : m_Cameras)
+		{
+			if (cameraIterated->IsMain())
+			{
+				noMainCameraFlag = false;
+				return cameraIterated;
+			}
+		}
+		if (noMainCameraFlag)
+		{
+			if (m_Cameras.size() > 0) return m_Cameras[0];
+			else
+			{
+				std::cout << "Scene '" << this->name << "' does not contain a suitable rendering camera!" << '\n';
+				return nullptr;
+			}
+		}
+	}
+
+	void Scene::Update()
+	{	
+		// Make sure that there always is a suitable rendering camera
+		m_MainCamera = FindMainCamera();
+		if (m_MainCamera == nullptr)
+			return;
+
+		rgr::ProcessShadowCasters(this);
+
 		for (size_t i = 0; i < m_Renderables.size(); i++)
 		{
 			rgr::Renderable* renderable = m_Renderables[i];
@@ -96,24 +126,7 @@ namespace rgr
 
 	rgr::Camera* Scene::GetMainCamera() const
 	{
-		bool noMainCameraFlag = true;
-		for (const auto& cameraIterated : m_Cameras)
-		{
-			if (cameraIterated->IsMain())
-			{
-				noMainCameraFlag = false;
-				return cameraIterated;
-			}
-		}
-		if (noMainCameraFlag)
-		{
-			if (m_Cameras.size() > 0) return m_Cameras[0];
-			else
-			{
-				std::cout << "Scene '" << this->name << "' does not contain a suitable rendering camera!" << '\n';
-				return nullptr;
-			}
-		}
+		return m_MainCamera;
 	}
 
 	const std::vector<Light*>& Scene::GetLightsAround(const glm::vec3 point, const float radius, const size_t maxCount /*=16*/) const
@@ -129,13 +142,19 @@ namespace rgr
 			Light* light = m_Lights[i];
 
 			if (glm::distance(light->GetTransform().GetPosition(), point) < radius ||
-				static_cast<DirectionalLight*>(light) != nullptr)
+				static_cast<DirectionalLight*>(light) != nullptr) // Alway add all directional lights
 			{
 				lights.push_back(light);
 			}
 		}
 
 		return lights;
+	}
+
+	const std::vector<Renderable*>& Scene::GetObjectsInFrustrum()
+	{
+		static std::vector<Renderable*> objects;
+		return objects;
 	}
 
 }

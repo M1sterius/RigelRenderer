@@ -46,6 +46,7 @@ namespace rgr
 		int GetUniformsCallback();
 
 		static Shader* GetPlainColorShader();
+		static Shader* GetDepthMapShader();
 	};
 }
 

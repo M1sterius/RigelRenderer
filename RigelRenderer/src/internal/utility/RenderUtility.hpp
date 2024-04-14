@@ -5,6 +5,7 @@
 #include "Mesh.hpp"
 #include "Camera.hpp"
 #include "Light.hpp"
+#include "Scene.hpp"
 
 namespace rgr
 {	
@@ -15,4 +16,6 @@ namespace rgr
 	void DrawErrorPlaceholder(const glm::mat4& mvp);
 	// Sets shader to draw object in wireframe mode
 	void DrawWireframe(const glm::mat4& mvp);
+
+	void ProcessShadowCasters(const Scene* scene);
 }

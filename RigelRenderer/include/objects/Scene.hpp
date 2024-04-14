@@ -18,6 +18,9 @@ namespace rgr
 		std::vector<Renderable*> m_Renderables;
 		std::vector<Camera*> m_Cameras;
 		std::vector<Light*> m_Lights;
+
+		rgr::Camera* m_MainCamera = nullptr;
+		rgr::Camera* FindMainCamera() const;
 	public:
 		/*
 		Publicly visible and modifiable name used to distinguish scenes from one another
@@ -48,6 +51,8 @@ namespace rgr
 		rgr::Camera* GetMainCamera() const;
 		// Returns all lights closer than radius around the point, up to maxCount of lights
 		const std::vector<Light*>& GetLightsAround(const glm::vec3 point, const float radius, const size_t maxCount = 16) const;
+		
+		const std::vector<Renderable*>& GetObjectsInFrustrum(); // TODO: Add the frustrum culling itself
 	};
 }
 

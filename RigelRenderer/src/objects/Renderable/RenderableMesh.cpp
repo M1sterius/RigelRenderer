@@ -65,11 +65,11 @@ namespace rgr
 				rgr::ProcessLighting(shader, lights, viewPos, modelMat4, this->GetTransform().GetNormalMatrix());
 		}
 
-		// Set u_MVP matrix uniform mandatory for any shader
+		// Set u_MVP matrix uniform that is mandatory for any shader
 		shader->SetUniformMat4("u_MVP", true, mvp);
 
 		// Check if uniforms were set with errors, and if so, 
-		// draw object bright pink to indicate errors
+		// draw the object bright pink to indicate errors
 		const int shaderCallback = shader->GetUniformsCallback();
 		if (shaderCallback != 0)
 		{
