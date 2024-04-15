@@ -78,4 +78,30 @@ namespace rgr
 		delete m_VertexArray;
 		delete m_IndexBuffer;
 	}
+
+	Mesh* Mesh::Get2DQuadMesh()
+	{
+		static std::vector<float> quadVertices{
+		-1.0f, 1.0f, 0.0f,
+		 1.0f, 1.0f, 0.0f,
+		 1.0f, -1.0f, 0.0f,
+		-1.0f, -1.0f, 0.0f
+		};
+
+		static std::vector<unsigned int> quadIndices{
+		0, 1, 3,
+		1, 2, 3
+		};
+
+		static std::vector<float> quadTexCoords{
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f
+		};
+
+		static rgr::Mesh* quad = new rgr::Mesh(quadVertices, quadIndices, quadTexCoords);
+
+		return quad;
+	}
 }

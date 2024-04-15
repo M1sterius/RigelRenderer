@@ -60,6 +60,8 @@ namespace rgr
 
 		rgr::ProcessShadowCasters(this);
 
+		return;
+
 		for (size_t i = 0; i < m_Renderables.size(); i++)
 		{
 			rgr::Renderable* renderable = m_Renderables[i];
@@ -142,7 +144,7 @@ namespace rgr
 			Light* light = m_Lights[i];
 
 			if (glm::distance(light->GetTransform().GetPosition(), point) < radius ||
-				static_cast<DirectionalLight*>(light) != nullptr) // Alway add all directional lights
+				static_cast<DirectionalLight*>(light) != nullptr) // Always add all directional lights
 			{
 				lights.push_back(light);
 			}
@@ -151,10 +153,9 @@ namespace rgr
 		return lights;
 	}
 
-	const std::vector<Renderable*>& Scene::GetObjectsInFrustrum()
+	const std::vector<Renderable*>& Scene::GetObjectsInFrustrum() const
 	{
-		static std::vector<Renderable*> objects;
-		return objects;
+		return m_Renderables;
 	}
 
 }

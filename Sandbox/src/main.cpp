@@ -6,6 +6,7 @@
 #include "gtx/quaternion.hpp"
 #include "gtx/string_cast.hpp"
 #include "glm.hpp"
+#include "publicUtility/Logger.hpp"
 
 #include <iostream>
 #include <vector>
@@ -47,6 +48,8 @@ int main()
 	rgr::Shader* shader2D = rgr::Shader::FromFiles("resources/shaders/vertex_2d.glsl", "resources/shaders/fragment_2d.glsl");
 	rgr::Shader* shader3D = rgr::Shader::FromFiles("resources/shaders/vertex_3d_lit.glsl", "resources/shaders/fragment_3d_lit.glsl");
 	
+	rgr::Shader* shaderShadows = rgr::Shader::FromFiles("resources/shaders/vertex_shadows.glsl", "resources/shaders/fragment_shadows.glsl");
+
 	Material2D quadMaterial = Material2D(new rgr::Texture("resources/textures/Misterius3Dk.png"), shader2D);
 	Material3D cubeMaterial = Material3D(new rgr::Texture("resources/textures/wall.jpg"), shader3D);
 	Material3D planeMaterial = Material3D(new rgr::Texture("resources/textures/plane_texture.png"), shader3D);
@@ -77,7 +80,8 @@ int main()
 	camera->GetTransform().SetRotation(glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)));
 	camera->FlagAsMain();
 
-	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.4f, glm::vec3(0.3, -0.8, 0.3));
+	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.4f, glm::vec3(0, -1, -1));
+	dirLight.GetTransform().SetPosition(glm::vec3(5, 5, 5));
 
 	rgr::PointLight pntLight = rgr::PointLight(
 		glm::vec3(0.98, 0.76, 0.12),

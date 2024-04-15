@@ -51,5 +51,7 @@ namespace rgr
 		Returns the type of this mesh (either MESH_INDEXED or MESH_ARRAY)
 		*/
 		inline MeshType GetMeshType() const { return m_MeshType; }
+
+		static Mesh* Get2DQuadMesh();
 	};
 }

@@ -86,10 +86,7 @@ namespace rgr
 		}
 
 		// Do the actual OpenGL draw call depending on which type of mesh is used
-		if (m_Mesh->GetMeshType() == rgr::Mesh::MeshType::INDEXED)
-			glDrawElements(GL_TRIANGLES, m_Mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-		else
-			glDrawArrays(GL_TRIANGLES, 0, m_Mesh->GetVertsCount());
+		rgr::DrawMesh(m_Mesh);
 
 		// Resetting the wireframe mode if it was set in rgr::DrawWireframe();
 		if (camera->viewMode == rgr::Camera::ViewMode::WIREFRAME)

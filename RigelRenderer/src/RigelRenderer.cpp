@@ -76,7 +76,7 @@ namespace rgr
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 
-		glViewport(0, 0, width, height);
+		ChangeViewport(width, height);
 		glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
 
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

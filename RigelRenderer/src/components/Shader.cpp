@@ -136,6 +136,12 @@ namespace rgr
 		return depthMapShader;
 	}
 
+	Shader* Shader::GetDepthTestShader()
+	{
+		static Shader* depthTestShader = new Shader(rgr::DepthTestVertex, rgr::DepthTestFragment);
+		return depthTestShader;
+	}
+
 	void Shader::Bind() const
 	{
 		glUseProgram(m_Handle);

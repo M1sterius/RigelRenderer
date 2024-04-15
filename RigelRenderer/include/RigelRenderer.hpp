@@ -27,6 +27,10 @@ namespace rgr
 	{
 		size_t width;
 		size_t height;
+
+		//ViewportSize(const size_t width, const size_t height)
+		//	: width(width), height(height) {}
+		//~ViewportSize() {}
 	};
 
 	/*

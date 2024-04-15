@@ -17,5 +17,7 @@ namespace rgr
 	// Sets shader to draw object in wireframe mode
 	void DrawWireframe(const glm::mat4& mvp);
 
+	void DrawMesh(const rgr::Mesh* mesh);
+
 	void ProcessShadowCasters(const Scene* scene);
 }

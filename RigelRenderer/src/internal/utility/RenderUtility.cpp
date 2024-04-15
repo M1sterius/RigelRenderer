@@ -4,6 +4,8 @@
 #include "RigelRenderer.hpp"
 #include "glm.hpp"
 
+#include "Logger.hpp"
+
 #include <vector>
 #include <string>
 
@@ -13,43 +15,106 @@ namespace rgr
 	static const size_t MAX_POINT_LIGHTS_ARRAY_SIZE = 100;
 	static const size_t MAX_SPOT_LIGHTS_ARRAY_SIZE = 36;
 
-	static unsigned int ProcessSingleDirLight(rgr::DirectionalLight* light)
-	{	
-		// Generate FBO for rendering the depth map
-		unsigned int depthMapFBO;
-		glGenFramebuffers(1, &depthMapFBO);
+	void DrawMesh(const Mesh* mesh)
+	{
+		if (mesh->GetMeshType() == rgr::Mesh::MeshType::INDEXED)
+			glDrawElements(GL_TRIANGLES, mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		else
+			glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertsCount());
+	}
 
+	static unsigned int depthMapFBO = 0;
+	static unsigned int depthMap = 0;
+
+	static void ProcessSingleDirLight(rgr::DirectionalLight* light, const Scene* scene)
+	{
 		const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
-		// Generate the texture to store the depth map
-		unsigned int depthMap;
-		glGenTextures(1, &depthMap);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-			SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		if (depthMapFBO == 0 && depthMap == 0)
+		{
+			// Generate FBO for rendering the depth map
+			glGenFramebuffers(1, &depthMapFBO);
 
-		// Bind buffer, configure it and attach the texture for it to render to
+			// Generate the texture to store the depth map
+			glGenTextures(1, &depthMap);
+			glBindTexture(GL_TEXTURE_2D, depthMap);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+				SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+			// Bind buffer, configure it and attach the texture for it to render to
+			glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+
+		// Render the scene to the depth map
+		const auto& objects = scene->GetObjectsInFrustrum();
+		rgr::Shader* shader = rgr::Shader::GetDepthMapShader();
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-		glDrawBuffer(GL_NONE);
-		glReadBuffer(GL_NONE);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		for (size_t i = 0; i < objects.size(); i++)
+		{
+			RenderableMesh* obj = static_cast<RenderableMesh*>(objects[i]);
+			if (obj != nullptr)
+			{
+				const glm::mat4 model = obj->GetTransform().GetModelMatrix();
+				rgr::Mesh* mesh = obj->GetMesh();
+
+				mesh->GetVertexArray()->Bind();
+
+				if (mesh->GetMeshType() == Mesh::MeshType::INDEXED)
+					mesh->GetIndexBuffer()->Bind();
+
+				shader->Bind();
+				shader->SetUniformMat4("u_LightSpaceMatrix", false, light->GetLightSpaceViewProj());
+				shader->SetUniformMat4("u_Model", false, model);
+
+				DrawMesh(mesh);
+			}
+		}
+
+		// Restore the viewport size and unbind the frame buffer
+		rgr::ViewportSize size = rgr::GetViewportSize();
+		glViewport(0, 0, size.width, size.height);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		// Configure light's point of view matrices
-		const glm::mat4 proj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 20.0f);
+		rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
+		rgr::Shader* testShader = rgr::Shader::GetDepthTestShader();
 
-		// Create a view matrix that looks in the same direction as light
-		const glm::vec3 right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), -light->direction));
-		const glm::vec3 up = glm::normalize(glm::cross(-light->direction, right));
-		const glm::mat4 view = glm::lookAt(glm::vec3(0.0f), -light->direction, up);
+		quad->GetVertexArray()->Bind();
+		quad->GetIndexBuffer()->Bind();
 
-		const glm::mat4 lightSpaceMatrix = proj * view;
+		testShader->Bind();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		testShader->SetUniform1i("u_DepthMap", depthMap);
 
-		return depthMap;
+		DrawMesh(quad);
+	}
+
+	void ProcessShadowCasters(const Scene* scene)
+	{
+		rgr::Camera* camera = scene->GetMainCamera();
+		const auto& lights = scene->GetLightsAround(camera->GetTransform().GetPosition(), camera->shadowsVisibilityDistance);
+
+		for (size_t i = 0; i < lights.size(); i++)
+		{
+			rgr::Light* light = lights[i];
+			if (static_cast<DirectionalLight*>(light) != nullptr)
+			{
+				ProcessSingleDirLight(static_cast<DirectionalLight*>(light), scene);
+				return;
+			}
+		}
 	}
 
 	void ProcessLighting(rgr::Shader* shader, const std::vector<rgr::Light*>& lights,
@@ -59,7 +124,7 @@ namespace rgr
 		size_t pointCount = 0;
 		size_t spotCount = 0;
 
-		// Iterate through all the lights affecting this object and setting corresponding uniforms
+		// Iterate through all the lights affecting this object and set corresponding uniforms
 		for (rgr::Light* light : lights)
 		{
 			if (dynamic_cast<rgr::DirectionalLight*>(light) != nullptr)
@@ -144,11 +209,5 @@ namespace rgr
 		phShader->SetUniformVec4("u_Color", glm::vec4(0.0, 0.0, 0.0, 1.0));
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-
-	void ProcessShadowCasters(const Scene* scene)
-	{	
-		rgr::Camera* camera = scene->GetMainCamera();
-		const auto& lights = scene->GetLightsAround(camera->GetTransform().GetPosition(), camera->shadowsVisibilityDistance);
 	}
 }

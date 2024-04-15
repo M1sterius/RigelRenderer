@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Object.hpp"
-#include "vec3.hpp"
+#include "glm.hpp"
 
 namespace rgr
 {
@@ -13,5 +13,8 @@ namespace rgr
 		bool castShadows = true;
 
 		virtual ~Light();
+
+		virtual const glm::mat4 GetLightSpaceView();
+		virtual const glm::mat4 GetLightSpaceViewProj();
 	};
 }
