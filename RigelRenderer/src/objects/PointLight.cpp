@@ -14,3 +14,18 @@ rgr::PointLight::~PointLight()
 {
 
 }
+
+const glm::mat4 rgr::PointLight::GetLightSpaceView()
+{
+	return glm::mat4(0.0f);
+}
+
+const glm::mat4 rgr::PointLight::GetLightSpaceViewProj()
+{
+	return glm::mat4(0.0f);
+}
+
+void rgr::PointLight::GenerateDepthMap()
+{
+
+}

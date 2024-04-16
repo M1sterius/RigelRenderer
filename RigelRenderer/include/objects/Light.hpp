@@ -2,6 +2,7 @@
 
 #include "Object.hpp"
 #include "glm.hpp"
+#include "internal.hpp"
 
 namespace rgr
 {
@@ -10,11 +11,15 @@ namespace rgr
 	public:
 		glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 		float intensity = 1.0f;
-		bool castShadows = true;
+		bool shadowCaster = true;
 
-		virtual ~Light();
+		virtual ~Light() { }
 
-		virtual const glm::mat4 GetLightSpaceView();
-		virtual const glm::mat4 GetLightSpaceViewProj();
+		virtual const glm::mat4 GetLightSpaceView() = 0;
+		virtual const glm::mat4 GetLightSpaceViewProj() = 0;
+	protected:
+		unsigned int m_DepthMapHandle = 0;
+	INTERNAL:
+		virtual void GenerateDepthMap() = 0;
 	};
 }

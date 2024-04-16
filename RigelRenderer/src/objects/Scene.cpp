@@ -58,6 +58,7 @@ namespace rgr
 		if (m_MainCamera == nullptr)
 			return;
 
+		// Generates depth maps for all lights close to camera
 		rgr::ProcessShadowCasters(this);
 
 		return;

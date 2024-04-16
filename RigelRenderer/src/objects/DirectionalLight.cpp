@@ -35,3 +35,8 @@ const glm::mat4 rgr::DirectionalLight::GetLightSpaceViewProj()
 
 	return viewProj;
 }
+
+void rgr::DirectionalLight::GenerateDepthMap()
+{
+
+}

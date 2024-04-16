@@ -11,10 +11,12 @@ namespace rgr
 		glm::vec3 direction;
 
 		DirectionalLight(const glm::vec3& color, const float intensity, const glm::vec3& direction);
-		~DirectionalLight() override;
+		virtual ~DirectionalLight();
 
 		const glm::mat4 GetLightSpaceView() override;
 		const glm::mat4 GetLightSpaceViewProj() override;
+	INTERNAL:
+		void GenerateDepthMap() override;
 	};
 }
 

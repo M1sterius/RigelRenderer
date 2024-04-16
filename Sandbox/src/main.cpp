@@ -80,7 +80,7 @@ int main()
 	camera->GetTransform().SetRotation(glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)));
 	camera->FlagAsMain();
 
-	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.4f, glm::vec3(0, -1, -1));
+	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.4f, glm::vec3(-1, -1, -1));
 	dirLight.GetTransform().SetPosition(glm::vec3(5, 5, 5));
 
 	rgr::PointLight pntLight = rgr::PointLight(

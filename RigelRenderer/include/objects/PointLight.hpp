@@ -13,7 +13,12 @@ namespace rgr
 		float quadratic;
 
 		PointLight(const glm::vec3 color, const float instensity, const float constant, const float linear, const float quadratic);
-		~PointLight() override;
+		virtual ~PointLight();
+
+		const glm::mat4 GetLightSpaceView() override;
+		const glm::mat4 GetLightSpaceViewProj() override;
+	INTERNAL:
+		void GenerateDepthMap() override;
 	};
 }
 
