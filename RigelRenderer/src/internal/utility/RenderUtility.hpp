@@ -4,7 +4,7 @@
 #include "Material.hpp"
 #include "Mesh.hpp"
 #include "Camera.hpp"
-#include "Light.hpp"
+#include "Lights/Light.hpp"
 #include "Scene.hpp"
 
 namespace rgr

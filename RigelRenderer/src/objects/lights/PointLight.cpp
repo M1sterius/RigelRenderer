@@ -1,4 +1,4 @@
-#include "PointLight.hpp"
+#include "Lights/PointLight.hpp"
 
 rgr::PointLight::PointLight(const glm::vec3 color, const float instensity, const float constant, const float linear, const float quadratic)
 {

@@ -1,8 +1,8 @@
-#include "glew.h"
 #include "RenderUtility.hpp"
 #include "glAbstraction/GlAbstraction.hpp"
 #include "RigelRenderer.hpp"
 #include "glm.hpp"
+#include "glew.h"
 
 #include "Logger.hpp"
 
@@ -24,26 +24,17 @@ namespace rgr
 	}
 
 	static unsigned int depthMapFBO = 0;
-	static unsigned int depthMap = 0;
 
 	static void ProcessSingleDirLight(rgr::DirectionalLight* light, const Scene* scene)
 	{
 		const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
-		if (depthMapFBO == 0 && depthMap == 0)
+		const unsigned int depthMap = light->GetDepthMapHandle();
+
+		if (depthMapFBO == 0)
 		{
 			// Generate FBO for rendering the depth map
 			glGenFramebuffers(1, &depthMapFBO);
-
-			// Generate the texture to store the depth map
-			glGenTextures(1, &depthMap);
-			glBindTexture(GL_TEXTURE_2D, depthMap);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-				SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 			// Bind buffer, configure it and attach the texture for it to render to
 			glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
@@ -87,6 +78,7 @@ namespace rgr
 		glViewport(0, 0, size.width, size.height);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		// Render the depth map to a quad for debug
 		rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
 		rgr::Shader* testShader = rgr::Shader::GetDepthTestShader();
 

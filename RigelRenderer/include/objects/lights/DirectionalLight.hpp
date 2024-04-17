@@ -1,12 +1,13 @@
 #pragma once
 
-#include "objects/Light.hpp"
-#include "glm.hpp"
+#include "objects/Lights/Light.hpp"
 
 namespace rgr
 {
 	class DirectionalLight : public rgr::Light
 	{
+	private:
+		size_t m_DepthMapSize = 1024;
 	public:
 		glm::vec3 direction;
 

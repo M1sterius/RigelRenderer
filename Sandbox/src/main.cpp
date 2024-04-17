@@ -6,7 +6,6 @@
 #include "gtx/quaternion.hpp"
 #include "gtx/string_cast.hpp"
 #include "glm.hpp"
-#include "publicUtility/Logger.hpp"
 
 #include <iostream>
 #include <vector>

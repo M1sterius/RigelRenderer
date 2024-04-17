@@ -21,5 +21,6 @@ namespace rgr
 		unsigned int m_DepthMapHandle = 0;
 	INTERNAL:
 		virtual void GenerateDepthMap() = 0;
+		inline const unsigned int GetDepthMapHandle() const { return m_DepthMapHandle; }
 	};
 }

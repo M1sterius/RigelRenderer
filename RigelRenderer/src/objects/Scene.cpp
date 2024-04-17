@@ -1,7 +1,7 @@
 #include "Scene.hpp"
 #include "components/Material.hpp"
 #include "components/Shader.hpp"
-#include "objects/DirectionalLight.hpp"
+#include "objects/Lights/DirectionalLight.hpp"
 #include "glAbstraction/GlAbstraction.hpp"
 
 #include "RenderUtility.hpp"

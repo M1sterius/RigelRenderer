@@ -1,4 +1,4 @@
-#include "SpotLight.hpp"
+#include "Lights/SpotLight.hpp"
 
 rgr::SpotLight::SpotLight(const glm::vec3 color, const float instensity, const glm::vec3& direction, 
 	const float cutOff, const float outerCutOff, const float constant, const float linear, const float quadratic)

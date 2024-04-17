@@ -9,10 +9,10 @@
 #include "objects/Scene.hpp"
 #include "objects/Object.hpp"
 #include "objects/Camera.hpp"
-#include "objects/Light.hpp"
-#include "objects/PointLight.hpp"
-#include "objects/DirectionalLight.hpp"
-#include "objects/SpotLight.hpp"
+#include "objects/Lights/Light.hpp"
+#include "objects/Lights/PointLight.hpp"
+#include "objects/Lights/DirectionalLight.hpp"
+#include "objects/Lights/SpotLight.hpp"
 
 #include "objects/Renderable/Renderable.hpp"
 #include "objects/Renderable/RenderableMesh.hpp"
@@ -27,10 +27,6 @@ namespace rgr
 	{
 		size_t width;
 		size_t height;
-
-		//ViewportSize(const size_t width, const size_t height)
-		//	: width(width), height(height) {}
-		//~ViewportSize() {}
 	};
 
 	/*

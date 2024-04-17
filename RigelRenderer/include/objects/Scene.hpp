@@ -2,7 +2,7 @@
 
 #include "Renderable/Renderable.hpp"
 #include "objects/Camera.hpp"
-#include "objects/Light.hpp"
+#include "objects/Lights/Light.hpp"
 
 #include <vector>
 #include <string>
