@@ -27,9 +27,9 @@ namespace rgr
 
 	}
 
-	void RenderableMesh::Render(const Scene* scene)
+	void RenderableMesh::Render()
 	{	
-		rgr::Camera* camera = scene->GetMainCamera(); // TODO: Check if camera can be made const
+		rgr::Camera* camera = m_ScenePtr->GetMainCamera(); // TODO: Check if camera can be made const
 		rgr::Shader* shader = m_Material->GetShader(); // TODO: Check if shader can be made const
 
 		const glm::mat4 modelMat4 = this->GetTransform().GetModelMatrix();
@@ -57,7 +57,7 @@ namespace rgr
 			mvp = camera->GetPerspective() * camera->GetView() * modelMat4;
 
 			// Obtain variables related to lighting
-			const auto& lights = scene->GetLightsAround(this->GetTransform().GetPosition(), affectedByLightDist);
+			const auto& lights = m_ScenePtr->GetLightsAround(this->GetTransform().GetPosition(), affectedByLightDist);
 			const glm::vec3 viewPos = camera->GetTransform().GetPosition();
 
 			// If this material is marked lit, set lighting uniforms

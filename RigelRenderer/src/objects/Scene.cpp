@@ -66,7 +66,7 @@ namespace rgr
 		for (size_t i = 0; i < m_Renderables.size(); i++)
 		{
 			rgr::Renderable* renderable = m_Renderables[i];
-			renderable->Render(this);
+			renderable->Render();
 		}
 	}
 
@@ -76,9 +76,9 @@ namespace rgr
 		{
 			m_Renderables.push_back(renderablePtr);
 		}
-		else if (rgr::Camera* cameraIteratedPtr = dynamic_cast<rgr::Camera*>(object))
+		else if (rgr::Camera* cameraPtr = dynamic_cast<rgr::Camera*>(object))
 		{
-			m_Cameras.push_back(cameraIteratedPtr);
+			m_Cameras.push_back(cameraPtr);
 		}
 		else if (rgr::Light* lightPtr = dynamic_cast<rgr::Light*>(object))
 		{
@@ -87,7 +87,10 @@ namespace rgr
 		else
 		{
 			std::cout << "Invalid Object pointer type!" << '\n';
+			return;
 		}
+
+		object->AssignScene(this);
 	}
 	void Scene::RemoveObject(rgr::Object* object)
 	{
@@ -95,7 +98,10 @@ namespace rgr
 		{
 			auto iterator = std::find(m_Renderables.begin(), m_Renderables.end(), renderablePtr);
 			if (iterator != m_Renderables.end())
+			{
 				m_Renderables.erase(iterator);
+				object->ResetScene();
+			}
 			else
 			{
 				std::cout << "Unable to find a Renderable by given pointer!" << '\n';

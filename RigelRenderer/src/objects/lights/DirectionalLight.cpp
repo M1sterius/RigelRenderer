@@ -41,7 +41,7 @@ const glm::mat4 rgr::DirectionalLight::GetLightSpaceView()
 
 const glm::mat4 rgr::DirectionalLight::GetLightSpaceViewProj()
 {
-	static glm::mat4 proj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 20.0f);
+	static glm::mat4 proj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, m_DepthProjNear, m_DepthProjFar);
 	const glm::mat4 viewProj = proj * GetLightSpaceView();
 
 	return viewProj;

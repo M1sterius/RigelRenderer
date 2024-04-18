@@ -22,6 +22,6 @@ namespace rgr
 	INTERNAL:
 		inline Mesh* GetMesh() { return m_Mesh; }
 		inline Material* GetMaterial() { return m_Material; }
-		void Render(const Scene* scene) override;
+		void Render() override;
 	};
 }

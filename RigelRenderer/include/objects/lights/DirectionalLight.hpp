@@ -7,7 +7,9 @@ namespace rgr
 	class DirectionalLight : public rgr::Light
 	{
 	private:
-		size_t m_DepthMapSize = 1024;
+		const size_t m_DepthMapSize = 1024;
+		const float m_DepthProjNear = 0.1f;
+		const float m_DepthProjFar = 20.0f;
 	public:
 		glm::vec3 direction;
 

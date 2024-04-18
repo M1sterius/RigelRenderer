@@ -1,4 +1,5 @@
 #include "Object.hpp"
+#include "Scene.hpp"
 
 namespace rgr
 {
@@ -19,5 +20,15 @@ namespace rgr
 
 	Object::~Object()
 	{
+	}
+
+	void Object::AssignScene(const rgr::Scene* scene)
+	{
+		m_ScenePtr = scene;
+	}
+
+	void Object::ResetScene()
+	{
+		m_ScenePtr = nullptr;
 	}
 }

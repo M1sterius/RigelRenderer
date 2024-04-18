@@ -14,7 +14,7 @@ namespace rgr
 		Renderable() { }
 		virtual ~Renderable() { }
 	INTERNAL:
-		virtual void Render(const Scene* scene) = 0;
+		virtual void Render() = 0;
 	};
 }
 
