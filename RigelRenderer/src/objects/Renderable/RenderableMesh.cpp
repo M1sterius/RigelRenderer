@@ -92,4 +92,21 @@ namespace rgr
 		if (camera->viewMode == rgr::Camera::ViewMode::WIREFRAME)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
+
+	void RenderableMesh::DepthRender(const glm::mat4& lightSpaceMatrix)
+	{
+		rgr::Shader* depthMapShader = rgr::Shader::GetDepthMapShader();
+
+		m_Mesh->GetVertexArray()->Bind();
+
+		if (m_Mesh->GetMeshType() == Mesh::MeshType::INDEXED)
+			m_Mesh->GetIndexBuffer()->Bind();
+
+		depthMapShader->Bind();
+		depthMapShader->SetUniformMat4("u_LightSpaceMatrix", false, lightSpaceMatrix);
+		depthMapShader->SetUniformMat4("u_Model", false, GetTransform().GetModelMatrix());
+
+		DrawMesh(m_Mesh);
+	}
+
 }

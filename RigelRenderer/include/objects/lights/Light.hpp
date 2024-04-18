@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Object.hpp"
+#include "objects/Object.hpp"
 #include "glm.hpp"
 #include "internal.hpp"
 
@@ -11,7 +11,7 @@ namespace rgr
 	public:
 		glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 		float intensity = 1.0f;
-		bool shadowCaster = true;
+		bool castShadows = true;
 
 		virtual ~Light() { }
 
@@ -20,7 +20,7 @@ namespace rgr
 	protected:
 		unsigned int m_DepthMapHandle = 0;
 	INTERNAL:
-		virtual void GenerateDepthMap() = 0;
+		virtual void GenerateDepthMap(const unsigned int depthMapFBO) = 0;
 		inline const unsigned int GetDepthMapHandle() const { return m_DepthMapHandle; }
 	};
 }

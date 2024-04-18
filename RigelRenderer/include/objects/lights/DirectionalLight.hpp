@@ -19,7 +19,7 @@ namespace rgr
 		const glm::mat4 GetLightSpaceView() override;
 		const glm::mat4 GetLightSpaceViewProj() override;
 	INTERNAL:
-		void GenerateDepthMap() override;
+		void GenerateDepthMap(const unsigned int depthMapFBO) override;
 	};
 }
 

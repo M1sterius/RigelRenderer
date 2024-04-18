@@ -52,7 +52,7 @@ namespace rgr
 		// Returns all lights closer than radius around the point, up to maxCount of lights
 		const std::vector<Light*>& GetLightsAround(const glm::vec3 point, const float radius, const size_t maxCount = 16) const;
 		
-		const std::vector<Renderable*>& GetObjectsInFrustrum() const; // TODO: Add the frustrum culling itself
+		const std::vector<Renderable*>& GetRenderablesInFrustrum() const; // TODO: Add the frustrum culling itself
 	};
 }
 

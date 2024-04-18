@@ -1,4 +1,5 @@
 #include "Lights/DirectionalLight.hpp"
+#include "RigelRenderer.hpp"
 #include "glm.hpp"
 #include "glew.h"
 
@@ -47,7 +48,24 @@ const glm::mat4 rgr::DirectionalLight::GetLightSpaceViewProj()
 	return viewProj;
 }
 
-void rgr::DirectionalLight::GenerateDepthMap()
+void rgr::DirectionalLight::GenerateDepthMap(const unsigned int depthMapFBO)
 {
+	const auto& renderables = m_ScenePtr->GetRenderablesInFrustrum();
 
+	glViewport(0, 0, m_DepthMapSize, m_DepthMapSize);
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthMapHandle, 0);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	for (size_t i = 0; i < renderables.size(); i++)
+	{
+		rgr::Renderable* renderable = renderables[i];
+		if (!renderable->shadowCaster) continue;
+		renderable->DepthRender(GetLightSpaceViewProj());
+	}
+
+	// Restore the original viewport
+	rgr::ViewportSize size = rgr::GetViewportSize();
+	glViewport(0, 0, size.width, size.height);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

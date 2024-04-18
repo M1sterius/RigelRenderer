@@ -25,7 +25,7 @@ const glm::mat4 rgr::PointLight::GetLightSpaceViewProj()
 	return glm::mat4(0.0f);
 }
 
-void rgr::PointLight::GenerateDepthMap()
+void rgr::PointLight::GenerateDepthMap(const unsigned int depthMapFBO)
 {
 
 }

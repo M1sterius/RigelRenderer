@@ -23,89 +23,48 @@ namespace rgr
 			glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertsCount());
 	}
 
-	static unsigned int depthMapFBO = 0;
+	void GenerateDepthMapsForLightSources(const Scene* scene)
+	{	
+		static unsigned int depthMapFBO = 0;
 
-	static void ProcessSingleDirLight(rgr::DirectionalLight* light, const Scene* scene)
-	{
-		const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-
-		const unsigned int depthMap = light->GetDepthMapHandle();
-
+		// Pre-setup depth map framebuffer for future depth map generations only if it hasn't been set up yet
 		if (depthMapFBO == 0)
-		{
-			// Generate FBO for rendering the depth map
+		{	
+			// Note that attaching a depth map is skipped, because one will later be attached for each light individually
 			glGenFramebuffers(1, &depthMapFBO);
-
-			// Bind buffer, configure it and attach the texture for it to render to
 			glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
 			glDrawBuffer(GL_NONE);
 			glReadBuffer(GL_NONE);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
-		// Render the scene to the depth map
-		const auto& objects = scene->GetObjectsInFrustrum();
-		rgr::Shader* shader = rgr::Shader::GetDepthMapShader();
-
-		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		for (size_t i = 0; i < objects.size(); i++)
-		{
-			RenderableMesh* obj = static_cast<RenderableMesh*>(objects[i]);
-			if (obj != nullptr)
-			{
-				const glm::mat4 model = obj->GetTransform().GetModelMatrix();
-				rgr::Mesh* mesh = obj->GetMesh();
-
-				mesh->GetVertexArray()->Bind();
-
-				if (mesh->GetMeshType() == Mesh::MeshType::INDEXED)
-					mesh->GetIndexBuffer()->Bind();
-
-				shader->Bind();
-				shader->SetUniformMat4("u_LightSpaceMatrix", false, light->GetLightSpaceViewProj());
-				shader->SetUniformMat4("u_Model", false, model);
-
-				DrawMesh(mesh);
-			}
-		}
-
-		// Restore the viewport size and unbind the frame buffer
-		rgr::ViewportSize size = rgr::GetViewportSize();
-		glViewport(0, 0, size.width, size.height);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		// Render the depth map to a quad for debug
-		rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
-		rgr::Shader* testShader = rgr::Shader::GetDepthTestShader();
-
-		quad->GetVertexArray()->Bind();
-		quad->GetIndexBuffer()->Bind();
-
-		testShader->Bind();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
-		testShader->SetUniform1i("u_DepthMap", depthMap);
-
-		DrawMesh(quad);
-	}
-
-	void ProcessShadowCasters(const Scene* scene)
-	{
 		rgr::Camera* camera = scene->GetMainCamera();
 		const auto& lights = scene->GetLightsAround(camera->GetTransform().GetPosition(), camera->shadowsVisibilityDistance);
 
 		for (size_t i = 0; i < lights.size(); i++)
 		{
 			rgr::Light* light = lights[i];
-			if (static_cast<DirectionalLight*>(light) != nullptr)
-			{
-				ProcessSingleDirLight(static_cast<DirectionalLight*>(light), scene);
-				return;
-			}
+
+			if (!light->castShadows) continue;
+
+			light->GenerateDepthMap(depthMapFBO);
+			
+			//Render the depth map of the last directional light to a quad for debug
+			//if (static_cast<DirectionalLight*>(light) != nullptr)
+			//{
+			//	rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
+			//	rgr::Shader* testShader = rgr::Shader::GetDepthTestShader();
+
+			//	quad->GetVertexArray()->Bind();
+			//	quad->GetIndexBuffer()->Bind();
+
+			//	testShader->Bind();
+			//	glActiveTexture(GL_TEXTURE0);
+			//	glBindTexture(GL_TEXTURE_2D, light->GetDepthMapHandle());
+			//	testShader->SetUniform1i("u_DepthMap", light->GetDepthMapHandle());
+
+			//	DrawMesh(quad);
+			//}
 		}
 	}
 

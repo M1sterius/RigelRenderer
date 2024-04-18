@@ -4,3 +4,4 @@ Shadows pipeline:
 	2) Iterate over the chosen lights and generate depth maps
 		2.1) Get objects from the scene in the light's frustrum
 		2.2) 
+

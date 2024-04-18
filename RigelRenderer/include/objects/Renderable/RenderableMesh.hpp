@@ -23,5 +23,6 @@ namespace rgr
 		inline Mesh* GetMesh() { return m_Mesh; }
 		inline Material* GetMaterial() { return m_Material; }
 		void Render() override;
+		void DepthRender(const glm::mat4& lightSpaceMatrix) override;
 	};
 }

@@ -30,7 +30,7 @@ const glm::mat4 rgr::SpotLight::GetLightSpaceViewProj()
 	return glm::mat4(0.0f);
 }
 
-void rgr::SpotLight::GenerateDepthMap()
+void rgr::SpotLight::GenerateDepthMap(const unsigned int depthMapFBO)
 {
 	
 }

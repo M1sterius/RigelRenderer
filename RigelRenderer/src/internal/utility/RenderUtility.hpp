@@ -19,5 +19,5 @@ namespace rgr
 
 	void DrawMesh(const rgr::Mesh* mesh);
 
-	void ProcessShadowCasters(const Scene* scene);
+	void GenerateDepthMapsForLightSources(const Scene* scene);
 }

@@ -58,10 +58,7 @@ namespace rgr
 		if (m_MainCamera == nullptr)
 			return;
 
-		// Generates depth maps for all lights close to camera
-		rgr::ProcessShadowCasters(this);
-
-		return;
+		rgr::GenerateDepthMapsForLightSources(this);
 
 		for (size_t i = 0; i < m_Renderables.size(); i++)
 		{
@@ -160,7 +157,7 @@ namespace rgr
 		return lights;
 	}
 
-	const std::vector<Renderable*>& Scene::GetObjectsInFrustrum() const
+	const std::vector<Renderable*>& Scene::GetRenderablesInFrustrum() const
 	{
 		return m_Renderables;
 	}
