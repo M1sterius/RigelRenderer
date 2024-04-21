@@ -1,14 +1,17 @@
 #pragma once
 
-#include "Renderable/Renderable.hpp"
-#include "objects/Camera.hpp"
-#include "objects/Lights/Light.hpp"
+#include "Camera.hpp"
+#include "renderable/Renderable.hpp"
+#include "lights/Light.hpp"
 
 #include <vector>
 #include <string>
+#include <memory>
 
 namespace rgr
 {	
+	class GBuffer;
+
 	/*
 	Represents the collection of objects that form a virtual environment
 	*/
@@ -18,6 +21,8 @@ namespace rgr
 		std::vector<Renderable*> m_Renderables;
 		std::vector<Camera*> m_Cameras;
 		std::vector<Light*> m_Lights;
+
+		std::unique_ptr<GBuffer> m_GBuffer;
 
 		rgr::Camera* m_MainCamera = nullptr;
 		rgr::Camera* FindMainCamera() const;
@@ -29,6 +34,8 @@ namespace rgr
 
 		Scene();
 		~Scene();
+
+		void Render();
 
 		/*
 		Performs all graphics calculations and renders the scene to the screen 

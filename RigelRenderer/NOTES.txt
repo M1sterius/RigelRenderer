@@ -1,7 +1,20 @@
-Shadows pipeline:
-	FIRST PASS
-	1) Find lights that are close enough to the camera and put them in a vector
-	2) Iterate over the chosen lights and generate depth maps
-		2.1) Get objects from the scene in the light's frustrum
-		2.2) 
+Rendering pipeline:
+	1) Generate depth maps
+	2) Geometry pass
+	3) Lighting pass
+	4) Forward rendering
 
+
+RenderableMesh:
+	1) Uses pre-defined material with built-in shaders
+	2) Goes through deferred rendering pipeline
+	3) Included in depth map generation
+	4) Does not support custom material creation
+	5) Affected by lighting
+
+CustomRenderable:
+	1) Can use custom materials with custom shaders
+	2) Does not go through deferred rendering pipeline
+	3) Always rendered forward way after deferred rendering
+	4) Is not included into depth map creation
+	5) Is not affected by lighting

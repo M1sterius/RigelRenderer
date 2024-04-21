@@ -1,8 +1,8 @@
-#include "Scene.hpp"
-#include "components/Material.hpp"
-#include "components/Shader.hpp"
-#include "objects/Lights/DirectionalLight.hpp"
+#include "RigelRenderer.hpp"
 #include "glAbstraction/GlAbstraction.hpp"
+#include "render/GBuffer.hpp"
+#include "render/Renderer.hpp"
+#include "renderable/CustomRenderable.hpp"
 
 #include "RenderUtility.hpp"
 #include "Logger.hpp"
@@ -21,7 +21,7 @@ namespace rgr
 {
 	Scene::Scene()
 	{
-
+		m_GBuffer = std::make_unique<GBuffer>(rgr::GetViewportSize().width, rgr::GetViewportSize().height);
 	}
 
 	Scene::~Scene()
@@ -51,6 +51,23 @@ namespace rgr
 		}
 	}
 
+	void Scene::Render()
+	{
+		for (size_t i = 0; i < m_Renderables.size(); i++)
+		{
+			rgr::Renderable* renderable = m_Renderables[i];
+
+			if (rgr::RenderableMesh* meshPtr = dynamic_cast<rgr::RenderableMesh*>(renderable))
+			{
+
+			}
+			else if (rgr::CustomRenderable* customPtr = dynamic_cast<rgr::CustomRenderable*>(renderable))
+			{
+
+			}
+		}
+	}
+
 	void Scene::Update()
 	{	
 		// Make sure that there always is a suitable rendering camera
@@ -58,7 +75,7 @@ namespace rgr
 		if (m_MainCamera == nullptr)
 			return;
 
-		rgr::GenerateDepthMapsForLightSources(this);
+		rgr::Renderer::GenerateDepthMapsForLightSources(this);
 
 		for (size_t i = 0; i < m_Renderables.size(); i++)
 		{

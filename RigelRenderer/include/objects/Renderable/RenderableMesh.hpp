@@ -8,7 +8,8 @@ namespace rgr
 	class Mesh;
 	class Material;
 
-	class RenderableMesh : public::rgr::Renderable
+	// Represents 3D mesh affectable by light
+	class RenderableMesh final : public::rgr::Renderable
 	{
 	private:
 		Mesh* m_Mesh;
