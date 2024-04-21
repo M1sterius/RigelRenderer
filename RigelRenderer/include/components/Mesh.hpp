@@ -1,5 +1,7 @@
 #pragma once
 
+#include "internal.hpp"
+
 #include <string>
 #include <vector>
 
@@ -36,9 +38,7 @@ namespace rgr
 		*/
 		Mesh(const std::string& objPath);
 		~Mesh();
-
-		inline rgr::VertexArray* GetVertexArray() const { return m_VertexArray; }
-		inline rgr::IndexBuffer* GetIndexBuffer() const { return m_IndexBuffer; }
+		
 		/*
 		The number of vertices this mesh consists of
 		*/
@@ -51,6 +51,13 @@ namespace rgr
 		Returns the type of this mesh (either MESH_INDEXED or MESH_ARRAY)
 		*/
 		inline MeshType GetMeshType() const { return m_MeshType; }
+
+	INTERNAL:
+		inline rgr::VertexArray* GetVertexArray() const { return m_VertexArray; }
+		inline rgr::IndexBuffer* GetIndexBuffer() const { return m_IndexBuffer; }
+
+		void Bind() const;
+		void Draw() const;
 
 		static Mesh* Get2DQuadMesh();
 	};

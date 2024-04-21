@@ -21,12 +21,12 @@ namespace rgr
 {
 	Scene::Scene()
 	{
-		m_GBuffer = std::make_unique<GBuffer>(rgr::GetViewportSize().width, rgr::GetViewportSize().height);
+		m_GBuffer = new GBuffer(rgr::GetViewportSize().width, rgr::GetViewportSize().height);
 	}
 
 	Scene::~Scene()
 	{
-
+		delete m_GBuffer;
 	}
 
 	rgr::Camera* Scene::FindMainCamera() const
@@ -76,12 +76,7 @@ namespace rgr
 			return;
 
 		rgr::Renderer::GenerateDepthMapsForLightSources(this);
-
-		for (size_t i = 0; i < m_Renderables.size(); i++)
-		{
-			rgr::Renderable* renderable = m_Renderables[i];
-			renderable->Render();
-		}
+		//rgr::Renderer::DoGeometryPass(this, m_GBuffer);
 	}
 
 	void Scene::AddObject(rgr::Object* object)
@@ -177,6 +172,21 @@ namespace rgr
 	const std::vector<Renderable*>& Scene::GetRenderablesInFrustrum() const
 	{
 		return m_Renderables;
+	}
+
+	const std::vector<Renderable*>& Scene::GetRenderablesByCondition(bool(*func)(rgr::Renderable*), const size_t maxCount /*= 64*/) const
+	{
+		static std::vector<Renderable*> renderables(16);
+		renderables.clear();
+
+		for (size_t i = 0; i < m_Renderables.size(); i++)
+		{
+			rgr::Renderable* renderable = m_Renderables[i];
+			if (func(renderable))
+				renderables.push_back(renderable);
+		}
+
+		return renderables;
 	}
 
 }

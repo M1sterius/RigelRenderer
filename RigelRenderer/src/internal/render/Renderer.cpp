@@ -1,18 +1,27 @@
 #include "Renderer.hpp"
 #include "GBuffer.hpp"
 #include "lights/DirectionalLight.hpp"
-
-#include "glew.h"
+#include "renderable/RenderableMesh.hpp"
 #include "Scene.hpp"
 
+#include "glew.h"
+
 namespace rgr
-{
-	void Renderer::DrawMesh(const Mesh* mesh)
+{	
+	static void DrawDebugQuad(const unsigned int textureHandle)
 	{
-		if (mesh->GetMeshType() == rgr::Mesh::MeshType::INDEXED)
-			glDrawElements(GL_TRIANGLES, mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-		else
-			glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertsCount());
+		rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
+		rgr::Shader* testShader = rgr::Shader::GetDepthTestShader();
+
+		quad->GetVertexArray()->Bind();
+		quad->GetIndexBuffer()->Bind();
+
+		testShader->Bind();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureHandle);
+		testShader->SetUniform1i("u_DepthMap", textureHandle);
+
+		quad->Draw();
 	}
 
 	void Renderer::GenerateDepthMapsForLightSources(const Scene* scene)
@@ -42,30 +51,35 @@ namespace rgr
 			light->GenerateDepthMap(depthMapFBO);
 
 			//Render the depth map of the last directional light to a quad for debug
-			//if (static_cast<DirectionalLight*>(light) != nullptr)
-			//{
-			//	rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
-			//	rgr::Shader* testShader = rgr::Shader::GetDepthTestShader();
-
-			//	quad->GetVertexArray()->Bind();
-			//	quad->GetIndexBuffer()->Bind();
-
-			//	testShader->Bind();
-			//	glActiveTexture(GL_TEXTURE0);
-			//	glBindTexture(GL_TEXTURE_2D, light->GetDepthMapHandle());
-			//	testShader->SetUniform1i("u_DepthMap", light->GetDepthMapHandle());
-
-			//	DrawMesh(quad);
-			//}
+			if (static_cast<DirectionalLight*>(light) != nullptr)
+			{
+				DrawDebugQuad(light->GetDepthMapHandle());
+			}
 		}
 	}
 
-	void Renderer::DoGeometryPass(const Scene* scene, const GBuffer& gBuffer)
+	void Renderer::DoGeometryPass(const Scene* scene, const GBuffer* gBuffer)
 	{
+		const auto& renderables = scene->GetRenderablesInFrustrum();
+		const rgr::Shader* shader = rgr::Shader::GetGeometryPassShader();
+		const glm::mat4 viewProj = scene->GetMainCamera()->GetPerspective() * scene->GetMainCamera()->GetView();
 
+		gBuffer->Bind();
+		gBuffer->Clear();
+
+		shader->Bind();
+
+		for (size_t i = 0; i < renderables.size(); i++)
+		{
+			rgr::RenderableMesh* renderable = dynamic_cast<rgr::RenderableMesh*>(renderables[i]);
+
+			if (renderable == nullptr) continue;
+
+			renderable->RenderGeometry(shader, viewProj);
+		}
 	}
 
-	void Renderer::DoLightingPass(const Scene* scene, const GBuffer& gBuffer)
+	void Renderer::DoLightingPass(const Scene* scene, const GBuffer* gBuffer)
 	{
 
 	}

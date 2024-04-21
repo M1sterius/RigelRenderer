@@ -79,13 +79,29 @@ namespace rgr
 		delete m_IndexBuffer;
 	}
 
+	void Mesh::Bind() const
+	{
+		GetVertexArray()->Bind();
+
+		if (GetMeshType() == Mesh::MeshType::INDEXED)
+			GetIndexBuffer()->Bind();
+	}
+
+	void Mesh::Draw() const
+	{
+		if (GetMeshType() == rgr::Mesh::MeshType::INDEXED)
+			glDrawElements(GL_TRIANGLES, GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		else
+			glDrawArrays(GL_TRIANGLES, 0, GetVertsCount());
+	}
+
 	Mesh* Mesh::Get2DQuadMesh()
 	{
 		static std::vector<float> quadVertices{
-		0.6f, 0.9f, 0.0f,
-		0.9f, 0.9f, 0.0f,
-		0.9f, 0.6f, 0.0f,
-		0.6f, 0.6f, 0.0f
+		-1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, -1.0f, 0.0f,
+		-1.0f, -1.0f, 0.0f
 		};
 
 		static std::vector<unsigned int> quadIndices{

@@ -19,9 +19,14 @@ namespace rgr
 
 		void Bind() const;
 		void Unbind() const;
+		void Clear() const;
 
 		void BindPositionTexture() const;
 		void BindNormalTexture() const;
 		void BindColorTexture() const;
+
+		inline const unsigned int GetPositionTexture() const { return m_PositionTexture; }
+		inline const unsigned int GetNormalTexture() const { return m_NormalTexture; }
+		inline const unsigned int GetColorTexture() const { return m_ColorTexture; }
 	};
 }

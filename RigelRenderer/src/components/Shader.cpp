@@ -142,6 +142,17 @@ namespace rgr
 		return depthTestShader;
 	}
 
+	Shader* Shader::GetGeometryPassShader()
+	{
+		static Shader* geometryPassShader = new Shader(rgr::GeometryPassVertex, rgr::GeometryPassFragment);
+		return geometryPassShader;
+	}
+
+	Shader* Shader::GetLightingPassShader()
+	{
+		return nullptr;
+	}
+
 	void Shader::Bind() const
 	{
 		glUseProgram(m_Handle);

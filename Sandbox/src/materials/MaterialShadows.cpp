@@ -5,8 +5,6 @@
 MaterialShadows::MaterialShadows(rgr::Texture* texture, rgr::Shader* shader) : rgr::Material(shader)
 {
 	m_Texture = texture;
-
-	MakeLit();
 }
 
 void MaterialShadows::SetUniforms()

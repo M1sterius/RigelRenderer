@@ -22,7 +22,7 @@ namespace rgr
 		std::vector<Camera*> m_Cameras;
 		std::vector<Light*> m_Lights;
 
-		std::unique_ptr<GBuffer> m_GBuffer;
+		GBuffer* m_GBuffer;
 
 		rgr::Camera* m_MainCamera = nullptr;
 		rgr::Camera* FindMainCamera() const;
@@ -60,6 +60,8 @@ namespace rgr
 		const std::vector<Light*>& GetLightsAround(const glm::vec3 point, const float radius, const size_t maxCount = 16) const;
 		
 		const std::vector<Renderable*>& GetRenderablesInFrustrum() const; // TODO: Add the frustrum culling itself
+
+		const std::vector<Renderable*>& GetRenderablesByCondition(bool(*func)(rgr::Renderable*), const size_t maxCount = 64) const;
 	};
 }
 

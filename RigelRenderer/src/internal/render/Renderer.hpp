@@ -14,11 +14,9 @@ namespace rgr
 	class Renderer
 	{
 	public:
-		static void DrawMesh(const Mesh* mesh);
-
 		static void GenerateDepthMapsForLightSources(const Scene* scene);
 
-		static void DoGeometryPass(const Scene* scene, const GBuffer& gBuffer);
-		static void DoLightingPass(const Scene* scene, const GBuffer& gBuffer);
+		static void DoGeometryPass(const Scene* scene, const GBuffer* gBuffer);
+		static void DoLightingPass(const Scene* scene, const GBuffer* gBuffer);
 	};
 }

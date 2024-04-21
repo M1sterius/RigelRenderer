@@ -1,4 +1,5 @@
 #include "Lights/DirectionalLight.hpp"
+#include "renderable/RenderableMesh.hpp"
 #include "RigelRenderer.hpp"
 #include "glm.hpp"
 #include "glew.h"
@@ -59,9 +60,12 @@ void rgr::DirectionalLight::GenerateDepthMap(const unsigned int depthMapFBO)
 
 	for (size_t i = 0; i < renderables.size(); i++)
 	{
-		rgr::Renderable* renderable = renderables[i];
+		rgr::RenderableMesh* renderable = dynamic_cast<rgr::RenderableMesh*>(renderables[i]);
+
+		if (renderable == nullptr) continue;
 		if (!renderable->shadowCaster) continue;
-		renderable->DepthRender(GetLightSpaceViewProj());
+
+		renderable->RenderDepth(GetLightSpaceViewProj());
 	}
 
 	// Restore the original viewport

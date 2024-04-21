@@ -7,8 +7,6 @@ Material3D::Material3D(rgr::Texture* texture, rgr::Shader* shader) : rgr::Materi
 	m_Texture = texture;
 	m_Diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	m_Shininess = 16.0f;
-
-	MakeLit();
 }
 
 void Material3D::SetUniforms()

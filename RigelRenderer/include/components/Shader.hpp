@@ -48,6 +48,8 @@ namespace rgr
 		static Shader* GetPlainColorShader();
 		static Shader* GetDepthMapShader();
 		static Shader* GetDepthTestShader();
+		static Shader* GetGeometryPassShader();
+		static Shader* GetLightingPassShader();
 	};
 }
 
