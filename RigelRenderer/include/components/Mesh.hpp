@@ -56,7 +56,6 @@ namespace rgr
 		inline rgr::VertexArray* GetVertexArray() const { return m_VertexArray; }
 		inline rgr::IndexBuffer* GetIndexBuffer() const { return m_IndexBuffer; }
 
-		void Bind() const;
 		void Draw() const;
 
 		static Mesh* Get2DQuadMesh();

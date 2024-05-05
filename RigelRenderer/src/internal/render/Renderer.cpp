@@ -6,6 +6,8 @@
 
 #include "glew.h"
 
+#include <iostream>
+
 namespace rgr
 {	
 	static void DrawDebugQuad(const unsigned int textureHandle)
@@ -13,15 +15,14 @@ namespace rgr
 		rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
 		rgr::Shader* testShader = rgr::Shader::GetDepthTestShader();
 
-		quad->GetVertexArray()->Bind();
-		quad->GetIndexBuffer()->Bind();
-
 		testShader->Bind();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureHandle);
-		testShader->SetUniform1i("u_DepthMap", textureHandle);
+		testShader->SetUniform1i("u_DepthMap", 0);
 
 		quad->Draw();
+
+		testShader->Unbind();
 	}
 
 	void Renderer::GenerateDepthMapsForLightSources(const Scene* scene)
@@ -51,17 +52,17 @@ namespace rgr
 			light->GenerateDepthMap(depthMapFBO);
 
 			//Render the depth map of the last directional light to a quad for debug
-			if (static_cast<DirectionalLight*>(light) != nullptr)
-			{
-				DrawDebugQuad(light->GetDepthMapHandle());
-			}
+			//if (static_cast<DirectionalLight*>(light) != nullptr)
+			//{
+			//	DrawDebugQuad(light->GetDepthMapHandle());
+			//}
 		}
 	}
 
 	void Renderer::DoGeometryPass(const Scene* scene, const GBuffer* gBuffer)
 	{
 		const auto& renderables = scene->GetRenderablesInFrustrum();
-		const rgr::Shader* shader = rgr::Shader::GetGeometryPassShader();
+		rgr::Shader* shader = rgr::Shader::GetGeometryPassShader();
 		const glm::mat4 viewProj = scene->GetMainCamera()->GetPerspective() * scene->GetMainCamera()->GetView();
 
 		gBuffer->Bind();
@@ -77,6 +78,11 @@ namespace rgr
 
 			renderable->RenderGeometry(shader, viewProj);
 		}
+
+		gBuffer->Unbind();
+
+		// Draw a texture from gBuffer to a quad for debug
+		DrawDebugQuad(gBuffer->GetPositionTexture());
 	}
 
 	void Renderer::DoLightingPass(const Scene* scene, const GBuffer* gBuffer)

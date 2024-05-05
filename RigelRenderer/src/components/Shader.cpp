@@ -3,6 +3,7 @@
 #include "gtc/type_ptr.hpp"
 #include "glm.hpp"
 #include "BuiltInShaders.hpp"
+#include "Texture.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -161,6 +162,12 @@ namespace rgr
 	void Shader::Unbind() const
 	{
 		glUseProgram(0);
+	}
+
+	void Shader::BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot)
+	{
+		texture->Bind(slot);
+		SetUniform1i(name, slot);
 	}
 
 	void Shader::SetUniform1i(const std::string& name, const int value)

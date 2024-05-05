@@ -7,6 +7,7 @@
 #include "Material.hpp"
 #include "MaterialLit.hpp"
 #include "Mesh.hpp"
+#include "Texture.hpp"
 
 #include "RenderUtility.hpp"
 #include "internal.hpp"
@@ -17,10 +18,11 @@
 
 namespace rgr
 {
-	RenderableMesh::RenderableMesh(rgr::Mesh* mesh, rgr::MaterialLit* material)
-		: m_Mesh(mesh), m_Material(material)
+	RenderableMesh::RenderableMesh(rgr::Mesh* mesh)
+		: m_Mesh(mesh)
 	{
-		
+		diffuseTexture = nullptr;
+		specularTexture = nullptr;
 	}
 
 	RenderableMesh::~RenderableMesh()
@@ -32,8 +34,6 @@ namespace rgr
 	{
 		rgr::Shader* depthMapShader = rgr::Shader::GetDepthMapShader();
 
-		m_Mesh->Bind();
-
 		depthMapShader->Bind();
 		depthMapShader->SetUniformMat4("u_LightSpaceMatrix", false, lightSpaceMatrix);
 		depthMapShader->SetUniformMat4("u_Model", false, GetTransform().GetModelMatrix());
@@ -41,9 +41,20 @@ namespace rgr
 		m_Mesh->Draw();
 	}
 
-	void RenderableMesh::RenderGeometry(const rgr::Shader* shader, const glm::mat4& viewProj)
-	{
+	void RenderableMesh::RenderGeometry(rgr::Shader* shader, const glm::mat4& viewProj)
+	{	
+		const glm::mat4 model = GetTransform().GetModelMatrix();
+		const glm::mat4 mvp = viewProj * model;
 
+		shader->SetUniformMat4("u_MVP", true, mvp); // transpose
+		shader->SetUniformMat4("u_Model", true, model); // transpose
+		shader->SetUniformMat3("u_NormalMatrix", false, GetTransform().GetNormalMatrix()); // no transpose
+
+		if (diffuseTexture != nullptr)
+			shader->BindTexture("u_DiffuseTexture", diffuseTexture, 0);
+		if (specularTexture != nullptr)
+			shader->BindTexture("u_SpecularTexture", specularTexture, 1);
+
+		m_Mesh->Draw();
 	}
-
 }

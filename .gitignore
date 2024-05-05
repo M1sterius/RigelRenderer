@@ -2,3 +2,4 @@ bin/
 CMakeBuild/
 .vscode/
 .vs/
+.idea/

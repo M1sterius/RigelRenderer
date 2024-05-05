@@ -79,20 +79,17 @@ namespace rgr
 		delete m_IndexBuffer;
 	}
 
-	void Mesh::Bind() const
-	{
+	void Mesh::Draw() const
+	{	
 		GetVertexArray()->Bind();
 
 		if (GetMeshType() == Mesh::MeshType::INDEXED)
+		{
 			GetIndexBuffer()->Bind();
-	}
-
-	void Mesh::Draw() const
-	{
-		if (GetMeshType() == rgr::Mesh::MeshType::INDEXED)
 			glDrawElements(GL_TRIANGLES, GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		}
 		else
-			glDrawArrays(GL_TRIANGLES, 0, GetVertsCount());
+			glDrawArrays(GL_TRIANGLES, 0, GetVertsCount());	
 	}
 
 	Mesh* Mesh::Get2DQuadMesh()

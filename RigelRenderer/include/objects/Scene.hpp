@@ -35,8 +35,6 @@ namespace rgr
 		Scene();
 		~Scene();
 
-		void Render();
-
 		/*
 		Performs all graphics calculations and renders the scene to the screen 
 		(must not be called outside rgr::Update)

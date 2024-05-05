@@ -51,23 +51,6 @@ namespace rgr
 		}
 	}
 
-	void Scene::Render()
-	{
-		for (size_t i = 0; i < m_Renderables.size(); i++)
-		{
-			rgr::Renderable* renderable = m_Renderables[i];
-
-			if (rgr::RenderableMesh* meshPtr = dynamic_cast<rgr::RenderableMesh*>(renderable))
-			{
-
-			}
-			else if (rgr::CustomRenderable* customPtr = dynamic_cast<rgr::CustomRenderable*>(renderable))
-			{
-
-			}
-		}
-	}
-
 	void Scene::Update()
 	{	
 		// Make sure that there always is a suitable rendering camera
@@ -76,7 +59,7 @@ namespace rgr
 			return;
 
 		rgr::Renderer::GenerateDepthMapsForLightSources(this);
-		//rgr::Renderer::DoGeometryPass(this, m_GBuffer);
+		rgr::Renderer::DoGeometryPass(this, m_GBuffer);
 	}
 
 	void Scene::AddObject(rgr::Object* object)
@@ -188,5 +171,4 @@ namespace rgr
 
 		return renderables;
 	}
-
 }

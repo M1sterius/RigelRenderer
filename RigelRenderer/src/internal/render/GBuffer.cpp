@@ -1,6 +1,8 @@
 #include "GBuffer.hpp"
 #include "glew.h"
 
+#include <iostream>
+
 namespace rgr
 {
 

@@ -72,12 +72,14 @@ namespace rgr
 		if (glewInit() != GLEW_OK)
 			return -1;
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		// Blending must be disabled during deferred rendering
+
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
+		//glEnable(GL_BLEND);
 
 		ChangeViewport(width, height);
-		glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 

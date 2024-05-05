@@ -11,6 +11,8 @@ namespace rgr
 	static int GetShaderCompileInfo(const unsigned int shaderHandle);
 	static std::string ProcessShaderSource(const std::string& sourcePath);
 
+	class Texture;
+
 	class Shader
 	{
 	private:
@@ -31,6 +33,7 @@ namespace rgr
 		void Bind() const;
 		void Unbind() const;
 
+		void BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot);
 		void SetUniform1i(const std::string& name, const int value);
 		void SetUniform1i(const std::string& name, const unsigned int value);
 		void SetUniform1i(const std::string& name, const size_t value);

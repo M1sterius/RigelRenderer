@@ -19,7 +19,7 @@ int main()
 	if (rgr::Init(WIDTH, HEIGHT, TITLE) != RIGEL_OK)
 		return -1;
 
-	rgr::Scene* scene = new rgr::Scene();
+	auto scene = new rgr::Scene();
 	rgr::SetScene(scene);
 
 	const std::vector<float> quadVertices {
@@ -46,10 +46,6 @@ int main()
 
 	rgr::Shader* shader2D = rgr::Shader::FromFiles("resources/shaders/vertex_2d.glsl", "resources/shaders/fragment_2d.glsl");
 	rgr::Shader* shader3D = rgr::Shader::FromFiles("resources/shaders/vertex_3d_lit.glsl", "resources/shaders/fragment_3d_lit.glsl");
-	
-	rgr::Shader* shaderShadows = rgr::Shader::FromFiles("resources/shaders/vertex_shadows.glsl", "resources/shaders/fragment_shadows.glsl");
-
-	
 
 	//Material2D quadMaterial = Material2D(mstTex, shader2D);
 	//Material3D cubeMaterial = Material3D(new rgr::Texture("resources/textures/wall.jpg"), shader3D);
@@ -57,12 +53,13 @@ int main()
 	//Material3D sphereMaterial = Material3D(new rgr::Texture("resources/textures/world_map.jpg"), shader3D);
 	//Material3D containerMaterial = Material3D(new rgr::Texture("resources/textures/container_diffuse.png"), shader3D);
 
-	rgr::Texture* wallTex = new rgr::Texture("resources/textures/wall.jpg");
+	rgr::Texture* containerDiffuse = new rgr::Texture("resources/textures/container_diffuse.png");
+	rgr::Texture* containerSpecular = new rgr::Texture("resources/textures/container_specular.png");
 
-	rgr::MaterialLit cubeMaterial = rgr::MaterialLit(wallTex);
-
-	rgr::Renderable* cube = new rgr::RenderableMesh(&cubeMesh, &cubeMaterial);
-	cube->GetTransform().SetPosition(glm::vec3(0, 0, 2));
+	rgr::RenderableMesh* cube = new rgr::RenderableMesh(&cubeMesh);
+	cube->diffuseTexture = containerDiffuse;
+	cube->specularTexture = containerSpecular;
+	cube->GetTransform().SetPosition(glm::vec3(0, 3, -2));
 
 	//rgr::Renderable* plane = new rgr::RenderableMesh(&cubeMesh);
 	//plane->GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
@@ -82,7 +79,7 @@ int main()
 	
 	rgr::Camera* camera = new rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
 	camera->GetTransform().SetPosition(glm::vec3(0.0f, 3, 0.0f));
-	camera->GetTransform().SetRotation(glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)));
+	//camera->GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 	camera->FlagAsMain();
 
 	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.4f, glm::vec3(-1, -1, -1));
@@ -181,7 +178,7 @@ int main()
 		camera->GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));
 
 		rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::GetDeltaTime();
-		cube->GetTransform().SetRotation(rot);
+		//cube->GetTransform().SetRotation(rot);
 		//sphere->GetTransform().SetRotation(rot);
 
 		if (rgr::Input::KeyPressed(RGR_KEY_M))
