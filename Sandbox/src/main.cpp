@@ -44,42 +44,28 @@ int main()
 	rgr::Mesh cubeMesh = rgr::Mesh("resources/objects/cube.obj");
 	rgr::Mesh sphereMesh = rgr::Mesh("resources/objects/sphere.obj");
 
-	rgr::Shader* shader2D = rgr::Shader::FromFiles("resources/shaders/vertex_2d.glsl", "resources/shaders/fragment_2d.glsl");
-	rgr::Shader* shader3D = rgr::Shader::FromFiles("resources/shaders/vertex_3d_lit.glsl", "resources/shaders/fragment_3d_lit.glsl");
+	auto containerDiffuse = new rgr::Texture("resources/textures/container_diffuse.png");
+	auto containerSpecular = new rgr::Texture("resources/textures/container_specular.png");
+	auto planeDiffuse = new rgr::Texture("resources/textures/plane_texture.png");
 
-	//Material2D quadMaterial = Material2D(mstTex, shader2D);
-	//Material3D cubeMaterial = Material3D(new rgr::Texture("resources/textures/wall.jpg"), shader3D);
-	//Material3D planeMaterial = Material3D(new rgr::Texture("resources/textures/plane_texture.png"), shader3D);
-	//Material3D sphereMaterial = Material3D(new rgr::Texture("resources/textures/world_map.jpg"), shader3D);
-	//Material3D containerMaterial = Material3D(new rgr::Texture("resources/textures/container_diffuse.png"), shader3D);
-
-	rgr::Texture* containerDiffuse = new rgr::Texture("resources/textures/container_diffuse.png");
-	rgr::Texture* containerSpecular = new rgr::Texture("resources/textures/container_specular.png");
-
-	rgr::RenderableMesh* cube = new rgr::RenderableMesh(&cubeMesh);
+	auto cube = new rgr::RenderableMesh(&cubeMesh);
 	cube->diffuseTexture = containerDiffuse;
 	cube->specularTexture = containerSpecular;
 	cube->GetTransform().SetPosition(glm::vec3(0, 3, -2));
 
-	//rgr::Renderable* plane = new rgr::RenderableMesh(&cubeMesh);
-	//plane->GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
-	//plane->GetTransform().SetScale(glm::vec3(10, 0.01, 10));
-	//
-	//rgr::Renderable* sphere = new rgr::RenderableMesh(&sphereMesh);
-	//sphere->GetTransform().SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
-	//sphere->GetTransform().SetPosition(glm::vec3(0.0, 0.0f, 0.0f));
+	auto cube1 = new rgr::RenderableMesh(&cubeMesh);
+	cube1->diffuseTexture = containerDiffuse;
+	cube1->specularTexture = containerSpecular;
+	cube1->GetTransform().SetPosition(glm::vec3(2, 3, -2));
 
-	//rgr::Renderable* container = new rgr::RenderableMesh(&cubeMesh);
-	//container->GetTransform().SetPosition(glm::vec3(0, 0, -2));
-
-	//rgr::Renderable* quad = new rgr::RenderableMesh(&quadMesh);
-	//quad->GetTransform().space = rgr::Transform::Space::SCREEN_2D;
-	//quad->GetTransform().SetPosition(glm::vec3(-730, 380, 0.0f));
-	//quad->GetTransform().SetScale(glm::vec3(0.5, 0.5, 1));
+	auto plane = new rgr::RenderableMesh(&cubeMesh);
+	plane->diffuseTexture = planeDiffuse;
+	plane->GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
+	plane->GetTransform().SetScale(glm::vec3(10, 0.01, 10));
 	
-	rgr::Camera* camera = new rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
+	auto camera = new rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
 	camera->GetTransform().SetPosition(glm::vec3(0.0f, 3, 0.0f));
-	//camera->GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
+	camera->GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 	camera->FlagAsMain();
 
 	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.4f, glm::vec3(-1, -1, -1));
@@ -124,8 +110,9 @@ int main()
 
 	scene->AddObject(camera);
 	scene->AddObject(cube);
+	scene->AddObject(cube1);
+	scene->AddObject(plane);
 	//scene->AddObject(quad);
-	//scene->AddObject(plane);
 	//scene->AddObject(sphere);
 	//scene->AddObject(container);
 
@@ -189,8 +176,8 @@ int main()
 				camera->viewMode = rgr::Camera::ViewMode::WIREFRAME;
 		}
 
-		float x = glm::cos(rgr::GetTimePassed() * 3);
-		float z = glm::sin(rgr::GetTimePassed() * 3);
+		auto x = (float)glm::cos(rgr::GetTimePassed() * 3);
+		auto z = (float)glm::sin(rgr::GetTimePassed() * 3);
 		sptLight.direction = glm::vec3(x, 0.0, z);
 
 		rgr::Update();

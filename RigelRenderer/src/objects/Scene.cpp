@@ -42,7 +42,7 @@ namespace rgr
 		}
 		if (noMainCameraFlag)
 		{
-			if (m_Cameras.size() > 0) return m_Cameras[0];
+			if (!m_Cameras.empty()) return m_Cameras[0];
 			else
 			{
 				std::cout << "Scene '" << this->name << "' does not contain a suitable rendering camera!" << '\n';
@@ -60,19 +60,20 @@ namespace rgr
 
 		rgr::Renderer::GenerateDepthMapsForLightSources(this);
 		rgr::Renderer::DoGeometryPass(this, m_GBuffer);
+		rgr::Renderer::DoLightingPass(this, m_GBuffer);
 	}
 
 	void Scene::AddObject(rgr::Object* object)
 	{
-		if (rgr::Renderable* renderablePtr = dynamic_cast<rgr::Renderable*>(object))
+		if (auto renderablePtr = dynamic_cast<rgr::Renderable*>(object))
 		{
 			m_Renderables.push_back(renderablePtr);
 		}
-		else if (rgr::Camera* cameraPtr = dynamic_cast<rgr::Camera*>(object))
+		else if (auto cameraPtr = dynamic_cast<rgr::Camera*>(object))
 		{
 			m_Cameras.push_back(cameraPtr);
 		}
-		else if (rgr::Light* lightPtr = dynamic_cast<rgr::Light*>(object))
+		else if (auto lightPtr = dynamic_cast<rgr::Light*>(object))
 		{
 			m_Lights.push_back(lightPtr);
 		}
@@ -86,7 +87,7 @@ namespace rgr
 	}
 	void Scene::RemoveObject(rgr::Object* object)
 	{
-		if (rgr::Renderable* renderablePtr = dynamic_cast<rgr::Renderable*>(object))
+		if (auto renderablePtr = dynamic_cast<rgr::Renderable*>(object))
 		{
 			auto iterator = std::find(m_Renderables.begin(), m_Renderables.end(), renderablePtr);
 			if (iterator != m_Renderables.end())
@@ -99,7 +100,7 @@ namespace rgr
 				std::cout << "Unable to find a Renderable by given pointer!" << '\n';
 			}
 		}
-		else if (rgr::Camera* cameraIteratedPtr = dynamic_cast<rgr::Camera*>(object))
+		else if (auto cameraIteratedPtr = dynamic_cast<rgr::Camera*>(object))
 		{
 			auto iterator = std::find(m_Cameras.begin(), m_Cameras.end(), cameraIteratedPtr);
 			if (iterator != m_Cameras.end())
@@ -109,7 +110,7 @@ namespace rgr
 				std::cout << "Unable to find a Camera by given pointer!" << '\n';
 			}
 		}
-		else if (rgr::Light* lightPtr = dynamic_cast<rgr::Light*>(object))
+		else if (auto lightPtr = dynamic_cast<rgr::Light*>(object))
 		{
 			auto iterator = std::find(m_Lights.begin(), m_Lights.end(), lightPtr);
 			if (iterator != m_Lights.end())
@@ -162,11 +163,10 @@ namespace rgr
 		static std::vector<Renderable*> renderables(16);
 		renderables.clear();
 
-		for (size_t i = 0; i < m_Renderables.size(); i++)
+		for (auto renderable : m_Renderables)
 		{
-			rgr::Renderable* renderable = m_Renderables[i];
-			if (func(renderable))
-				renderables.push_back(renderable);
+            if (func(renderable))
+                renderables.push_back(renderable);
 		}
 
 		return renderables;

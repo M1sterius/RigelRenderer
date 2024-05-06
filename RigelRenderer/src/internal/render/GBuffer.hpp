@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdio>
+
 namespace rgr
 {
 	class GBuffer
@@ -14,7 +16,7 @@ namespace rgr
 		size_t m_ScreenWidth;
 		size_t m_ScreenHeight;
 	public:
-		GBuffer(const size_t screenWidth, const size_t screenHeight);
+		GBuffer(size_t screenWidth, size_t screenHeight);
 		~GBuffer();
 
 		void Bind() const;

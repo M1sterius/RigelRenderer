@@ -77,16 +77,19 @@ namespace rgr
 
 	void GBuffer::BindPositionTexture() const
 	{
-
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_PositionTexture);
 	}
 
 	void GBuffer::BindNormalTexture() const
 	{
-
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, m_NormalTexture);
 	}
 
 	void GBuffer::BindColorTexture() const
 	{
-
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, m_ColorTexture);
 	}
 }

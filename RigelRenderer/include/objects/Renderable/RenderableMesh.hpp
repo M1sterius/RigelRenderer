@@ -15,10 +15,9 @@ namespace rgr
 	private:
 		Mesh* m_Mesh;
 
-		void SetMaterialUniforms(rgr::Shader* shader);
 	public:
-		RenderableMesh(rgr::Mesh* mesh);
-		virtual ~RenderableMesh();
+		explicit RenderableMesh(rgr::Mesh* mesh);
+		~RenderableMesh() override;
 
 		Texture* diffuseTexture;
 		Texture* specularTexture;

@@ -10,12 +10,12 @@
 #include "objects/Scene.hpp"
 #include "objects/Object.hpp"
 #include "objects/Camera.hpp"
-#include "objects/Lights/Light.hpp"
+#include "objects/lights/Light.hpp"
 #include "objects/Lights/PointLight.hpp"
 #include "objects/Lights/DirectionalLight.hpp"
 #include "objects/Lights/SpotLight.hpp"
 
-#include "objects/Renderable/Renderable.hpp"
+#include "objects/renderable/Renderable.hpp"
 #include "objects/Renderable/RenderableMesh.hpp"
 
 #include "input/Input.hpp"
@@ -37,7 +37,7 @@ namespace rgr
 	*/
 	int Init(size_t width, size_t height, const char* title);
 
-	// Makes the scene at given pointer active so it will be rendered and processed in rgr::Update()
+	// Makes the scene at given pointer active, so it will be rendered and processed in rgr::Update()
 	void SetScene(rgr::Scene* scene);
 
 	// Main game loop function that renders scene, processes events and updates all library modules

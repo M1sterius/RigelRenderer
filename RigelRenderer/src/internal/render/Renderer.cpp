@@ -43,19 +43,17 @@ namespace rgr
 		rgr::Camera* camera = scene->GetMainCamera();
 		const auto& lights = scene->GetLightsAround(camera->GetTransform().GetPosition(), camera->shadowsVisibilityDistance);
 
-		for (size_t i = 0; i < lights.size(); i++)
+		for (auto light : lights)
 		{
-			rgr::Light* light = lights[i];
-
-			if (!light->castShadows) continue;
+            if (!light->castShadows) continue;
 
 			light->GenerateDepthMap(depthMapFBO);
 
 			//Render the depth map of the last directional light to a quad for debug
-			//if (static_cast<DirectionalLight*>(light) != nullptr)
-			//{
-			//	DrawDebugQuad(light->GetDepthMapHandle());
-			//}
+//			if (static_cast<DirectionalLight*>(light) != nullptr)
+//			{
+//				DrawDebugQuad(light->GetDepthMapHandle());
+//			}
 		}
 	}
 
@@ -70,19 +68,17 @@ namespace rgr
 
 		shader->Bind();
 
-		for (size_t i = 0; i < renderables.size(); i++)
+		for (auto i : renderables)
 		{
-			rgr::RenderableMesh* renderable = dynamic_cast<rgr::RenderableMesh*>(renderables[i]);
-
+			auto renderable = dynamic_cast<rgr::RenderableMesh*>(i);
 			if (renderable == nullptr) continue;
-
 			renderable->RenderGeometry(shader, viewProj);
 		}
 
 		gBuffer->Unbind();
 
 		// Draw a texture from gBuffer to a quad for debug
-		DrawDebugQuad(gBuffer->GetPositionTexture());
+		DrawDebugQuad(gBuffer->GetColorTexture());
 	}
 
 	void Renderer::DoLightingPass(const Scene* scene, const GBuffer* gBuffer)
@@ -90,4 +86,8 @@ namespace rgr
 
 	}
 
+	void Renderer::DoForwardPass(const Scene* scene)
+	{
+
+	}
 }

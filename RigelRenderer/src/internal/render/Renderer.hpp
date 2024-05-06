@@ -18,5 +18,6 @@ namespace rgr
 
 		static void DoGeometryPass(const Scene* scene, const GBuffer* gBuffer);
 		static void DoLightingPass(const Scene* scene, const GBuffer* gBuffer);
+		static void DoForwardPass(const Scene* scene);
 	};
 }

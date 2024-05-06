@@ -4,17 +4,11 @@
 #include "Camera.hpp"
 #include "Scene.hpp"
 #include "Shader.hpp"
-#include "Material.hpp"
-#include "MaterialLit.hpp"
 #include "Mesh.hpp"
 #include "Texture.hpp"
-
-#include "RenderUtility.hpp"
-#include "internal.hpp"
 #include "glm.hpp"
 
 #include <iostream>
-#include <vector>
 
 namespace rgr
 {
@@ -47,7 +41,7 @@ namespace rgr
 		const glm::mat4 mvp = viewProj * model;
 
 		shader->SetUniformMat4("u_MVP", true, mvp); // transpose
-		shader->SetUniformMat4("u_Model", true, model); // transpose
+		shader->SetUniformMat4("u_Model", false, model); // no transpose
 		shader->SetUniformMat3("u_NormalMatrix", false, GetTransform().GetNormalMatrix()); // no transpose
 
 		if (diffuseTexture != nullptr)
