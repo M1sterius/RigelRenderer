@@ -18,7 +18,7 @@ namespace rgr
 	private:
 		unsigned int m_Handle;
 		bool m_ShaderHasError;
-		int m_UnifromsCallback;
+		int m_UniformsCallback;
 		std::unordered_map<std::string, int> m_UniformsLocationCache;
 		
 		Shader(const std::string& vertexSource, const std::string& fragmentSource);
@@ -48,11 +48,16 @@ namespace rgr
 		int FindUniform(const std::string& name);
 		int GetUniformsCallback();
 
-		static Shader* GetPlainColorShader();
-		static Shader* GetDepthMapShader();
-		static Shader* GetDepthTestShader();
-		static Shader* GetGeometryPassShader();
-		static Shader* GetLightingPassShader();
+        enum class BUILT_IN_SHADERS
+        {
+            PLAIN_COLOR,
+            DEPTH_MAP,
+            GEOMETRY_PASS,
+            LIGHTING_PASS,
+            TEXTURE_TEST
+        };
+
+        static Shader* GetBuiltInShader(BUILT_IN_SHADERS type);
 	};
 }
 

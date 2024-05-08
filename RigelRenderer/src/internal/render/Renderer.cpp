@@ -13,12 +13,12 @@ namespace rgr
 	static void DrawDebugQuad(const unsigned int textureHandle)
 	{
 		rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
-		rgr::Shader* testShader = rgr::Shader::GetDepthTestShader();
+		rgr::Shader* testShader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
 
 		testShader->Bind();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureHandle);
-		testShader->SetUniform1i("u_DepthMap", 0);
+		testShader->SetUniform1i("u_Texture", 0);
 
 		quad->Draw();
 
@@ -60,7 +60,7 @@ namespace rgr
 	void Renderer::DoGeometryPass(const Scene* scene, const GBuffer* gBuffer)
 	{
 		const auto& renderables = scene->GetRenderablesInFrustrum();
-		rgr::Shader* shader = rgr::Shader::GetGeometryPassShader();
+		rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::GEOMETRY_PASS);
 		const glm::mat4 viewProj = scene->GetMainCamera()->GetPerspective() * scene->GetMainCamera()->GetView();
 
 		gBuffer->Bind();

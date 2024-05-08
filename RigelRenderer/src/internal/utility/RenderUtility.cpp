@@ -139,7 +139,7 @@ namespace rgr
 
 	void DrawErrorPlaceholder(const glm::mat4& mvp)
 	{
-		rgr::Shader* phShader = rgr::Shader::GetPlainColorShader();
+		rgr::Shader* phShader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
 
 		/*
 		If there were any errors, then unbind material with errors and use placeholder shader
@@ -153,7 +153,7 @@ namespace rgr
 
 	void DrawWireframe(const glm::mat4& mvp)
 	{
-		rgr::Shader* phShader = rgr::Shader::GetPlainColorShader();
+		rgr::Shader* phShader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
 
 		phShader->Bind();
 		phShader->SetUniformMat4("u_MVP", true, mvp);

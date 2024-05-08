@@ -31,6 +31,7 @@ namespace rgr
 
 		return 1;
 	}
+
 	// Processes glsl source code in the file at the given path so it can be used as OpenGL shader source
 	std::string ProcessShaderSource(const std::string& sourcePath)
 	{
@@ -109,12 +110,12 @@ namespace rgr
 		if (processedVertexSource.empty())
 		{
 			std::cout << "The file at path: '" << vertexPath << "' does not exist!" << '\n';
-			return GetPlainColorShader();
+			return GetBuiltInShader(BUILT_IN_SHADERS::PLAIN_COLOR);
 		}
 		if (processedFragmentSource.empty())
 		{
 			std::cout << "The file at path: '" << fragmentPath << "' does not exist!" << '\n';
-			return GetPlainColorShader();
+			return GetBuiltInShader(BUILT_IN_SHADERS::PLAIN_COLOR);
 		}
 
 		return new rgr::Shader(processedVertexSource, processedFragmentSource);
@@ -125,34 +126,30 @@ namespace rgr
 		return new rgr::Shader(vertexSource, fragmentSource);
 	}
 
-	Shader* Shader::GetPlainColorShader()
-	{
-		static Shader* plainColorShader = new Shader(rgr::PlainColorVertex, rgr::PlainColorFragment);
-		return plainColorShader;
-	}
-	
-	Shader* Shader::GetDepthMapShader()
-	{
-		static Shader* depthMapShader = new Shader(rgr::DepthMapVertex, rgr::DepthMapFragment);
-		return depthMapShader;
-	}
+    Shader* Shader::GetBuiltInShader(const Shader::BUILT_IN_SHADERS type)
+    {
+        static auto plainColorShader = Shader(rgr::PlainColorVertex, rgr::PlainColorFragment);
+        static auto depthMapShader = Shader(rgr::DepthMapVertex, rgr::DepthMapFragment);
+        static auto geometryPassShader = Shader(rgr::GeometryPassVertex, rgr::GeometryPassFragment);
+        // Lighting pass shader!
+        static auto textureTestShader = Shader(rgr::TextureTestVertex, rgr::TextureTestFragment);
 
-	Shader* Shader::GetDepthTestShader()
-	{
-		static Shader* depthTestShader = new Shader(rgr::DepthTestVertex, rgr::DepthTestFragment);
-		return depthTestShader;
-	}
-
-	Shader* Shader::GetGeometryPassShader()
-	{
-		static Shader* geometryPassShader = new Shader(rgr::GeometryPassVertex, rgr::GeometryPassFragment);
-		return geometryPassShader;
-	}
-
-	Shader* Shader::GetLightingPassShader()
-	{
-		return nullptr;
-	}
+        switch (type)
+        {
+            case BUILT_IN_SHADERS::PLAIN_COLOR:
+                return &plainColorShader;
+            case BUILT_IN_SHADERS::DEPTH_MAP:
+                return &depthMapShader;
+            case BUILT_IN_SHADERS::GEOMETRY_PASS:
+                return &geometryPassShader;
+            case BUILT_IN_SHADERS::LIGHTING_PASS:
+                return nullptr; // TODO: Implement shader for lighting pass
+            case BUILT_IN_SHADERS::TEXTURE_TEST:
+                return &textureTestShader;
+            default:
+                return nullptr;
+        }
+    }
 
 	void Shader::Bind() const
 	{
@@ -245,14 +242,14 @@ namespace rgr
 			return location;
 		}
 		std::cout << "Unable to find uniform named: " << name << '\n';
-		m_UnifromsCallback++;
+		m_UniformsCallback++;
 		return -1;
 	}
 
 	int Shader::GetUniformsCallback()
 	{
-		int callback = m_UnifromsCallback;
-		m_UnifromsCallback = 0;
+		int callback = m_UniformsCallback;
+        m_UniformsCallback = 0;
 		return callback;
 	}
 }

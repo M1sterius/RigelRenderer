@@ -26,7 +26,7 @@ namespace rgr
 
 	void RenderableMesh::RenderDepth(const glm::mat4& lightSpaceMatrix)
 	{
-		rgr::Shader* depthMapShader = rgr::Shader::GetDepthMapShader();
+		rgr::Shader* depthMapShader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DEPTH_MAP);
 
 		depthMapShader->Bind();
 		depthMapShader->SetUniformMat4("u_LightSpaceMatrix", false, lightSpaceMatrix);

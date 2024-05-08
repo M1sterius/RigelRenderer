@@ -56,7 +56,7 @@ namespace rgr
 		"} \n"
 	};
 
-	const std::string DepthTestVertex =
+	const std::string TextureTestVertex =
 	{
 		"#version 440 \n"
 
@@ -71,21 +71,19 @@ namespace rgr
 		"	v_TexCoords = a_TexCoords; \n"
 		"} \n"	
 	};
-	const std::string DepthTestFragment =
+	const std::string TextureTestFragment =
 	{
 		"#version 440 \n"
 
 		"in vec2 v_TexCoords; \n"
 
-		"uniform sampler2D u_DepthMap; \n"
+		"uniform sampler2D u_Texture; \n"
 
 		"out vec4 FragColor; \n"
 
 		"void main() \n"
 		"{ \n"
-		"	//float depthValue = texture(u_DepthMap, v_TexCoords).r; \n"
-		"	//FragColor = vec4(vec3(depthValue), 1.0); \n"
-		"	FragColor = vec4(texture(u_DepthMap, v_TexCoords).rgb, 1.0); \n"
+		"	FragColor = vec4(texture(u_Texture, v_TexCoords).rgb, 1.0); \n"
 		"} \n"
 	};
 
