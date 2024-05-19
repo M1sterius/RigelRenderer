@@ -51,7 +51,7 @@ const glm::mat4 rgr::DirectionalLight::GetLightSpaceViewProj()
 
 void rgr::DirectionalLight::GenerateDepthMap(const unsigned int depthMapFBO)
 {
-	const auto& renderables = m_ScenePtr->GetRenderablesInFrustrum();
+	const auto& renderables = m_ScenePtr->GetRenderablesInFrustum();
 
 	glViewport(0, 0, m_DepthMapSize, m_DepthMapSize);
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);

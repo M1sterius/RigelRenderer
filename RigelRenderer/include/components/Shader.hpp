@@ -8,9 +8,6 @@
 
 namespace rgr
 {
-	static int GetShaderCompileInfo(const unsigned int shaderHandle);
-	static std::string ProcessShaderSource(const std::string& sourcePath);
-
 	class Texture;
 
 	class Shader
@@ -18,7 +15,7 @@ namespace rgr
 	private:
 		unsigned int m_Handle;
 		bool m_ShaderHasError;
-		int m_UniformsCallback;
+		int m_UniformsCallback = 0;
 		std::unordered_map<std::string, int> m_UniformsLocationCache;
 		
 		Shader(const std::string& vertexSource, const std::string& fragmentSource);

@@ -153,7 +153,7 @@ namespace rgr
 		return lights;
 	}
 
-	const std::vector<Renderable*>& Scene::GetRenderablesInFrustrum() const
+	const std::vector<Renderable*>& Scene::GetRenderablesInFrustum() const
 	{
 		return m_Renderables;
 	}

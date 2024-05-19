@@ -68,10 +68,10 @@ int main()
 	camera->GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 	camera->FlagAsMain();
 
-	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.4f, glm::vec3(-1, -1, -1));
-	dirLight.GetTransform().SetPosition(glm::vec3(3, 3, 3));
+	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.5f, glm::vec3(-1, -1, 0));
+	dirLight.GetTransform().SetPosition(glm::vec3(0, 30, 0));
 
-	rgr::DirectionalLight dirLight1 = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.4f, glm::vec3(1, -1, 1));
+	rgr::DirectionalLight dirLight1 = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.5f, glm::vec3(1, -1, 1));
 	dirLight1.GetTransform().SetPosition(glm::vec3(-3, 3, -3));
 
 	rgr::PointLight pntLight = rgr::PointLight(
@@ -117,7 +117,7 @@ int main()
 	//scene->AddObject(container);
 
 	scene->AddObject(&dirLight);
-	scene->AddObject(&dirLight1);
+	//scene->AddObject(&dirLight1);
 	scene->AddObject(&pntLight);
 	scene->AddObject(&pntLight1);
 	scene->AddObject(&sptLight);

@@ -9,7 +9,9 @@
 #include <iostream>
 
 namespace rgr
-{	
+{
+    unsigned int Renderer::m_DepthMapFBOHandle = 0;
+
 	static void DrawDebugQuad(const unsigned int textureHandle)
 	{
 		rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
@@ -25,20 +27,21 @@ namespace rgr
 		testShader->Unbind();
 	}
 
+    void Renderer::InitializeDepthMapFBO()
+    {
+        // Note that attaching a depth map texture is skipped, because one will later be attached for each light individually
+        glGenFramebuffers(1, &m_DepthMapFBOHandle);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBOHandle);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
 	void Renderer::GenerateDepthMapsForLightSources(const Scene* scene)
 	{
-		static unsigned int depthMapFBO = 0;
-
 		// Pre-setup depth map framebuffer for future depth map generations only if it hasn't been set up yet
-		if (depthMapFBO == 0)
-		{
-			// Note that attaching a depth map is skipped, because one will later be attached for each light individually
-			glGenFramebuffers(1, &depthMapFBO);
-			glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-			glDrawBuffer(GL_NONE);
-			glReadBuffer(GL_NONE);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		}
+		if (m_DepthMapFBOHandle == 0)
+            InitializeDepthMapFBO();
 
 		rgr::Camera* camera = scene->GetMainCamera();
 		const auto& lights = scene->GetLightsAround(camera->GetTransform().GetPosition(), camera->shadowsVisibilityDistance);
@@ -46,20 +49,13 @@ namespace rgr
 		for (auto light : lights)
 		{
             if (!light->castShadows) continue;
-
-			light->GenerateDepthMap(depthMapFBO);
-
-			//Render the depth map of the last directional light to a quad for debug
-//			if (static_cast<DirectionalLight*>(light) != nullptr)
-//			{
-//				DrawDebugQuad(light->GetDepthMapHandle());
-//			}
+			light->GenerateDepthMap(m_DepthMapFBOHandle);
 		}
 	}
 
 	void Renderer::DoGeometryPass(const Scene* scene, const GBuffer* gBuffer)
 	{
-		const auto& renderables = scene->GetRenderablesInFrustrum();
+		const auto& renderables = scene->GetRenderablesInFrustum();
 		rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::GEOMETRY_PASS);
 		const glm::mat4 viewProj = scene->GetMainCamera()->GetPerspective() * scene->GetMainCamera()->GetView();
 
@@ -78,16 +74,63 @@ namespace rgr
 		gBuffer->Unbind();
 
 		// Draw a texture from gBuffer to a quad for debug
-		DrawDebugQuad(gBuffer->GetColorTexture());
+		//DrawDebugQuad(gBuffer->GetColorTexture());
 	}
+
+    void Renderer::SetDirectionalLightUniforms(const DirectionalLight* light, Shader* shader, const size_t lightIndex)
+    {
+        std::string u_name = "u_DirectionalLights[" + std::to_string(lightIndex) + "].";
+        shader->SetUniformVec3(u_name + "color", light->color);
+        shader->SetUniform1f(u_name + "intensity", light->intensity);
+        shader->SetUniformVec3(u_name + "direction", light->direction);
+    }
 
 	void Renderer::DoLightingPass(const Scene* scene, const GBuffer* gBuffer)
 	{
+        rgr::Camera* camera = scene->GetMainCamera();
+        const auto& lights = scene->GetLightsAround(camera->GetTransform().GetPosition(),camera->shadowsVisibilityDistance);
+        rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::LIGHTING_PASS);
+        rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
 
+        gBuffer->Clear();
+        shader->Bind();
+
+        shader->SetUniform1i("g_Position", 0);
+        shader->SetUniform1i("g_Normal", 1);
+        shader->SetUniform1i("g_AlbedoSpec", 2);
+        shader->SetUniformVec3("u_ViewPos", camera->GetTransform().GetPosition());
+
+        gBuffer->BindPositionTexture();
+        gBuffer->BindNormalTexture();
+        gBuffer->BindColorTexture();
+
+        size_t dirCount = 0;
+
+        for (auto light: lights)
+        {
+            if (auto dirLight = dynamic_cast<DirectionalLight*>(light))
+            {
+                if (dirCount > (MAX_DIR_LIGHTS_COUNT - 1)) continue;
+                SetDirectionalLightUniforms(dirLight, shader, dirCount);
+                dirCount++;
+            }
+        }
+
+        shader->SetUniform1i("u_DirLightsCount", dirCount);
+
+        quad->Draw();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer->GetFBOHandle());
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glBlitFramebuffer(0, 0, gBuffer->GetBufferWidth(), gBuffer->GetBufferHeight(),
+                          0, 0, gBuffer->GetBufferWidth(), gBuffer->GetBufferHeight(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void Renderer::DoForwardPass(const Scene* scene)
 	{
 
 	}
+
+
 }

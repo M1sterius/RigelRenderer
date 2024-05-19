@@ -32,7 +32,7 @@ namespace rgr
 		return 1;
 	}
 
-	// Processes glsl source code in the file at the given path so it can be used as OpenGL shader source
+	// Processes glsl source code in the file at the given path, so it can be used as OpenGL shader source
 	std::string ProcessShaderSource(const std::string& sourcePath)
 	{
 		std::ifstream stream(sourcePath);
@@ -131,7 +131,7 @@ namespace rgr
         static auto plainColorShader = Shader(rgr::PlainColorVertex, rgr::PlainColorFragment);
         static auto depthMapShader = Shader(rgr::DepthMapVertex, rgr::DepthMapFragment);
         static auto geometryPassShader = Shader(rgr::GeometryPassVertex, rgr::GeometryPassFragment);
-        // Lighting pass shader!
+        static auto lightingPassShader = Shader(rgr::LightingPassVertex, rgr::LightingPassFragment);
         static auto textureTestShader = Shader(rgr::TextureTestVertex, rgr::TextureTestFragment);
 
         switch (type)
@@ -143,7 +143,7 @@ namespace rgr
             case BUILT_IN_SHADERS::GEOMETRY_PASS:
                 return &geometryPassShader;
             case BUILT_IN_SHADERS::LIGHTING_PASS:
-                return nullptr; // TODO: Implement shader for lighting pass
+                return &lightingPassShader;
             case BUILT_IN_SHADERS::TEXTURE_TEST:
                 return &textureTestShader;
             default:
