@@ -1,19 +1,13 @@
 #include "RigelRenderer.hpp"
 #include "glAbstraction/GlAbstraction.hpp"
 #include "render/GBuffer.hpp"
-#include "render/Renderer.hpp"
+#include "render/RenderHandler.hpp"
 #include "renderable/CustomRenderable.hpp"
 
-#include "RenderUtility.hpp"
 #include "Logger.hpp"
 
-#include "gtx/string_cast.hpp"
 #include "glm.hpp"
 #include "glfw3.h"
-#include "glew.h"
-
-//#define GLT_IMPLEMENTATION
-//#include "gltext.h"
 
 #include <iostream>
 
@@ -21,12 +15,12 @@ namespace rgr
 {
 	Scene::Scene()
 	{
-		m_GBuffer = new GBuffer(rgr::GetViewportSize().width, rgr::GetViewportSize().height);
-	}
+        m_RenderHandler = std::make_unique<RenderHandler>(this);
+    }
 
 	Scene::~Scene()
 	{
-		delete m_GBuffer;
+
 	}
 
 	rgr::Camera* Scene::FindMainCamera() const
@@ -58,9 +52,10 @@ namespace rgr
 		if (m_MainCamera == nullptr)
 			return;
 
-		rgr::Renderer::GenerateDepthMapsForLightSources(this);
-		rgr::Renderer::DoGeometryPass(this, m_GBuffer);
-		rgr::Renderer::DoLightingPass(this, m_GBuffer);
+        m_RenderHandler->GenerateDepthMaps();
+        m_RenderHandler->DoGeometryPass();
+        m_RenderHandler->DoLightingPass();
+        m_RenderHandler->DoForwardPass();
 	}
 
 	void Scene::AddObject(rgr::Object* object)

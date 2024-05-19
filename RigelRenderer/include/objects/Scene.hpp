@@ -9,7 +9,8 @@
 #include <memory>
 
 namespace rgr
-{	
+{
+    class RenderHandler;
 	class GBuffer;
 
 	/*
@@ -22,7 +23,7 @@ namespace rgr
 		std::vector<Camera*> m_Cameras;
 		std::vector<Light*> m_Lights;
 
-		GBuffer* m_GBuffer;
+        std::unique_ptr<RenderHandler> m_RenderHandler;
 
 		rgr::Camera* m_MainCamera = nullptr;
 		rgr::Camera* FindMainCamera() const;
