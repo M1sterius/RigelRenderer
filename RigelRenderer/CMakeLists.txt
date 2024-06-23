@@ -2,15 +2,12 @@ cmake_minimum_required(VERSION 3.19)
 
 project(RigelRenderer)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/RigelRenderer/${CMAKE_BUILD_TYPE})
 
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.hpp")
 add_library(RigelRenderer STATIC ${SOURCES})
-
-set_target_properties(RigelRenderer PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin/RigelRenderer/Debug"
-    ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin/RigelRenderer/Release"
-)
 
 target_compile_definitions(RigelRenderer PRIVATE "GLEW_STATIC")
 target_compile_definitions(RigelRenderer PRIVATE "INTERNAL_LIB")

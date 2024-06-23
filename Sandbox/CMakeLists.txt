@@ -2,15 +2,12 @@ cmake_minimum_required(VERSION 3.19)
 
 project(Sandbox)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD_TYPE})
 
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.hpp")
 add_executable(Sandbox ${SOURCES})
-
-set_target_properties(Sandbox PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin/Sandbox/Debug"
-    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin/Sandbox/Release"
-)
 
 target_compile_definitions(Sandbox PRIVATE "GLEW_STATIC")
 
