@@ -1,4 +1,4 @@
-#include "Lights/DirectionalLight.hpp"
+#include "lights/DirectionalLight.hpp"
 #include "renderable/RenderableMesh.hpp"
 #include "RigelRenderer.hpp"
 #include "glm.hpp"
@@ -15,7 +15,7 @@ rgr::DirectionalLight::DirectionalLight(const glm::vec3& color, const float inte
 	glGenTextures(1, &m_DepthMapHandle);
 	glBindTexture(GL_TEXTURE_2D, m_DepthMapHandle);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-		m_DepthMapSize, m_DepthMapSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		depthMapSize, depthMapSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -35,7 +35,6 @@ const glm::mat4 rgr::DirectionalLight::GetLightSpaceView()
 
 	const glm::vec3 dir = glm::normalize(direction);
 	const glm::vec3 pos = GetTransform().GetPosition();
-	//const glm::vec3 right = glm::normalize(glm::cross(up, dir));
 	const glm::mat4 view = glm::lookAt(pos, pos + dir, up);
 
 	return view;
@@ -49,27 +48,17 @@ const glm::mat4 rgr::DirectionalLight::GetLightSpaceViewProj()
 	return viewProj;
 }
 
-void rgr::DirectionalLight::GenerateDepthMap(const unsigned int depthMapFBO)
+void rgr::DirectionalLight::GenerateDepthMap()
 {
 	const auto& renderables = m_ScenePtr->GetRenderablesInFrustum();
 
-	glViewport(0, 0, m_DepthMapSize, m_DepthMapSize);
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthMapHandle, 0);
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-	for (size_t i = 0; i < renderables.size(); i++)
+	for (auto i : renderables)
 	{
-		rgr::RenderableMesh* renderable = dynamic_cast<rgr::RenderableMesh*>(renderables[i]);
+		auto renderable = dynamic_cast<rgr::RenderableMesh*>(i);
 
 		if (renderable == nullptr) continue;
 		if (!renderable->shadowCaster) continue;
 
 		renderable->RenderDepth(GetLightSpaceViewProj());
 	}
-
-	// Restore the original viewport
-	rgr::ViewportSize size = rgr::GetViewportSize();
-	glViewport(0, 0, size.width, size.height);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

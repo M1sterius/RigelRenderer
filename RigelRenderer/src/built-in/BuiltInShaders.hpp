@@ -83,7 +83,8 @@ namespace rgr
 
 		"void main() \n"
 		"{ \n"
-		"	FragColor = vec4(texture(u_Texture, v_TexCoords).rgb, 1.0); \n"
+		"	float depth = texture(u_Texture, v_TexCoords).r; \n"
+        "   FragColor = vec4(vec3(depth), 1.0); \n"
 		"} \n"
 	};
 
@@ -172,7 +173,7 @@ namespace rgr
         "uniform sampler2D g_Normal; \n"
         "uniform sampler2D g_AlbedoSpec; \n"
 
-        "uniform DirectionalLight u_DirectionalLights[8]; \n"
+        "uniform DirectionalLight u_DirectionalLights[16]; \n"
         "uniform uint u_DirLightsCount; \n"
 
         "out vec4 FragColor; \n"
@@ -201,7 +202,7 @@ namespace rgr
             "vec3 viewDir = normalize(u_ViewPos - FragPos);"
 
             "vec3 color = vec3(0.0); \n"
-            "color += Diffuse * 0.1; \n"
+            "color += Diffuse * 0.15; \n"
 
             "for (uint i = 0; i < u_DirLightsCount; i++) { \n"
                 "color += CalcDirLight(u_DirectionalLights[i], Normal, viewDir, Diffuse, Specular); \n"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "fwd.hpp"
-#include "internal.hpp"
+#include "Internal.hpp"
 
 #include <string>
 #include <unordered_map>

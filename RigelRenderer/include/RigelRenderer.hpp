@@ -11,12 +11,12 @@
 #include "objects/Object.hpp"
 #include "objects/Camera.hpp"
 #include "objects/lights/Light.hpp"
-#include "objects/Lights/PointLight.hpp"
-#include "objects/Lights/DirectionalLight.hpp"
-#include "objects/Lights/SpotLight.hpp"
+#include "objects/lights/PointLight.hpp"
+#include "objects/lights/DirectionalLight.hpp"
+#include "objects/lights/SpotLight.hpp"
 
 #include "objects/renderable/Renderable.hpp"
-#include "objects/Renderable/RenderableMesh.hpp"
+#include "objects/renderable/RenderableMesh.hpp"
 
 #include "input/Input.hpp"
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "objects/Object.hpp"
-#include "internal.hpp"
+#include "Internal.hpp"
 #include "glm.hpp"
 
 namespace rgr

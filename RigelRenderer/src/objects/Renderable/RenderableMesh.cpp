@@ -1,4 +1,4 @@
-#include "Renderable/RenderableMesh.hpp"
+#include "renderable/RenderableMesh.hpp"
 #include "Logger.hpp"
 #include "glAbstraction/GlAbstraction.hpp"
 #include "Camera.hpp"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "components/Transform.hpp"
-#include "internal.hpp"
+#include "Internal.hpp"
 
 #include <string>
 

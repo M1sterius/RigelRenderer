@@ -2,7 +2,7 @@
 
 #include "objects/Object.hpp"
 #include "glm.hpp"
-#include "internal.hpp"
+#include "Internal.hpp"
 
 namespace rgr
 {
@@ -20,7 +20,7 @@ namespace rgr
 	protected:
 		unsigned int m_DepthMapHandle = 0;
 	INTERNAL:
-		virtual void GenerateDepthMap(const unsigned int depthMapFBO) = 0;
+		virtual void GenerateDepthMap() = 0;
 		inline const unsigned int GetDepthMapHandle() const { return m_DepthMapHandle; }
 	};
 }

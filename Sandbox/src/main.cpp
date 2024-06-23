@@ -47,6 +47,7 @@ int main()
 	auto containerDiffuse = new rgr::Texture("resources/textures/container_diffuse.png");
 	auto containerSpecular = new rgr::Texture("resources/textures/container_specular.png");
 	auto planeDiffuse = new rgr::Texture("resources/textures/plane_texture.png");
+    auto testTexture = new rgr::Texture("resources/textures/test_texture.png");
 
 	auto cube = new rgr::RenderableMesh(&cubeMesh);
 	cube->diffuseTexture = containerDiffuse;
@@ -54,8 +55,7 @@ int main()
 	cube->GetTransform().SetPosition(glm::vec3(0, 3, -2));
 
 	auto cube1 = new rgr::RenderableMesh(&cubeMesh);
-	cube1->diffuseTexture = containerDiffuse;
-	cube1->specularTexture = containerSpecular;
+	cube1->diffuseTexture = testTexture;
 	cube1->GetTransform().SetPosition(glm::vec3(2, 3, -2));
 
 	auto plane = new rgr::RenderableMesh(&cubeMesh);
@@ -68,10 +68,10 @@ int main()
 	camera->GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 	camera->FlagAsMain();
 
-	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.5f, glm::vec3(-1, -1, 0));
-	dirLight.GetTransform().SetPosition(glm::vec3(0, 30, 0));
+	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(1, -1, 1));
+	dirLight.GetTransform().SetPosition(glm::vec3(-3, 3, -3));
 
-	rgr::DirectionalLight dirLight1 = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.5f, glm::vec3(1, -1, 1));
+	rgr::DirectionalLight dirLight1 = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(1, -1, 0));
 	dirLight1.GetTransform().SetPosition(glm::vec3(-3, 3, -3));
 
 	rgr::PointLight pntLight = rgr::PointLight(
@@ -117,7 +117,7 @@ int main()
 	//scene->AddObject(container);
 
 	scene->AddObject(&dirLight);
-	//scene->AddObject(&dirLight1);
+	scene->AddObject(&dirLight1);
 	scene->AddObject(&pntLight);
 	scene->AddObject(&pntLight1);
 	scene->AddObject(&sptLight);
@@ -165,7 +165,7 @@ int main()
 		camera->GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));
 
 		rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::GetDeltaTime();
-		//cube->GetTransform().SetRotation(rot);
+		cube->GetTransform().SetRotation(rot);
 		//sphere->GetTransform().SetRotation(rot);
 
 		if (rgr::Input::KeyPressed(RGR_KEY_M))

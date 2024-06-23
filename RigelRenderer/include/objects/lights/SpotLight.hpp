@@ -1,6 +1,6 @@
 #pragma once
 
-#include "objects/Lights/Light.hpp"
+#include "objects/lights/Light.hpp"
 
 namespace rgr
 {
@@ -22,7 +22,7 @@ namespace rgr
 		const glm::mat4 GetLightSpaceView() override;
 		const glm::mat4 GetLightSpaceViewProj() override;
 	INTERNAL:
-		void GenerateDepthMap(const unsigned int depthMapFBO) override;
+		void GenerateDepthMap() override;
 	};
 }
 

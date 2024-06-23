@@ -4,10 +4,36 @@
 
 namespace rgr
 {
+    
 	class Texture
 	{
 	public:
-		Texture(const std::string& path);
+        enum class DATA_FORMAT
+        {
+            RGB,
+            RGBA,
+            DEPTH_COMPONENT
+        };
+
+        enum class DATA_TYPE
+        {
+            UNSIGNED_BYTE,
+            BYTE,
+            FLOAT,
+        };
+
+        enum class FILTER
+        {
+            LINEAR = 0x2601,
+        };
+
+        enum class WRAP
+        {
+            CLAMP_TO_EDGE,
+            REPEAT
+        };
+
+		explicit Texture(const std::string& path);
 		~Texture();
 
 		void Bind(unsigned int slot = 0) const;
