@@ -34,7 +34,6 @@ target_include_directories(Sandbox PUBLIC ../RigelRenderer/include)
 target_link_libraries(Sandbox RigelRenderer)
 
 set(COPY_OUT_DIR ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD_TYPE}/resources)
-
 add_custom_command(TARGET Sandbox POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/resources/

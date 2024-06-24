@@ -17,6 +17,7 @@ namespace rgr
 		bool m_ShaderHasError;
 		int m_UniformsCallback = 0;
 		std::unordered_map<std::string, int> m_UniformsLocationCache;
+        static std::string m_BuildInShadersPath;
 		
 		Shader(const std::string& vertexSource, const std::string& fragmentSource);
 	public:
@@ -26,6 +27,9 @@ namespace rgr
 		static Shader* FromSources(const std::string& vertexSource, const std::string& fragmentSource);
 	
 		inline bool GetShaderHasError() const { return m_ShaderHasError; }
+
+        static void SetBuildInShadersPath(const std::string& path);
+        static std::string GetBuildInShadersPath();
 	INTERNAL:
 		void Bind() const;
 		void Unbind() const;
