@@ -52,6 +52,14 @@ namespace rgr
 
                 dirLightsCount++;
             }
+//            else if (auto spotLight = dynamic_cast<rgr::SpotLight*>(light))
+//            {
+//
+//            }
+//            else if (auto pointLight = dynamic_cast<rgr::PointLight*>(light))
+//            {
+//
+//            }
         }
 
         // Restore the original viewport
@@ -91,20 +99,21 @@ namespace rgr
         m_GBuffer->Unbind();
     }
 
-    static void SetDirLightUniforms(const rgr::DirectionalLight* light, rgr::Shader* shader, const size_t lightIndex)
+    static void SetDirLightUniforms(rgr::DirectionalLight* light, rgr::Shader* shader, const size_t lightIndex)
     {
         std::string u_name = "u_DirectionalLights[" + std::to_string(lightIndex) + "].";
         shader->SetUniformVec3(u_name + "color", light->color);
         shader->SetUniform1f(u_name + "intensity", light->intensity);
         shader->SetUniformVec3(u_name + "direction", light->direction);
+        shader->SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
     }
 
-    static void SetPointLightUniforms(const rgr::PointLight* light, rgr::Shader* shader, const size_t lightIndex)
+    static void SetPointLightUniforms(rgr::PointLight* light, rgr::Shader* shader, const size_t lightIndex)
     {
 
     }
 
-    static void SetSpotLightUniforms(const rgr::SpotLight* light, rgr::Shader* shader, const size_t lightIndex)
+    static void SetSpotLightUniforms(rgr::SpotLight* light, rgr::Shader* shader, const size_t lightIndex)
     {
 
     }

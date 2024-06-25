@@ -2,10 +2,12 @@
 
 struct DirectionalLight
 {
-vec3 color;
-float intensity;
+    vec3 color;
+    float intensity;
 
-vec3 direction;
+    vec3 direction;
+
+    mat4 lightSpaceViewProj;
 };
 
 in vec2 v_TexCoords;
@@ -22,16 +24,21 @@ out vec4 FragColor;
 
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec3 diffuse, float specular)
 {
-vec3 lightDir = normalize(-light.direction);
+    vec3 lightDir = normalize(-light.direction);
 
-float diff = max(dot(normal, lightDir), 0.0);
-vec3 diffuseRes = diff * light.color * light.intensity * diffuse;
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 diffuseRes = diff * light.color * light.intensity * diffuse;
 
-vec3 halfwayDir = normalize(lightDir + viewDir);
-float spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
-vec3 specularRes = spec * light.color * light.intensity * specular;
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
+    vec3 specularRes = spec * light.color * light.intensity * specular;
 
-return diffuseRes + specularRes;
+    return diffuseRes + specularRes;
+}
+
+float CalcDirLightShadow(vec4 fragPosLightSpace, sampler2D map, vec2 texCoords)
+{
+    return 1.0;
 }
 
 void main()
@@ -46,8 +53,12 @@ void main()
     vec3 color = vec3(0.0);
     color += Diffuse * 0.15;
 
-    for (uint i = 0; i < u_DirLightsCount; i++) {
-        color += CalcDirLight(u_DirectionalLights[i], Normal, viewDir, Diffuse, Specular);
+    for (uint i = 0; i < u_DirLightsCount; i++)
+    {
+        DirectionalLight dirLight = u_DirectionalLights[i];
+        vec4 fragPosLightSpace = vec4(FragPos, 1.0) * dirLight.lightSpaceViewProj;
+
+        color += CalcDirLight(dirLight, Normal, viewDir, Diffuse, Specular);
     }
 
     FragColor = vec4(color, 1.0);

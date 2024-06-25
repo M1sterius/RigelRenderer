@@ -23,4 +23,3 @@ namespace rgr
 		void GenerateDepthMap() override;
 	};
 }
-

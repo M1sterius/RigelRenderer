@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 
-int main()
+int main(int argc, char* argv[])
 {	
 	const int WIDTH = 1600;
 	const int HEIGHT = 900;
@@ -71,8 +71,17 @@ int main()
 	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(1, -1, 1));
 	dirLight.GetTransform().SetPosition(glm::vec3(-3, 3, -3));
 
-	rgr::DirectionalLight dirLight1 = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(1, -1, 0));
-	dirLight1.GetTransform().SetPosition(glm::vec3(-3, 3, -3));
+	rgr::DirectionalLight dirLight1 = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(1, 1, 1));
+	dirLight1.GetTransform().SetPosition(glm::vec3(-3, -3, -3));
+
+    rgr::DirectionalLight dirLight2 = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.2f, glm::vec3(-1, -2, -3));
+    dirLight1.GetTransform().SetPosition(glm::vec3(1, 2, 3));
+
+    rgr::DirectionalLight dirLight3 = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.2f, glm::vec3(-1, -1, -1));
+    dirLight1.GetTransform().SetPosition(glm::vec3(1, 1, 1));
+
+    rgr::DirectionalLight dirLight4 = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.2f, glm::vec3(-1, 1, -1));
+    dirLight1.GetTransform().SetPosition(glm::vec3(1, -1, 1));
 
 	rgr::PointLight pntLight = rgr::PointLight(
 		glm::vec3(0.98, 0.76, 0.12),
@@ -118,6 +127,9 @@ int main()
 
 	scene->AddObject(&dirLight);
 	scene->AddObject(&dirLight1);
+	scene->AddObject(&dirLight2);
+	scene->AddObject(&dirLight3);
+	scene->AddObject(&dirLight4);
 	scene->AddObject(&pntLight);
 	scene->AddObject(&pntLight1);
 	scene->AddObject(&sptLight);
