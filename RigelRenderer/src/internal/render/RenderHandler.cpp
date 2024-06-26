@@ -33,6 +33,8 @@ namespace rgr
         glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBOHandle);
         glClear(GL_DEPTH_BUFFER_BIT);
 
+        glCullFace(GL_FRONT);
+
         size_t dirLightsCount = 0;
 
         for (auto light : lights)
@@ -66,6 +68,8 @@ namespace rgr
         rgr::ViewportSize size = rgr::GetViewportSize();
         glViewport(0, 0, size.width, size.height);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        glCullFace(GL_BACK);
 
 //        rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
 //        rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
@@ -137,6 +141,10 @@ namespace rgr
         m_GBuffer->BindNormalTexture();
         m_GBuffer->BindColorTexture();
 
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, m_DirLightsDepthAtlasHandle);
+        shader->SetUniform1i("u_DirLightsShadowAtlas", 3);
+
         size_t dirCount = 0;
 
         for (auto light: lights)
@@ -196,8 +204,10 @@ namespace rgr
                     DIR_LIGHTS_ATLAS_SIZE, DIR_LIGHTS_ATLAS_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     }
 
     void RenderHandler::DeleteDepthAtlases()

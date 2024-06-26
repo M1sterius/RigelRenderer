@@ -17,10 +17,7 @@ namespace rgr
 
 		virtual const glm::mat4 GetLightSpaceView() = 0;
 		virtual const glm::mat4 GetLightSpaceViewProj() = 0;
-	protected:
-		unsigned int m_DepthMapHandle = 0;
 	INTERNAL:
 		virtual void GenerateDepthMap() = 0;
-		inline const unsigned int GetDepthMapHandle() const { return m_DepthMapHandle; }
 	};
 }
