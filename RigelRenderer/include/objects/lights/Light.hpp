@@ -12,6 +12,7 @@ namespace rgr
 		glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 		float intensity = 1.0f;
 		bool castShadows = true;
+        bool smoothShadows = false;
 
 		virtual ~Light() { }
 

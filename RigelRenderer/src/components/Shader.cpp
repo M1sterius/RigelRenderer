@@ -191,6 +191,13 @@ namespace rgr
 		glUniform1f(location, value);
 	}
 
+    void Shader::SetUniformBool(const std::string &name, const bool value)
+    {
+        const int location = FindUniform(name);
+        if (location == -1) return;
+        glUniform1i(location, value);
+    }
+
 	void Shader::SetUniformVec2(const std::string& name, const glm::vec2& value)
 	{
 		const int location = FindUniform(name);

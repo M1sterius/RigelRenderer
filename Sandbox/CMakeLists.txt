@@ -10,8 +10,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.hpp")
 add_executable(Sandbox ${SOURCES})
 
-target_compile_definitions(Sandbox PRIVATE "GLEW_STATIC")
-
 include_directories(
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/src/materials

@@ -62,15 +62,16 @@ int main(int argc, char* argv[])
 	auto plane = new rgr::RenderableMesh(&cubeMesh);
 	plane->diffuseTexture = planeDiffuse;
 	plane->GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
-	plane->GetTransform().SetScale(glm::vec3(10, 0.01, 10));
+	plane->GetTransform().SetScale(glm::vec3(20, 0.01, 20));
 	
 	auto camera = new rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
 	camera->GetTransform().SetPosition(glm::vec3(0.0f, 4, 0.0f));
 	camera->GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 	camera->FlagAsMain();
 
-	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.3f, glm::vec3(0, -1, 1));
+	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 1.0f, glm::vec3(0, -1, 1));
 	dirLight.GetTransform().SetPosition(glm::vec3(0, 6, -6));
+    dirLight.smoothShadows = true;
 
 	rgr::DirectionalLight dirLight1 = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.3f, glm::vec3(0, -1, -1));
 	dirLight1.GetTransform().SetPosition(glm::vec3(0, 6, 6));
@@ -123,9 +124,6 @@ int main(int argc, char* argv[])
 	scene->AddObject(cube);
 	scene->AddObject(cube1);
 	scene->AddObject(plane);
-	//scene->AddObject(quad);
-	//scene->AddObject(sphere);
-	//scene->AddObject(container);
 
 	scene->AddObject(&dirLight);
 	scene->AddObject(&dirLight1);

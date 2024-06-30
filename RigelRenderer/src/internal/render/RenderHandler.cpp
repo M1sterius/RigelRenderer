@@ -70,16 +70,6 @@ namespace rgr
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glCullFace(GL_BACK);
-
-//        rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
-//        rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
-//
-//        shader->Bind();
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, m_DirLightsDepthAtlasHandle);
-//        shader->SetUniform1i("u_Texture", m_DirLightsDepthAtlasHandle);
-//
-//        quad->Draw();
     }
 
     void RenderHandler::DoGeometryPass()
@@ -109,6 +99,7 @@ namespace rgr
         shader->SetUniformVec3(u_name + "color", light->color);
         shader->SetUniform1f(u_name + "intensity", light->intensity);
         shader->SetUniformVec3(u_name + "direction", light->direction);
+        shader->SetUniformBool(u_name + "smoothShadows", light->smoothShadows);
         shader->SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
     }
 
@@ -212,6 +203,6 @@ namespace rgr
 
     void RenderHandler::DeleteDepthAtlases()
     {
-//        glDeleteTextures(1, &m_DirLightsDepthAtlasHandle);
+        glDeleteTextures(1, &m_DirLightsDepthAtlasHandle);
     }
 }

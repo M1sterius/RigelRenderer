@@ -10,8 +10,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/RigelRenderer/${CMAKE
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.hpp")
 add_library(RigelRenderer STATIC ${SOURCES})
 
-target_compile_definitions(RigelRenderer PRIVATE "GLEW_STATIC")
-target_compile_definitions(RigelRenderer PRIVATE "INTERNAL_LIB")
+target_compile_definitions(RigelRenderer PRIVATE "GLEW_STATIC" "INTERNAL_LIB")
 
 include_directories(
     src

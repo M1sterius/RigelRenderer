@@ -16,7 +16,7 @@ namespace rgr
 		inline rgr::Transform& GetTransform() { return m_Transform; }
 	protected:
 		Object();
-		Object(const rgr::Transform& transform);
+		explicit Object(const rgr::Transform& transform);
 		Object(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale);
 		virtual ~Object();
 
