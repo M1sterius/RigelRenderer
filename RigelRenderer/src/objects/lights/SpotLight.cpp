@@ -1,4 +1,4 @@
-#include "SpotLight.hpp"
+#include "lights/SpotLight.hpp"
 
 rgr::SpotLight::SpotLight(const glm::vec3 color, const float instensity, const glm::vec3& direction, 
 	const float cutOff, const float outerCutOff, const float constant, const float linear, const float quadratic)
@@ -18,4 +18,19 @@ rgr::SpotLight::SpotLight(const glm::vec3 color, const float instensity, const g
 rgr::SpotLight::~SpotLight()
 {
 
+}
+
+const glm::mat4 rgr::SpotLight::GetLightSpaceView()
+{
+	return glm::mat4(0.0f);
+}
+
+const glm::mat4 rgr::SpotLight::GetLightSpaceViewProj()
+{
+	return glm::mat4(0.0f);
+}
+
+void rgr::SpotLight::GenerateDepthMap()
+{
+	
 }

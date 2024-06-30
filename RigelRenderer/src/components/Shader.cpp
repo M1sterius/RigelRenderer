@@ -2,7 +2,7 @@
 #include "glew.h"
 #include "gtc/type_ptr.hpp"
 #include "glm.hpp"
-#include "BuiltInShaders.hpp"
+#include "Texture.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -30,7 +30,8 @@ namespace rgr
 
 		return 1;
 	}
-	// Processes glsl source code in the file at the given path so it can be used as OpenGL shader source
+
+	// Processes glsl source code in the file at the given path, so it can be used as OpenGL shader source
 	std::string ProcessShaderSource(const std::string& sourcePath)
 	{
 		std::ifstream stream(sourcePath);
@@ -46,6 +47,8 @@ namespace rgr
 
 		return temp;
 	}
+
+    std::string Shader::m_BuildInShadersPath = "built-in-resources/shaders";
 
 	Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)
 	{	
@@ -82,17 +85,6 @@ namespace rgr
 
 		glDeleteShader(vertexHandle);
 		glDeleteShader(fragmentHandle);
-
-		//int param;
-		//glGetProgramiv(m_Handle, GL_ACTIVE_UNIFORMS, &param);
-		//std::cout << param << '\n';
-
-		//GLchar uniform_name[256];
-		//GLsizei length;
-		//GLint size;
-		//GLenum type;
-		//glGetActiveUniform(m_Handle, 0, sizeof(uniform_name), &length, &size, &type, uniform_name);
-		//std::cout << uniform_name << '\n';
 	}
 
 	Shader::~Shader()
@@ -108,12 +100,12 @@ namespace rgr
 		if (processedVertexSource.empty())
 		{
 			std::cout << "The file at path: '" << vertexPath << "' does not exist!" << '\n';
-			return GetPlainColorShader();
+			return GetBuiltInShader(BUILT_IN_SHADERS::PLAIN_COLOR);
 		}
 		if (processedFragmentSource.empty())
 		{
 			std::cout << "The file at path: '" << fragmentPath << "' does not exist!" << '\n';
-			return GetPlainColorShader();
+			return GetBuiltInShader(BUILT_IN_SHADERS::PLAIN_COLOR);
 		}
 
 		return new rgr::Shader(processedVertexSource, processedFragmentSource);
@@ -124,17 +116,36 @@ namespace rgr
 		return new rgr::Shader(vertexSource, fragmentSource);
 	}
 
-	Shader* Shader::GetPlainColorShader()
-	{
-		static Shader* plainColorShader = new Shader(rgr::PlainColorVertex, rgr::PlainColorFragment);
-		return plainColorShader;
-	}
-	
-	Shader* Shader::GetDepthMapShader()
-	{
-		static Shader* depthMapShader = new Shader(rgr::DepthMapVertex, rgr::DepthMapFragment);
-		return depthMapShader;
-	}
+    Shader* Shader::GetBuiltInShader(const Shader::BUILT_IN_SHADERS type)
+    {
+        // Instantiation of plain color shader may create infinite recursive call chain of GetBuiltInShader() and FromFiles(), gotta fix that!!
+        static auto plainColorShader = Shader::FromFiles(m_BuildInShadersPath + "/plain_color_vertex.glsl",
+                                                         m_BuildInShadersPath + "/plain_color_fragment.glsl");
+        static auto depthMapShader = Shader::FromFiles(m_BuildInShadersPath + "/depth_map_vertex.glsl",
+                                                       m_BuildInShadersPath + "/depth_map_fragment.glsl");
+        static auto geometryPassShader = Shader::FromFiles(m_BuildInShadersPath + "/geometry_pass_vertex.glsl",
+                                                           m_BuildInShadersPath + "/geometry_pass_fragment.glsl");
+        static auto lightingPassShader = Shader::FromFiles(m_BuildInShadersPath + "/lighting_pass_vertex.glsl",
+                                                           m_BuildInShadersPath + "/lighting_pass_fragment.glsl");
+        static auto textureTestShader = Shader::FromFiles(m_BuildInShadersPath + "/texture_test_vertex.glsl",
+                                                          m_BuildInShadersPath + "/texture_test_fragment.glsl");
+
+        switch (type)
+        {
+            case BUILT_IN_SHADERS::PLAIN_COLOR:
+                return plainColorShader;
+            case BUILT_IN_SHADERS::DEPTH_MAP:
+                return depthMapShader;
+            case BUILT_IN_SHADERS::GEOMETRY_PASS:
+                return geometryPassShader;
+            case BUILT_IN_SHADERS::LIGHTING_PASS:
+                return lightingPassShader;
+            case BUILT_IN_SHADERS::TEXTURE_TEST:
+                return textureTestShader;
+            default:
+                return nullptr;
+        }
+    }
 
 	void Shader::Bind() const
 	{
@@ -144,6 +155,12 @@ namespace rgr
 	void Shader::Unbind() const
 	{
 		glUseProgram(0);
+	}
+
+	void Shader::BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot)
+	{
+		texture->Bind(slot);
+		SetUniform1i(name, slot);
 	}
 
 	void Shader::SetUniform1i(const std::string& name, const int value)
@@ -173,6 +190,13 @@ namespace rgr
 		if (location == -1) return;
 		glUniform1f(location, value);
 	}
+
+    void Shader::SetUniformBool(const std::string &name, const bool value)
+    {
+        const int location = FindUniform(name);
+        if (location == -1) return;
+        glUniform1i(location, value);
+    }
 
 	void Shader::SetUniformVec2(const std::string& name, const glm::vec2& value)
 	{
@@ -221,14 +245,24 @@ namespace rgr
 			return location;
 		}
 		std::cout << "Unable to find uniform named: " << name << '\n';
-		m_UnifromsCallback++;
+		m_UniformsCallback++;
 		return -1;
 	}
 
 	int Shader::GetUniformsCallback()
 	{
-		int callback = m_UnifromsCallback;
-		m_UnifromsCallback = 0;
+		int callback = m_UniformsCallback;
+        m_UniformsCallback = 0;
 		return callback;
 	}
+
+    void Shader::SetBuildInShadersPath(const std::string &path)
+    {
+        m_BuildInShadersPath = path;
+    }
+
+    std::string Shader::GetBuildInShadersPath()
+    {
+        return m_BuildInShadersPath;
+    }
 }

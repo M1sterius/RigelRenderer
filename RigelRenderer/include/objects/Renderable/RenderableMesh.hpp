@@ -1,25 +1,34 @@
 #pragma once
 
 #include "Renderable.hpp"
+#include "glm.hpp"
 
 namespace rgr
 {	
-	class Scene;
 	class Mesh;
-	class Material;
+	class Shader;
+	class Texture;
 
-	class RenderableMesh : public::rgr::Renderable
+	// Represents 3D mesh affectable by light
+	class RenderableMesh final : public::rgr::Renderable
 	{
 	private:
 		Mesh* m_Mesh;
-		Material* m_Material;
+
 	public:
-		RenderableMesh(rgr::Mesh* mesh, rgr::Material* material);
-		virtual ~RenderableMesh();
+		explicit RenderableMesh(rgr::Mesh* mesh);
+		~RenderableMesh() override;
+
+		Texture* diffuseTexture;
+		Texture* specularTexture;
 
 		// Determines in what radius light will be able to affect appearance of this object
 		float affectedByLightDist = 7.0f;
+		bool shadowCaster = true;
 	INTERNAL:
-		void Render(const Scene* scene) override;
+		inline Mesh* GetMesh() { return m_Mesh; }
+
+		void RenderDepth(const glm::mat4& lightSpaceMatrix);
+		void RenderGeometry(rgr::Shader* shader, const glm::mat4& viewProj);
 	};
 }

@@ -1,14 +1,18 @@
 #pragma once
 
-#include "Renderable/Renderable.hpp"
-#include "objects/Camera.hpp"
-#include "objects/Light.hpp"
+#include "Camera.hpp"
+#include "renderable/Renderable.hpp"
+#include "lights/Light.hpp"
 
 #include <vector>
 #include <string>
+#include <memory>
 
 namespace rgr
-{	
+{
+    class RenderHandler;
+	class GBuffer;
+
 	/*
 	Represents the collection of objects that form a virtual environment
 	*/
@@ -18,6 +22,8 @@ namespace rgr
 		std::vector<Renderable*> m_Renderables;
 		std::vector<Camera*> m_Cameras;
 		std::vector<Light*> m_Lights;
+
+        std::unique_ptr<RenderHandler> m_RenderHandler;
 
 		rgr::Camera* m_MainCamera = nullptr;
 		rgr::Camera* FindMainCamera() const;
@@ -52,7 +58,9 @@ namespace rgr
 		// Returns all lights closer than radius around the point, up to maxCount of lights
 		const std::vector<Light*>& GetLightsAround(const glm::vec3 point, const float radius, const size_t maxCount = 16) const;
 		
-		const std::vector<Renderable*>& GetObjectsInFrustrum(); // TODO: Add the frustrum culling itself
+		const std::vector<Renderable*>& GetRenderablesInFrustum() const; // TODO: Add the frustum culling itself
+
+		const std::vector<Renderable*>& GetRenderablesByCondition(bool(*func)(rgr::Renderable*), const size_t maxCount = 64) const;
 	};
 }
 

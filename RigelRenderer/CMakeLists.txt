@@ -1,19 +1,16 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.28)
 
 project(RigelRenderer)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 23)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/RigelRenderer/${CMAKE_BUILD_TYPE})
 
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.hpp")
 add_library(RigelRenderer STATIC ${SOURCES})
 
-set_target_properties(RigelRenderer PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin/RigelRenderer/Debug"
-    ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin/RigelRenderer/Release"
-)
-
-target_compile_definitions(RigelRenderer PRIVATE "GLEW_STATIC")
-target_compile_definitions(RigelRenderer PRIVATE "INTERNAL_LIB")
+target_compile_definitions(RigelRenderer PRIVATE "GLEW_STATIC" "INTERNAL_LIB")
 
 include_directories(
     src
@@ -34,4 +31,12 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/dependencies/freetype
     ${CMAKE_SOURCE_DIR}/dependencies/gltext
     ${CMAKE_SOURCE_DIR}/dependencies
+)
+
+# Copy library's built-in resources (e.g shaders) to the output directory of the test project
+set(COPY_OUT_DIR ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD_TYPE}/built-in-resources)
+add_custom_command(TARGET RigelRenderer POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/built-in-resources/
+        ${COPY_OUT_DIR}
 )

@@ -1,7 +1,7 @@
 #include "Camera.hpp"
 
 #include <iostream>
-#include "gtx\string_cast.hpp"
+#include "gtx/string_cast.hpp"
 
 namespace rgr
 {

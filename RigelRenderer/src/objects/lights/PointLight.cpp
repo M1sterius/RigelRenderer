@@ -1,4 +1,4 @@
-#include "PointLight.hpp"
+#include "lights/PointLight.hpp"
 
 rgr::PointLight::PointLight(const glm::vec3 color, const float instensity, const float constant, const float linear, const float quadratic)
 {
@@ -11,6 +11,21 @@ rgr::PointLight::PointLight(const glm::vec3 color, const float instensity, const
 }
 
 rgr::PointLight::~PointLight()
+{
+
+}
+
+const glm::mat4 rgr::PointLight::GetLightSpaceView()
+{
+	return glm::mat4(0.0f);
+}
+
+const glm::mat4 rgr::PointLight::GetLightSpaceViewProj()
+{
+	return glm::mat4(0.0f);
+}
+
+void rgr::PointLight::GenerateDepthMap()
 {
 
 }

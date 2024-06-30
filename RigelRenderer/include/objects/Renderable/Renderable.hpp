@@ -1,20 +1,17 @@
 #pragma once
 
 #include "objects/Object.hpp"
-#include "internal.hpp"
+#include "Internal.hpp"
+#include "glm.hpp"
 
 namespace rgr
 {	
-	class Scene;
-
-	// Base class for all objects able to render
+	// Base class for all objects that can be rendered
 	class Renderable : public rgr::Object
 	{
-	public:
+	protected:
 		Renderable() { }
 		virtual ~Renderable() { }
-	INTERNAL:
-		virtual void Render(const Scene* scene) = 0;
 	};
 }
 

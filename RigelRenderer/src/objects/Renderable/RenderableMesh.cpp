@@ -1,25 +1,22 @@
-#include "Renderable/RenderableMesh.hpp"
+#include "renderable/RenderableMesh.hpp"
 #include "Logger.hpp"
 #include "glAbstraction/GlAbstraction.hpp"
 #include "Camera.hpp"
 #include "Scene.hpp"
 #include "Shader.hpp"
-#include "Material.hpp"
 #include "Mesh.hpp"
-
-#include "RenderUtility.hpp"
-#include "internal.hpp"
+#include "Texture.hpp"
 #include "glm.hpp"
 
 #include <iostream>
-#include <vector>
 
 namespace rgr
 {
-	RenderableMesh::RenderableMesh(rgr::Mesh* mesh, rgr::Material* material)
-		: m_Mesh(mesh), m_Material(material)
+	RenderableMesh::RenderableMesh(rgr::Mesh* mesh)
+		: m_Mesh(mesh)
 	{
-		
+		diffuseTexture = nullptr;
+		specularTexture = nullptr;
 	}
 
 	RenderableMesh::~RenderableMesh()
@@ -27,72 +24,31 @@ namespace rgr
 
 	}
 
-	void RenderableMesh::Render(const Scene* scene)
+	void RenderableMesh::RenderDepth(const glm::mat4& lightSpaceMatrix)
+	{
+		rgr::Shader* depthMapShader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DEPTH_MAP);
+
+		depthMapShader->Bind();
+		depthMapShader->SetUniformMat4("u_LightSpaceMatrix", false, lightSpaceMatrix);
+		depthMapShader->SetUniformMat4("u_Model", false, GetTransform().GetModelMatrix());
+
+		m_Mesh->Draw();
+	}
+
+	void RenderableMesh::RenderGeometry(rgr::Shader* shader, const glm::mat4& viewProj)
 	{	
-		rgr::Camera* camera = scene->GetMainCamera(); // TODO: Check if camera can be made const
-		rgr::Shader* shader = m_Material->GetShader(); // TODO: Check if shader can be made const
+		const glm::mat4 model = GetTransform().GetModelMatrix();
+		const glm::mat4 mvp = viewProj * model;
 
-		const glm::mat4 modelMat4 = this->GetTransform().GetModelMatrix();
+		shader->SetUniformMat4("u_MVP", true, mvp); // transpose
+		shader->SetUniformMat4("u_Model", false, model); // no transpose
+		shader->SetUniformMat3("u_NormalMatrix", false, GetTransform().GetNormalMatrix()); // no transpose
 
-		m_Mesh->GetVertexArray()->Bind();
+		if (diffuseTexture != nullptr)
+			shader->BindTexture("u_DiffuseTexture", diffuseTexture, 0);
+		if (specularTexture != nullptr)
+			shader->BindTexture("u_SpecularTexture", specularTexture, 1);
 
-		// Bind the index buffer only if the mesh uses it
-		if (m_Mesh->GetMeshType() == Mesh::MeshType::INDEXED)
-			m_Mesh->GetIndexBuffer()->Bind();
-
-		// Bind the material and set user-defined uniforms
-		m_Material->Bind();
-		m_Material->SetUniforms();
-
-		glm::mat4 mvp;
-
-		// Branch rendering pipeline depending on which space this object is in (2D or 3D)
-		if (this->GetTransform().space == Transform::Space::SCREEN_2D)
-		{	
-			// NOTE: Skip view matrix for now as 2D camera transformations has not been implemented yet
-			mvp = camera->GetOrthographic() * modelMat4;
-		}
-		else if (this->GetTransform().space == Transform::Space::WORLD_3D)
-		{
-			mvp = camera->GetPerspective() * camera->GetView() * modelMat4;
-
-			// Obtain variables related to lighting
-			const auto& lights = scene->GetLightsAround(this->GetTransform().GetPosition(), affectedByLightDist);
-			const glm::vec3 viewPos = camera->GetTransform().GetPosition();
-
-			// If this material is marked lit, set lighting uniforms
-			if (m_Material->GetIsLit())
-				rgr::ProcessLighting(shader, lights, viewPos, modelMat4, this->GetTransform().GetNormalMatrix());
-		}
-
-		// Set u_MVP matrix uniform that is mandatory for any shader
-		shader->SetUniformMat4("u_MVP", true, mvp);
-
-		// Check if uniforms were set with errors, and if so, 
-		// draw the object bright pink to indicate errors
-		const int shaderCallback = shader->GetUniformsCallback();
-		if (shaderCallback != 0)
-		{
-			m_Material->Unbind();
-			rgr::DrawErrorPlaceholder(mvp);
-		}
-
-		// Check if camera is set to draw the wireframes of objects, and if so,
-		// draw them with some plain color
-		if (camera->viewMode == Camera::ViewMode::WIREFRAME)
-		{
-			m_Material->Unbind();
-			rgr::DrawWireframe(mvp);
-		}
-
-		// Do the actual OpenGL draw call depending on which type of mesh is used
-		if (m_Mesh->GetMeshType() == rgr::Mesh::MeshType::INDEXED)
-			glDrawElements(GL_TRIANGLES, m_Mesh->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-		else
-			glDrawArrays(GL_TRIANGLES, 0, m_Mesh->GetVertsCount());
-
-		// Resetting the wireframe mode if it was set in rgr::DrawWireframe();
-		if (camera->viewMode == rgr::Camera::ViewMode::WIREFRAME)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		m_Mesh->Draw();
 	}
 }
