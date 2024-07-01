@@ -6,6 +6,9 @@ namespace rgr
 {
 	class SpotLight : public rgr::Light
 	{
+    private:
+        const float m_DepthProjNear = 0.1f;
+        const float m_DepthProjFar = 20.0f;
 	public:
 		glm::vec3 direction;
 		float cutOff;

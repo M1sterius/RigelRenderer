@@ -2,7 +2,6 @@
 #include "renderable/RenderableMesh.hpp"
 #include "RigelRenderer.hpp"
 #include "glm.hpp"
-#include "glew.h"
 
 rgr::DirectionalLight::DirectionalLight(const glm::vec3& color, const float intensity, const glm::vec3& direction)
     : direction(direction)
@@ -25,7 +24,7 @@ const glm::mat4 rgr::DirectionalLight::GetLightSpaceView()
 const glm::mat4 rgr::DirectionalLight::GetLightSpaceViewProj()
 {
 	static const glm::mat4 proj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, m_DepthProjNear, m_DepthProjFar);
-	const glm::mat4 viewProj = proj * GetLightSpaceView();
+	const glm::mat4 viewProj = proj * this->GetLightSpaceView();
 
 	return viewProj;
 }

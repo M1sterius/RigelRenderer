@@ -27,6 +27,7 @@ namespace rgr
         unsigned int m_DepthMapFBOHandle = 0;
 
         unsigned int m_DirLightsDepthAtlasHandle = 0;
+        unsigned int m_SpotLightsDepthAtlasHandle = 0;
 
         void InitializeDepthMapFBO();
         void DeleteDepthMapFBO();

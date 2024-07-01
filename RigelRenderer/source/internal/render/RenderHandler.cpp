@@ -36,6 +36,7 @@ namespace rgr
         glCullFace(GL_FRONT);
 
         size_t dirLightsCount = 0;
+        size_t spotLightsCount = 0;
 
         for (auto light : lights)
         {
@@ -54,10 +55,19 @@ namespace rgr
 
                 dirLightsCount++;
             }
-//            else if (auto spotLight = dynamic_cast<rgr::SpotLight*>(light))
-//            {
-//
-//            }
+            else if (auto spotLight = dynamic_cast<rgr::SpotLight*>(light))
+            {
+                const size_t dirMapSize = rgr::SpotLight::depthMapSize;
+                const auto x_pos = static_cast<size_t>(spotLightsCount % 4) * dirMapSize;
+                const auto y_pos = static_cast<size_t>(spotLightsCount / 4) * dirMapSize;
+
+                glViewport(x_pos, y_pos, dirMapSize, dirMapSize);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle, 0);
+
+                spotLight->GenerateDepthMap();
+
+                spotLightsCount++;
+            }
 //            else if (auto pointLight = dynamic_cast<rgr::PointLight*>(light))
 //            {
 //
@@ -187,8 +197,10 @@ namespace rgr
 
     void RenderHandler::InitializeDepthAtlases()
     {
+        constexpr float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
         // Directional lights atlas
-        static const size_t DIR_LIGHTS_ATLAS_SIZE = rgr::DirectionalLight::depthMapSize * 4;
+        static const size_t DIR_LIGHTS_ATLAS_SIZE = rgr::DirectionalLight::depthMapSize * 4; // total 16 maps
         glGenTextures(1, &m_DirLightsDepthAtlasHandle);
         glBindTexture(GL_TEXTURE_2D, m_DirLightsDepthAtlasHandle);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
@@ -197,12 +209,34 @@ namespace rgr
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+        // Spotlights atlas
+        static const size_t SPOT_LIGHTS_ATLAS_SIZE = rgr::SpotLight::depthMapSize * 8; // total 64 maps
+        glGenTextures(1, &m_SpotLightsDepthAtlasHandle);
+        glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+                     SPOT_LIGHTS_ATLAS_SIZE, SPOT_LIGHTS_ATLAS_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     }
 
     void RenderHandler::DeleteDepthAtlases()
     {
         glDeleteTextures(1, &m_DirLightsDepthAtlasHandle);
+        glDeleteTextures(1, &m_SpotLightsDepthAtlasHandle);
     }
 }
+
+//rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
+//rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
+//
+//shader->Bind();
+//glActiveTexture(GL_TEXTURE0);
+//glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
+//shader->SetUniform1i("u_Texture", m_SpotLightsDepthAtlasHandle);
+//
+//quad->Draw();

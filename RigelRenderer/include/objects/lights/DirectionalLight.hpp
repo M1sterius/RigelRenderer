@@ -12,8 +12,6 @@ namespace rgr
 	public:
 		glm::vec3 direction;
 
-        static const size_t depthMapSize = 1024;
-
 		DirectionalLight(const glm::vec3& color, const float intensity, const glm::vec3& direction);
 		~DirectionalLight() override = default;
 
