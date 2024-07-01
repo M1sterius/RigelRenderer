@@ -4669,12 +4669,12 @@ static int stbi__paeth(int a, int b, int c)
 static const stbi_uc stbi__depth_scale_table[9] = { 0, 0xff, 0x55, 0, 0x11, 0,0,0, 0x01 };
 
 // adds an extra all-255 alpha channel
-// dest == src is legal
+// dest == source is legal
 // img_n must be 1 or 3
 static void stbi__create_png_alpha_expand8(stbi_uc *dest, stbi_uc *src, stbi__uint32 x, int img_n)
 {
    int i;
-   // must process data backwards since we allow dest==src
+   // must process data backwards since we allow dest==source
    if (img_n == 1) {
       for (i=x-1; i >= 0; --i) {
          dest[i*2+1] = 255;

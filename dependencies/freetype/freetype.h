@@ -3071,7 +3071,7 @@ FT_BEGIN_HEADER
   /*    The blending function for placing text over a background is        */
   /*                                                                       */
   /*    {                                                                  */
-  /*      dst = alpha * src + (1 - alpha) * dst    ,                       */
+  /*      dst = alpha * source + (1 - alpha) * dst    ,                       */
   /*    }                                                                  */
   /*                                                                       */
   /*    which is known as the OVER operator.                               */
