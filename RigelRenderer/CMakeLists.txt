@@ -7,21 +7,21 @@ set(CMAKE_CXX_STANDARD 23)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/RigelRenderer/${CMAKE_BUILD_TYPE})
 
-file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.hpp")
+file(GLOB_RECURSE SOURCES "source/*.cpp" "source/*.hpp")
 add_library(RigelRenderer STATIC ${SOURCES})
 
 target_compile_definitions(RigelRenderer PRIVATE "GLEW_STATIC" "INTERNAL_LIB")
 
 include_directories(
-    src
+        source
     include
     include/publicUtility
     include/components
     include/input
     include/objects
-    src/internal
-    src/internal/utility
-    src/built-in
+        source/internal
+        source/internal/utility
+        source/built-in
 
     ${CMAKE_SOURCE_DIR}/dependencies/glfw/include/GLFW
     ${CMAKE_SOURCE_DIR}/dependencies/glew/include/GL

@@ -1157,7 +1157,7 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /*    XXX: For now, the standard raster doesn't support direct           */
   /*         composition but this should change for the final release (see */
-  /*         the files `demos/src/ftgrays.c' and `demos/src/ftgrays2.c'    */
+  /*         the files `demos/source/ftgrays.c' and `demos/source/ftgrays2.c'    */
   /*         for examples of distinct implementations that support direct  */
   /*         composition).                                                 */
   /*                                                                       */

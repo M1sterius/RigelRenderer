@@ -144,7 +144,7 @@ FT_BEGIN_HEADER
   /*   `compress' program.  This is mostly used to parse many of the PCF   */
   /*   files that come with various X11 distributions.  The implementation */
   /*   uses NetBSD's `zopen' to partially uncompress the file on the fly   */
-  /*   (see src/lzw/ftgzip.c).                                             */
+  /*   (see source/lzw/ftgzip.c).                                             */
   /*                                                                       */
   /*   Define this macro if you want to enable this `feature'.             */
   /*                                                                       */
@@ -158,7 +158,7 @@ FT_BEGIN_HEADER
   /*   FreeType now handles font files that have been compressed with the  */
   /*   `gzip' program.  This is mostly used to parse many of the PCF files */
   /*   that come with XFree86.  The implementation uses `zlib' to          */
-  /*   partially uncompress the file on the fly (see src/gzip/ftgzip.c).   */
+  /*   partially uncompress the file on the fly (see source/gzip/ftgzip.c).   */
   /*                                                                       */
   /*   Define this macro if you want to enable this `feature'.  See also   */
   /*   the macro FT_CONFIG_OPTION_SYSTEM_ZLIB below.                       */
@@ -194,7 +194,7 @@ FT_BEGIN_HEADER
   /*   FreeType now handles font files that have been compressed with the  */
   /*   `bzip2' program.  This is mostly used to parse many of the PCF      */
   /*   files that come with XFree86.  The implementation uses `libbz2' to  */
-  /*   partially uncompress the file on the fly (see src/bzip2/ftbzip2.c). */
+  /*   partially uncompress the file on the fly (see source/bzip2/ftbzip2.c). */
   /*   Contrary to gzip, bzip2 currently is not included and need to use   */
   /*   the system available bzip2 implementation.                          */
   /*                                                                       */
