@@ -13,15 +13,15 @@ add_library(RigelRenderer STATIC ${SOURCES})
 target_compile_definitions(RigelRenderer PRIVATE "GLEW_STATIC" "INTERNAL_LIB")
 
 include_directories(
-        source
+    source
     include
     include/publicUtility
     include/components
     include/input
     include/objects
-        source/internal
-        source/internal/utility
-        source/built-in
+    source/internal
+    source/internal/utility
+    source/built-in
 
     ${CMAKE_SOURCE_DIR}/dependencies/glfw/include/GLFW
     ${CMAKE_SOURCE_DIR}/dependencies/glew/include/GL

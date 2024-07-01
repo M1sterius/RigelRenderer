@@ -5,16 +5,10 @@
 #include "glew.h"
 
 rgr::DirectionalLight::DirectionalLight(const glm::vec3& color, const float intensity, const glm::vec3& direction)
+    : direction(direction)
 {
 	this->color = color;
 	this->intensity = intensity;
-
-	this->direction = direction;
-}
-
-rgr::DirectionalLight::~DirectionalLight()
-{
-	
 }
 
 const glm::mat4 rgr::DirectionalLight::GetLightSpaceView()
@@ -30,7 +24,7 @@ const glm::mat4 rgr::DirectionalLight::GetLightSpaceView()
 
 const glm::mat4 rgr::DirectionalLight::GetLightSpaceViewProj()
 {
-	static glm::mat4 proj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, m_DepthProjNear, m_DepthProjFar);
+	static const glm::mat4 proj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, m_DepthProjNear, m_DepthProjFar);
 	const glm::mat4 viewProj = proj * GetLightSpaceView();
 
 	return viewProj;

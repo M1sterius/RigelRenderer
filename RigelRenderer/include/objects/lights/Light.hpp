@@ -14,7 +14,7 @@ namespace rgr
 		bool castShadows = true;
         bool smoothShadows = false;
 
-		virtual ~Light() { }
+		virtual ~Light() = default;
 
 		virtual const glm::mat4 GetLightSpaceView() = 0;
 		virtual const glm::mat4 GetLightSpaceViewProj() = 0;

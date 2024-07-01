@@ -15,7 +15,7 @@ namespace rgr
         static const size_t depthMapSize = 1024;
 
 		DirectionalLight(const glm::vec3& color, const float intensity, const glm::vec3& direction);
-		~DirectionalLight() override;
+		~DirectionalLight() override = default;
 
 		const glm::mat4 GetLightSpaceView() override;
 		const glm::mat4 GetLightSpaceViewProj() override;

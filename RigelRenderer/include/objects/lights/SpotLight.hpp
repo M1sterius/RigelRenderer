@@ -15,9 +15,9 @@ namespace rgr
 		float linear;
 		float quadratic;
 
-		SpotLight(const glm::vec3 color, const float instensity, const glm::vec3& direction, 
+		SpotLight(const glm::vec3 color, const float intensity, const glm::vec3& direction,
 			const float cutOff, const float outerCutOff, const float constant, const float linear, const float quadratic);
-		virtual ~SpotLight();
+		~SpotLight() override = default;
 
 		const glm::mat4 GetLightSpaceView() override;
 		const glm::mat4 GetLightSpaceViewProj() override;
