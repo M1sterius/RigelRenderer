@@ -19,19 +19,22 @@ namespace rgr
         void DoForwardPass();
     private:
         static const size_t MAX_DIR_LIGHTS_COUNT = 16;
-        static const size_t MAX_POINT_LIGHTS_COUNT = 64;
         static const size_t MAX_SPOT_LIGHTS_COUNT = 64;
+        static const size_t MAX_POINT_LIGHTS_COUNT = 64;
 
         rgr::Scene* m_Scene;
         std::unique_ptr<GBuffer> m_GBuffer;
-        unsigned int m_DepthMapFBOHandle = 0;
+
+        unsigned int m_DirLightsFBOHandle = 0;
+        unsigned int m_SpotLightsFBOHandle = 0;
 
         unsigned int m_DirLightsDepthAtlasHandle = 0;
         unsigned int m_SpotLightsDepthAtlasHandle = 0;
 
-        void InitializeDepthMapFBO();
-        void DeleteDepthMapFBO();
+        void InitializeDepthMapFBOs();
+        void DeleteDepthMapFBOs();
         void BlitDeferredFBO();
+        void ClearDepthAtlases() const;
 
         void InitializeDepthAtlases();
         void DeleteDepthAtlases();

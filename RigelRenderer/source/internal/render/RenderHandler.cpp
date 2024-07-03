@@ -6,6 +6,7 @@
 #include "glew.h"
 
 #include <vector>
+#include <iostream>
 
 namespace rgr
 {
@@ -16,13 +17,13 @@ namespace rgr
         m_GBuffer = std::make_unique<rgr::GBuffer>(rgr::GetViewportSize().width, rgr::GetViewportSize().height);
 
         InitializeDepthAtlases();
-        InitializeDepthMapFBO();
+        InitializeDepthMapFBOs();
     }
 
     RenderHandler::~RenderHandler()
     {
         DeleteDepthAtlases();
-        DeleteDepthMapFBO();
+        DeleteDepthMapFBOs();
     }
 
     void RenderHandler::GenerateDepthMaps()
@@ -30,10 +31,8 @@ namespace rgr
         rgr::Camera* camera = m_Scene->GetMainCamera();
         const auto& lights = m_Scene->GetLightsAround(camera->GetTransform().GetPosition(), camera->shadowsVisibilityDistance);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBOHandle);
-        glClear(GL_DEPTH_BUFFER_BIT);
-
         glCullFace(GL_FRONT);
+        ClearDepthAtlases();
 
         size_t dirLightsCount = 0;
         size_t spotLightsCount = 0;
@@ -48,8 +47,8 @@ namespace rgr
                 const auto x_pos = static_cast<size_t>(dirLightsCount % 4) * dirMapSize;
                 const auto y_pos = static_cast<size_t>(dirLightsCount / 4) * dirMapSize;
 
+                glBindFramebuffer(GL_FRAMEBUFFER, m_DirLightsFBOHandle);
                 glViewport(x_pos, y_pos, dirMapSize, dirMapSize);
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DirLightsDepthAtlasHandle, 0);
 
                 dirLight->GenerateDepthMap();
 
@@ -57,24 +56,19 @@ namespace rgr
             }
             else if (auto spotLight = dynamic_cast<rgr::SpotLight*>(light))
             {
-                const size_t dirMapSize = rgr::SpotLight::depthMapSize;
-                const auto x_pos = static_cast<size_t>(spotLightsCount % 4) * dirMapSize;
-                const auto y_pos = static_cast<size_t>(spotLightsCount / 4) * dirMapSize;
+                const size_t spotMapSize = rgr::SpotLight::depthMapSize;
+                const auto x_pos = static_cast<size_t>(spotLightsCount % 8) * spotMapSize;
+                const auto y_pos = static_cast<size_t>(spotLightsCount / 8) * spotMapSize;
 
-                glViewport(x_pos, y_pos, dirMapSize, dirMapSize);
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle, 0);
+                glBindFramebuffer(GL_FRAMEBUFFER, m_SpotLightsFBOHandle);
+                glViewport(x_pos, y_pos, spotMapSize, spotMapSize);
 
                 spotLight->GenerateDepthMap();
 
                 spotLightsCount++;
             }
-//            else if (auto pointLight = dynamic_cast<rgr::PointLight*>(light))
-//            {
-//
-//            }
         }
 
-        // Restore the original viewport
         rgr::ViewportSize size = rgr::GetViewportSize();
         glViewport(0, 0, size.width, size.height);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -170,20 +164,29 @@ namespace rgr
 
     }
 
-    void RenderHandler::InitializeDepthMapFBO()
+    void RenderHandler::InitializeDepthMapFBOs()
     {
-        // Note that attaching a depth map texture is skipped, because one will later be attached for each light individually
-        glGenFramebuffers(1, &m_DepthMapFBOHandle);
-        glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBOHandle);
+        // Directional lights FBO
+        glGenFramebuffers(1, &m_DirLightsFBOHandle);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_DirLightsFBOHandle);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DirLightsDepthAtlasHandle, 0);
+
+        // Spotlights FBO
+        glGenFramebuffers(1, &m_SpotLightsFBOHandle);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_SpotLightsFBOHandle);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void RenderHandler::DeleteDepthMapFBO()
+    void RenderHandler::DeleteDepthMapFBOs()
     {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glDeleteFramebuffers(1, &m_DepthMapFBOHandle);
+        glDeleteFramebuffers(1, &m_DirLightsFBOHandle);
+        glDeleteFramebuffers(1, &m_SpotLightsFBOHandle);
     }
 
     void RenderHandler::BlitDeferredFBO()
@@ -229,14 +232,23 @@ namespace rgr
         glDeleteTextures(1, &m_DirLightsDepthAtlasHandle);
         glDeleteTextures(1, &m_SpotLightsDepthAtlasHandle);
     }
+
+    void RenderHandler::ClearDepthAtlases() const
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, m_DirLightsFBOHandle);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_SpotLightsFBOHandle);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 }
 
-//rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
-//rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
+//        rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
+//        rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
 //
-//shader->Bind();
-//glActiveTexture(GL_TEXTURE0);
-//glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
-//shader->SetUniform1i("u_Texture", m_SpotLightsDepthAtlasHandle);
+//        shader->Bind();
+//        glActiveTexture(GL_TEXTURE0);
+//        glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
+//        shader->SetUniform1i("u_Texture", m_SpotLightsDepthAtlasHandle);
 //
-//quad->Draw();
+//        quad->Draw();
