@@ -6,6 +6,10 @@ namespace rgr
 {
     class Scene;
     class GBuffer;
+    class DirectionalLight;
+    class SpotLight;
+    class PointLight;
+    class Shader;
 
     class RenderHandler
     {
@@ -35,6 +39,10 @@ namespace rgr
         void DeleteDepthMapFBOs();
         void BlitDeferredFBO();
         void ClearDepthAtlases() const;
+
+        static void SetDirLightUniforms(rgr::DirectionalLight* light, rgr::Shader* shader, const size_t lightIndex);
+        static void SetSpotLightUniforms(rgr::SpotLight* light, rgr::Shader* shader, const size_t lightIndex);
+        static void SetPointLightUniforms(rgr::PointLight* light, rgr::Shader* shader, const size_t lightIndex);
 
         void InitializeDepthAtlases();
         void DeleteDepthAtlases();

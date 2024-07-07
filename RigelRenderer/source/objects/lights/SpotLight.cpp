@@ -34,6 +34,8 @@ void rgr::SpotLight::GenerateDepthMap()
 {
     const auto& renderables = m_ScenePtr->GetRenderablesInFrustum();
 
+    const glm::mat4 lightSpaceViewProj = GetLightSpaceViewProj();
+
     for (auto i : renderables)
     {
         auto renderable = dynamic_cast<rgr::RenderableMesh*>(i);
@@ -41,6 +43,6 @@ void rgr::SpotLight::GenerateDepthMap()
         if (renderable == nullptr) continue;
         if (!renderable->shadowCaster) continue;
 
-        renderable->RenderDepth(GetLightSpaceViewProj());
+        renderable->RenderDepth(lightSpaceViewProj);
     }
 }

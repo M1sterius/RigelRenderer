@@ -8,6 +8,8 @@ rgr::DirectionalLight::DirectionalLight(const glm::vec3& color, const float inte
 {
 	this->color = color;
 	this->intensity = intensity;
+
+    CalcProjMatrix();
 }
 
 const glm::mat4 rgr::DirectionalLight::GetLightSpaceView()
@@ -23,8 +25,7 @@ const glm::mat4 rgr::DirectionalLight::GetLightSpaceView()
 
 const glm::mat4 rgr::DirectionalLight::GetLightSpaceViewProj()
 {
-	static const glm::mat4 proj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, m_DepthProjNear, m_DepthProjFar);
-	const glm::mat4 viewProj = proj * this->GetLightSpaceView();
+	const glm::mat4 viewProj = m_ProjMatrix * this->GetLightSpaceView();
 
 	return viewProj;
 }
@@ -33,6 +34,8 @@ void rgr::DirectionalLight::GenerateDepthMap()
 {
 	const auto& renderables = m_ScenePtr->GetRenderablesInFrustum();
 
+    const glm::mat4 lightSpaceViewProj = GetLightSpaceViewProj();
+
 	for (auto i : renderables)
 	{
 		auto renderable = dynamic_cast<rgr::RenderableMesh*>(i);
@@ -40,6 +43,11 @@ void rgr::DirectionalLight::GenerateDepthMap()
 		if (renderable == nullptr) continue;
 		if (!renderable->shadowCaster) continue;
 
-		renderable->RenderDepth(GetLightSpaceViewProj());
+		renderable->RenderDepth(lightSpaceViewProj);
 	}
+}
+
+void rgr::DirectionalLight::CalcProjMatrix()
+{
+    m_ProjMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, m_DepthProjNear, m_DepthProjFar);
 }

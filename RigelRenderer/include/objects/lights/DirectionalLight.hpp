@@ -9,6 +9,10 @@ namespace rgr
 	private:
 		const float m_DepthProjNear = 0.1f;
 		const float m_DepthProjFar = 20.0f;
+
+        glm::mat4 m_ProjMatrix;
+
+        void CalcProjMatrix();
 	public:
 		glm::vec3 direction;
 

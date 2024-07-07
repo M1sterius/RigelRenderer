@@ -73,6 +73,17 @@ namespace rgr
         glViewport(0, 0, size.width, size.height);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+//        glViewport(0, 0, 900, 900);
+//        rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
+//        rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
+//
+//        shader->Bind();
+//        glActiveTexture(GL_TEXTURE0);
+//        glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
+//        shader->SetUniform1i("u_Texture", m_SpotLightsDepthAtlasHandle);
+//
+//        quad->Draw();
+
         glCullFace(GL_BACK);
     }
 
@@ -97,7 +108,7 @@ namespace rgr
         m_GBuffer->Unbind();
     }
 
-    static void SetDirLightUniforms(rgr::DirectionalLight* light, rgr::Shader* shader, const size_t lightIndex)
+    void RenderHandler::SetDirLightUniforms(rgr::DirectionalLight* light, rgr::Shader* shader, const size_t lightIndex)
     {
         std::string u_name = "u_DirectionalLights[" + std::to_string(lightIndex) + "].";
         shader->SetUniformVec3(u_name + "color", light->color);
@@ -107,12 +118,23 @@ namespace rgr
         shader->SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
     }
 
-    static void SetPointLightUniforms(rgr::PointLight* light, rgr::Shader* shader, const size_t lightIndex)
+    void RenderHandler::SetSpotLightUniforms(rgr::SpotLight* light, rgr::Shader* shader, const size_t lightIndex)
     {
-
+        std::string u_name = "u_SpotLights[" + std::to_string(lightIndex) + "].";
+        shader->SetUniformVec3(u_name + "color", light->color);
+        shader->SetUniform1f(u_name + "intensity", light->intensity);
+        shader->SetUniformVec3(u_name + "position", light->GetTransform().GetPosition());
+        shader->SetUniformVec3(u_name + "direction", light->direction);
+        shader->SetUniform1f(u_name + "cutOff", light->cutOff);
+        shader->SetUniform1f(u_name + "outerCutOff", light->outerCutOff);
+        shader->SetUniform1f(u_name + "constant", light->constant);
+        shader->SetUniform1f(u_name + "linear", light->linear);
+        shader->SetUniform1f(u_name + "quadratic", light->quadratic);
+        shader->SetUniformBool(u_name + "smoothShadows", light->smoothShadows);
+        shader->SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
     }
 
-    static void SetSpotLightUniforms(rgr::SpotLight* light, rgr::Shader* shader, const size_t lightIndex)
+    void RenderHandler::SetPointLightUniforms(rgr::PointLight* light, rgr::Shader* shader, const size_t lightIndex)
     {
 
     }
@@ -140,7 +162,13 @@ namespace rgr
         glBindTexture(GL_TEXTURE_2D, m_DirLightsDepthAtlasHandle);
         shader->SetUniform1i("u_DirLightsShadowAtlas", 3);
 
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
+        shader->SetUniform1i("u_SpotLightsShadowAtlas", 4);
+
         size_t dirCount = 0;
+        size_t spotCount = 0;
+
 
         for (auto light: lights)
         {
@@ -150,9 +178,16 @@ namespace rgr
                 SetDirLightUniforms(dirLight, shader, dirCount);
                 dirCount++;
             }
+            else if (auto spotLight = dynamic_cast<SpotLight*>(light))
+            {
+                if (spotCount > (MAX_SPOT_LIGHTS_COUNT - 1)) continue;
+                SetSpotLightUniforms(spotLight, shader, spotCount);
+                spotCount++;
+            }
         }
 
         shader->SetUniform1i("u_DirLightsCount", dirCount);
+        shader->SetUniform1i("u_SpotLightsCount", spotCount);
 
         quad->Draw();
 
@@ -214,16 +249,17 @@ namespace rgr
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
+
         // Spotlights atlas
         static const size_t SPOT_LIGHTS_ATLAS_SIZE = rgr::SpotLight::depthMapSize * 8; // total 64 maps
         glGenTextures(1, &m_SpotLightsDepthAtlasHandle);
         glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
                      SPOT_LIGHTS_ATLAS_SIZE, SPOT_LIGHTS_ATLAS_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     }
 
@@ -243,12 +279,13 @@ namespace rgr
     }
 }
 
-//        rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
-//        rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
+//glViewport(0, 0, 900, 900);
+//rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
+//rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
 //
-//        shader->Bind();
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
-//        shader->SetUniform1i("u_Texture", m_SpotLightsDepthAtlasHandle);
+//shader->Bind();
+//glActiveTexture(GL_TEXTURE0);
+//glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
+//shader->SetUniform1i("u_Texture", m_SpotLightsDepthAtlasHandle);
 //
-//        quad->Draw();
+//quad->Draw();

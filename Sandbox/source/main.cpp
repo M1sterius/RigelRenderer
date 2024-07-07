@@ -56,8 +56,8 @@ int main(int argc, char* argv[])
 
 	auto cube1 = new rgr::RenderableMesh(&cubeMesh);
 	cube1->diffuseTexture = testTexture;
-	cube1->GetTransform().SetPosition(glm::vec3(0, 2, -3));
-    cube1->GetTransform().SetRotation(glm::vec3(30, 25, 40));
+	cube1->GetTransform().SetPosition(glm::vec3(-3, -1, 0));
+    cube1->GetTransform().SetRotation(glm::vec3(0, 0, 0));
 
 	auto plane = new rgr::RenderableMesh(&cubeMesh);
 	plane->diffuseTexture = planeDiffuse;
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 	camera->GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 	camera->FlagAsMain();
 
-	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 1.0f, glm::vec3(0, -1, 1));
+	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(0, -1, 1));
 	dirLight.GetTransform().SetPosition(glm::vec3(0, 6, -6));
     dirLight.smoothShadows = true;
 
@@ -105,16 +105,16 @@ int main(int argc, char* argv[])
 	pntLight1.GetTransform().SetPosition(glm::vec3(-2.5, -0.9f, 0));
 
 	rgr::SpotLight sptLight = rgr::SpotLight(
-		glm::vec3(1.0f, 0.0f, 0.0f),
-		4.0f, glm::vec3(0.0f, -1.0f, 0.0f),
+		glm::vec3(1.0f, 1.0f, 1.0f),
+		15.0f, glm::vec3(0.05, -1.0, 0.0),
 		0.9978f, 0.953f,
 		1.0f, 0.22f, 0.2f
 	);
-	sptLight.GetTransform().SetPosition(glm::vec3(2, 0, 0));
+	sptLight.GetTransform().SetPosition(glm::vec3(0.0, -1.3, 0));
 
 	rgr::SpotLight sptLight1 = rgr::SpotLight(
 		glm::vec3(0.0f, 0.0f, 1.0f),
-		4.0f, glm::vec3(1.0f, -0.5f, 0.0f),
+		10.0f, glm::vec3(1.0f, -0.5f, 0.0f),
 		0.9978f, 0.953f,
 		1.0f, 0.22f, 0.2f
 	);
@@ -178,7 +178,6 @@ int main(int argc, char* argv[])
 
 		rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::GetDeltaTime();
 		cube->GetTransform().SetRotation(rot);
-		//sphere->GetTransform().SetRotation(rot);
 
 		if (rgr::Input::KeyPressed(RGR_KEY_M))
 		{
@@ -190,7 +189,12 @@ int main(int argc, char* argv[])
 
 		auto x = (float)glm::cos(rgr::GetTimePassed() * 3);
 		auto z = (float)glm::sin(rgr::GetTimePassed() * 3);
-		sptLight.direction = glm::vec3(x, 0.0, z);
+		sptLight.direction = glm::vec3(x, 0, z);
+
+//        sptLight.GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0.0f, 0.0f, 0.0f));
+//        sptLight.direction = camera->GetForwardVector();
+//
+//        std::cout << glm::to_string(sptLight.direction) << '\n';
 
 		rgr::Update();
 	}
