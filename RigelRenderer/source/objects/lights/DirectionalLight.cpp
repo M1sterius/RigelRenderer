@@ -12,6 +12,11 @@ rgr::DirectionalLight::DirectionalLight(const glm::vec3& color, const float inte
     CalcProjMatrix();
 }
 
+const float rgr::DirectionalLight::GetLightRange()
+{
+    return INFINITY;
+}
+
 const glm::mat4 rgr::DirectionalLight::GetLightSpaceView()
 {
 	constexpr glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -29,6 +34,12 @@ const glm::mat4 rgr::DirectionalLight::GetLightSpaceViewProj()
 
 	return viewProj;
 }
+
+void rgr::DirectionalLight::SetDepthProjectionClip(const float near, const float far, const float width, const float height)
+{
+
+}
+
 
 void rgr::DirectionalLight::GenerateDepthMap()
 {
@@ -49,5 +60,6 @@ void rgr::DirectionalLight::GenerateDepthMap()
 
 void rgr::DirectionalLight::CalcProjMatrix()
 {
-    m_ProjMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, m_DepthProjNear, m_DepthProjFar);
+    m_ProjMatrix = glm::ortho(-(m_ProjWidth / 2), (m_ProjWidth / 2), -(m_ProjHeight / 2), (m_ProjHeight / 2),
+                              m_DepthProjNear, m_DepthProjFar);
 }

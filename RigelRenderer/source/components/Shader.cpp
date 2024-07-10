@@ -142,8 +142,6 @@ namespace rgr
                 return lightingPassShader;
             case BUILT_IN_SHADERS::TEXTURE_TEST:
                 return textureTestShader;
-            default:
-                return nullptr;
         }
     }
 

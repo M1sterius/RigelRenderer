@@ -14,10 +14,9 @@ namespace rgr
 		bool castShadows = true;
         bool smoothShadows = false;
 
-        static const size_t depthMapSize = 1024;
-
 		virtual ~Light() = default;
 
+        virtual const float GetLightRange() = 0;
 		virtual const glm::mat4 GetLightSpaceView() = 0;
 		virtual const glm::mat4 GetLightSpaceViewProj() = 0;
 	INTERNAL:

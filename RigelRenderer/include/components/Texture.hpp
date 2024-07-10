@@ -29,6 +29,7 @@ namespace rgr
         enum class WRAP
         {
             CLAMP_TO_BORDER = 0x812D,
+            CLAMP_TO_EDGE = 0x812F,
             REPEAT = 0x2901
         };
 

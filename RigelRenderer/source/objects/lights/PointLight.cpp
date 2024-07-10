@@ -21,3 +21,8 @@ void rgr::PointLight::GenerateDepthMap()
 {
 
 }
+
+const float rgr::PointLight::GetLightRange()
+{
+    return 1000.0f;
+}

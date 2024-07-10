@@ -5,10 +5,12 @@
 
 rgr::SpotLight::SpotLight(const glm::vec3 color, const float intensity, const glm::vec3& direction,
 	const float cutOff, const float outerCutOff, const float constant, const float linear, const float quadratic)
-    : direction(direction), cutOff(cutOff), outerCutOff(outerCutOff), constant(constant), linear(linear), quadratic(quadratic)
+    : direction(direction), m_CutOff(cutOff), outerCutOff(outerCutOff), constant(constant), linear(linear), quadratic(quadratic)
 {
 	this->color = color;
 	this->intensity = intensity;
+
+    CalcProjMatrix();
 }
 
 const glm::mat4 rgr::SpotLight::GetLightSpaceView()
@@ -24,8 +26,7 @@ const glm::mat4 rgr::SpotLight::GetLightSpaceView()
 
 const glm::mat4 rgr::SpotLight::GetLightSpaceViewProj()
 {
-    static const glm::mat4 proj = glm::perspective(cutOff * 2.0f, 1.0f, m_DepthProjNear, m_DepthProjFar);
-    const glm::mat4 viewProj = proj * this->GetLightSpaceView();
+    const glm::mat4 viewProj = m_ProjMatrix * this->GetLightSpaceView();
 
     return viewProj;
 }
@@ -45,4 +46,29 @@ void rgr::SpotLight::GenerateDepthMap()
 
         renderable->RenderDepth(lightSpaceViewProj);
     }
+}
+
+void rgr::SpotLight::SetDepthProjectionClipPlanes(const float near, const float far)
+{
+    m_DepthProjNear = near;
+    m_DepthProjFar = far;
+
+    CalcProjMatrix();
+}
+
+void rgr::SpotLight::SetCutOff(const float cutOff)
+{
+    m_CutOff = cutOff;
+
+    CalcProjMatrix();
+}
+
+void rgr::SpotLight::CalcProjMatrix()
+{
+    m_ProjMatrix = glm::perspective(m_CutOff * 2.0f, 1.0f, m_DepthProjNear, m_DepthProjFar);
+}
+
+const float rgr::SpotLight::GetLightRange()
+{
+    return 1000.0f;
 }

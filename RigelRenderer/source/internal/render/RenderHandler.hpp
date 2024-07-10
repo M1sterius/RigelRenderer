@@ -22,9 +22,9 @@ namespace rgr
         void DoLightingPass();
         void DoForwardPass();
     private:
-        static const size_t MAX_DIR_LIGHTS_COUNT = 16;
-        static const size_t MAX_SPOT_LIGHTS_COUNT = 64;
-        static const size_t MAX_POINT_LIGHTS_COUNT = 64;
+        static constexpr size_t MAX_DIR_LIGHTS_COUNT = 9;
+        static constexpr size_t MAX_SPOT_LIGHTS_COUNT = 64;
+        static constexpr size_t MAX_POINT_LIGHTS_COUNT = 64;
 
         rgr::Scene* m_Scene;
         std::unique_ptr<GBuffer> m_GBuffer;
@@ -39,12 +39,11 @@ namespace rgr
         void DeleteDepthMapFBOs();
         void BlitDeferredFBO();
         void ClearDepthAtlases() const;
+        void InitializeDepthAtlases();
+        void DeleteDepthAtlases();
 
         static void SetDirLightUniforms(rgr::DirectionalLight* light, rgr::Shader* shader, const size_t lightIndex);
         static void SetSpotLightUniforms(rgr::SpotLight* light, rgr::Shader* shader, const size_t lightIndex);
         static void SetPointLightUniforms(rgr::PointLight* light, rgr::Shader* shader, const size_t lightIndex);
-
-        void InitializeDepthAtlases();
-        void DeleteDepthAtlases();
     };
 }

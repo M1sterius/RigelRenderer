@@ -47,12 +47,9 @@ uniform uint u_SpotLightsCount;
 
 out vec4 FragColor;
 
-const float near = 0.1f;
-const float far = 20.0f;
-
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec3 diffuse, float specular)
 {
-    vec3 lightDir = normalize(-light.direction);
+    vec3 lightDir = -normalize(light.direction);
 
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 diffuseRes = diff * light.color * light.intensity * diffuse;
@@ -72,18 +69,17 @@ float CalcDirLightShadow(vec4 fragPosLightSpace, uint index, vec3 normal)
     if (projCoords.z > 1.0)
         return 1.0;
 
-    const uint MAPS_PER_ROW = 4;
-    const uint MAPS_PER_COL = 4;
-    const float MAP_OFFSET_UV = 0.25;
+    const uint MAPS_PER_AXIS = 3;
+    const float MAP_OFFSET_UV = 0.33333;
 
-    vec2 atlasOffset = vec2((index % MAPS_PER_ROW) * MAP_OFFSET_UV, (index / MAPS_PER_COL) * MAP_OFFSET_UV);
+    vec2 atlasOffset = vec2((index % MAPS_PER_AXIS) * MAP_OFFSET_UV, (index / MAPS_PER_AXIS) * MAP_OFFSET_UV);
 
     vec2 shadowMapUV = projCoords.xy * MAP_OFFSET_UV + atlasOffset;
 
     float currentDepth = projCoords.z;
     float closestDepth = texture(u_DirLightsShadowAtlas, shadowMapUV).r;
 
-    float bias = max(0.05 * (1.0 - dot(normal, u_DirectionalLights[index].direction)), 0.005);
+    float bias = max(0.005 * (1.0 - dot(normal, normalize(u_DirectionalLights[index].direction))), 0.001);
 
     float shadow = currentDepth - bias > closestDepth ? 0.0 : 1.0;
 
@@ -113,12 +109,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     return diffuseRes + specularRes;
 }
 
-float LinearizeDepth(float depth)
-{
-    float z = depth * 2.0 - 1.0;
-    return (2.0 * near * far) / (far + near - z * (far - near));
-}
-
 float CalcSpotLightShadow(vec4 fragPosLightSpace, uint index, vec3 normal)
 {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -127,11 +117,10 @@ float CalcSpotLightShadow(vec4 fragPosLightSpace, uint index, vec3 normal)
     if (projCoords.z > 1.0)
         return 1.0;
 
-    const uint MAPS_PER_ROW = 8;
-    const uint MAPS_PER_COL = 8;
+    const uint MAPS_PER_AXIS = 8;
     const float MAP_OFFSET_UV = 0.125;
 
-    vec2 atlasOffset = vec2((index % MAPS_PER_ROW) * MAP_OFFSET_UV, (index / MAPS_PER_COL) * MAP_OFFSET_UV);
+    vec2 atlasOffset = vec2((index % MAPS_PER_AXIS) * MAP_OFFSET_UV, (index / MAPS_PER_AXIS) * MAP_OFFSET_UV);
 
     vec2 shadowMapUV = projCoords.xy * MAP_OFFSET_UV + atlasOffset;
 

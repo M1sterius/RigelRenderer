@@ -7,20 +7,28 @@ namespace rgr
 	class DirectionalLight : public rgr::Light
 	{
 	private:
-		const float m_DepthProjNear = 0.1f;
-		const float m_DepthProjFar = 20.0f;
+		float m_DepthProjNear = 0.1f;
+		float m_DepthProjFar = 20.0f;
+        float m_ProjWidth = 20.0f;
+        float m_ProjHeight = 20.0f;
 
         glm::mat4 m_ProjMatrix;
 
         void CalcProjMatrix();
 	public:
+        static const size_t depthMapSize = 2048;
+
 		glm::vec3 direction;
 
 		DirectionalLight(const glm::vec3& color, const float intensity, const glm::vec3& direction);
 		~DirectionalLight() override = default;
 
+        const float GetLightRange() override;
 		const glm::mat4 GetLightSpaceView() override;
 		const glm::mat4 GetLightSpaceViewProj() override;
+
+        void SetDepthProjectionClip(const float near, const float far, const float width, const float height);
+        inline glm::vec4 GetDepthProjectionClip() const { return {m_DepthProjNear, m_DepthProjFar, m_ProjWidth, m_ProjHeight}; }
 	INTERNAL:
 		void GenerateDepthMap() override;
 	};
