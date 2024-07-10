@@ -10,6 +10,7 @@ namespace rgr
     class SpotLight;
     class PointLight;
     class Shader;
+    class Texture;
 
     class RenderHandler
     {
@@ -28,19 +29,17 @@ namespace rgr
 
         rgr::Scene* m_Scene;
         std::unique_ptr<GBuffer> m_GBuffer;
+        std::unique_ptr<Texture> m_DirLightsDepthAtlas;
+        std::unique_ptr<Texture> m_SpotLightsDepthAtlas;
 
         unsigned int m_DirLightsFBOHandle = 0;
         unsigned int m_SpotLightsFBOHandle = 0;
-
-        unsigned int m_DirLightsDepthAtlasHandle = 0;
-        unsigned int m_SpotLightsDepthAtlasHandle = 0;
 
         void InitializeDepthMapFBOs();
         void DeleteDepthMapFBOs();
         void BlitDeferredFBO();
         void ClearDepthAtlases() const;
         void InitializeDepthAtlases();
-        void DeleteDepthAtlases();
 
         static void SetDirLightUniforms(rgr::DirectionalLight* light, rgr::Shader* shader, const size_t lightIndex);
         static void SetSpotLightUniforms(rgr::SpotLight* light, rgr::Shader* shader, const size_t lightIndex);

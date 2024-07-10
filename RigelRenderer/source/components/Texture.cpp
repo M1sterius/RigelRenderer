@@ -43,15 +43,19 @@ namespace rgr
             case TYPE::RGB:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width,
                              height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+                break;
             case TYPE::RGBA:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width,
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width,
                              height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                break;
             case TYPE::RGBA32F:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width,
                              height, 0, GL_RGBA, GL_FLOAT, nullptr);
+                break;
             case TYPE::DEPTH_COMPONENT:
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width,
                              height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+                break;
         }
 
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -68,8 +72,36 @@ namespace rgr
 		glBindTexture(GL_TEXTURE_2D, m_Handle);
 	}
 
+    void Texture::BindNoSlot() const
+    {
+        glBindTexture(GL_TEXTURE_2D, m_Handle);
+    }
+
 	void Texture::Unbind() const
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+
+    void Texture::SetFilter(const Texture::FILTER min, const Texture::FILTER mag) const
+    {
+        this->BindNoSlot();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(min));
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(mag));
+        this->Unbind();
+    }
+
+    void Texture::SetWrap(const Texture::WRAP s, const Texture::WRAP t) const
+    {
+        this->BindNoSlot();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(s));
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(t));
+        this->Unbind();
+    }
+
+    void Texture::SetBorderColor(const float* color) const
+    {
+        this->BindNoSlot();
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
+        this->Unbind();
+    }
 }

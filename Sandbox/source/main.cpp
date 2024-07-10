@@ -119,8 +119,8 @@ int main(int argc, char* argv[])
 	scene->AddObject(&dirLight1);
 	scene->AddObject(&pntLight);
 	scene->AddObject(&pntLight1);
-//	scene->AddObject(&sptLight);
-//	scene->AddObject(&sptLight1);
+	scene->AddObject(&sptLight);
+	scene->AddObject(&sptLight1);
 
 	const float sensitivity = 0.3f;
 	const float flySpeed = 2.0f;
@@ -178,8 +178,8 @@ int main(int argc, char* argv[])
 		auto z = (float)glm::sin(rgr::GetTimePassed() * 3);
 		sptLight.direction = glm::vec3(x, 0, z);
 
-//        sptLight1.GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f));
-//        sptLight1.direction = camera->GetForwardVector();
+        sptLight1.GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f));
+        sptLight1.direction = camera->GetForwardVector();
 
 
 		rgr::Update();

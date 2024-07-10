@@ -1046,7 +1046,7 @@ namespace objl
 						// Push Back loaded Material
 						LoadedMaterials.push_back(tempMaterial);
 
-						// Clear Loaded Material
+						// ClearColorDepthBufferBit Loaded Material
 						tempMaterial = Material();
 
 						if (curline.size() > 7)

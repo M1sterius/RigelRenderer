@@ -1,17 +1,20 @@
 #pragma once
 
-#include <cstdio>
+#include <memory>
 
 namespace rgr
 {
+    class Texture;
+
 	class GBuffer
 	{
 	private:
 		unsigned int m_FBO;
-		unsigned int m_PositionTexture;
-		unsigned int m_NormalTexture;
-		unsigned int m_ColorTexture;
 		unsigned int m_DepthRBO;
+
+        std::unique_ptr<Texture> m_PositionTexture;
+        std::unique_ptr<Texture> m_NormalTexture;
+        std::unique_ptr<Texture> m_ColorTexture;
 
 		size_t m_ScreenWidth;
 		size_t m_ScreenHeight;
@@ -21,15 +24,12 @@ namespace rgr
 
 		void Bind() const;
 		void Unbind() const;
-		void Clear() const;
+		void ClearColorDepthBufferBit() const;
 
 		void BindPositionTexture() const;
 		void BindNormalTexture() const;
 		void BindColorTexture() const;
 
-		inline const unsigned int GetPositionTexture() const { return m_PositionTexture; }
-		inline const unsigned int GetNormalTexture() const { return m_NormalTexture; }
-		inline const unsigned int GetColorTexture() const { return m_ColorTexture; }
         inline const unsigned int GetFBOHandle() const {return m_FBO; }
 
         inline const size_t GetBufferWidth() const {return m_ScreenWidth; }

@@ -1,42 +1,32 @@
 #include "GBuffer.hpp"
 #include "glew.h"
+#include "Texture.hpp"
 
-#include <iostream>
 
 namespace rgr
 {
-
 	GBuffer::GBuffer(const size_t screenWidth, const size_t screenHeight)
-		: m_ScreenWidth(screenWidth), m_ScreenHeight(screenHeight)
+		: m_ScreenWidth(screenWidth), m_ScreenHeight(screenHeight), m_FBO(0), m_DepthRBO(0)
 	{
 		glGenFramebuffers(1, &m_FBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-		// Position buffer
-		glGenTextures(1, &m_PositionTexture);
-		glBindTexture(GL_TEXTURE_2D, m_PositionTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_ScreenWidth, m_ScreenHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_PositionTexture, 0);
-	
-		// Normal buffer
-		glGenTextures(1, &m_NormalTexture);
-		glBindTexture(GL_TEXTURE_2D, m_NormalTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_ScreenWidth, m_ScreenHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_NormalTexture, 0);
+        // Position buffer
+        m_PositionTexture = std::make_unique<Texture>(m_ScreenWidth, m_ScreenHeight, rgr::Texture::TYPE::RGBA32F);
+        m_PositionTexture->SetFilter(rgr::Texture::FILTER::NEAREST, rgr::Texture::FILTER::NEAREST);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_PositionTexture->GetHandle(), 0);
 
-		// Color buffer
-		glGenTextures(1, &m_ColorTexture);
-		glBindTexture(GL_TEXTURE_2D, m_ColorTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_ScreenWidth, m_ScreenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_ColorTexture, 0);
+        // Normal buffer
+        m_NormalTexture = std::make_unique<Texture>(m_ScreenWidth, m_ScreenHeight, rgr::Texture::TYPE::RGBA32F);
+        m_NormalTexture->SetFilter(rgr::Texture::FILTER::NEAREST, rgr::Texture::FILTER::NEAREST);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_NormalTexture->GetHandle(), 0);
 
-		const unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+        // Color buffer
+        m_ColorTexture = std::make_unique<Texture>(m_ScreenWidth, m_ScreenHeight, rgr::Texture::TYPE::RGBA);
+        m_ColorTexture->SetFilter(rgr::Texture::FILTER::NEAREST, rgr::Texture::FILTER::NEAREST);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_ColorTexture->GetHandle(), 0);
+
+		constexpr unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glDrawBuffers(3, attachments);
 
 		// Depth buffer
@@ -50,12 +40,7 @@ namespace rgr
 
 	GBuffer::~GBuffer()
 	{
-		glDeleteTextures(1, &m_PositionTexture);
-		glDeleteTextures(1, &m_NormalTexture);
-		glDeleteTextures(1, &m_ColorTexture);
-
 		glDeleteRenderbuffers(1, &m_DepthRBO);
-
 		glDeleteFramebuffers(1, &m_FBO);
 	}
 
@@ -69,7 +54,7 @@ namespace rgr
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void GBuffer::Clear() const
+	void GBuffer::ClearColorDepthBufferBit() const
 	{
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -77,19 +62,16 @@ namespace rgr
 
 	void GBuffer::BindPositionTexture() const
 	{
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_PositionTexture);
+        m_PositionTexture->Bind(0);
 	}
 
 	void GBuffer::BindNormalTexture() const
 	{
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, m_NormalTexture);
+        m_NormalTexture->Bind(1);
 	}
 
 	void GBuffer::BindColorTexture() const
 	{
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, m_ColorTexture);
+        m_ColorTexture->Bind(2);
 	}
 }
