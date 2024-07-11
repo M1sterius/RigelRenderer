@@ -2,7 +2,7 @@
 
 #include "stb_image.h"
 #include "glew.h"
-#include <iostream>
+
 namespace rgr
 {
 	Texture::Texture(const std::string& path)
@@ -45,7 +45,7 @@ namespace rgr
                              height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
                 break;
             case TYPE::RGBA:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width,
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width,
                              height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
                 break;
             case TYPE::RGBA32F:

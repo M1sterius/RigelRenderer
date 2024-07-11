@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
 	rgr::Mesh quadMesh = rgr::Mesh(quadVertices, quadIndices, quadTexCoords);
 	rgr::Mesh cubeMesh = rgr::Mesh("resources/objects/cube.obj");
 	rgr::Mesh sphereMesh = rgr::Mesh("resources/objects/sphere.obj");
+    rgr::Mesh dragonMesh = rgr::Mesh("resources/objects/dragon-1%.obj");
 
 	auto containerDiffuse = new rgr::Texture("resources/textures/container_diffuse.png");
 	auto containerSpecular = new rgr::Texture("resources/textures/container_specular.png");
@@ -63,6 +64,9 @@ int main(int argc, char* argv[])
 	plane->diffuseTexture = planeDiffuse;
 	plane->GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
 	plane->GetTransform().SetScale(glm::vec3(20, 0.01, 20));
+
+    auto dragon = new rgr::RenderableMesh(&dragonMesh);
+    dragon->GetTransform().SetPosition(glm::vec3(2, 0, 2));
 	
 	auto camera = new rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
 	camera->GetTransform().SetPosition(glm::vec3(0.0f, 4, 0.0f));
@@ -96,7 +100,7 @@ int main(int argc, char* argv[])
 
 	rgr::SpotLight sptLight = rgr::SpotLight(
 		glm::vec3(1.0f, 1.0f, 1.0f),
-		5.0f, glm::vec3(0.05, -1.0, 0.0),
+		3.0f, glm::vec3(0.05, -1.0, 0.0),
 		0.9978f, 0.953f,
 		1.0f, 0.22f, 0.2f
 	);
@@ -104,21 +108,22 @@ int main(int argc, char* argv[])
 
 	rgr::SpotLight sptLight1 = rgr::SpotLight(
 		glm::vec3(1.0f, 1.0f, 1.0f),
-		10.0f, glm::vec3(1.0f, -0.5f, 0.0f),
+		5.0f, glm::vec3(3, -3, 4),
 		0.9978f, 0.953f,
 		1.0f, 0.22f, 0.2f
 	);
-	sptLight1.GetTransform().SetPosition(glm::vec3(-2, 0, 0));
+	sptLight1.GetTransform().SetPosition(glm::vec3(-3, 2, -4));
 
 	scene->AddObject(camera);
 	scene->AddObject(cube);
 	scene->AddObject(cube1);
 	scene->AddObject(plane);
+    scene->AddObject(dragon);
 
 	scene->AddObject(&dirLight);
 	scene->AddObject(&dirLight1);
-	scene->AddObject(&pntLight);
-	scene->AddObject(&pntLight1);
+//	scene->AddObject(&pntLight);
+//	scene->AddObject(&pntLight1);
 	scene->AddObject(&sptLight);
 	scene->AddObject(&sptLight1);
 
@@ -130,6 +135,8 @@ int main(int argc, char* argv[])
 	float pitch = 0;
 	glm::vec3 pos = camera->GetTransform().GetPosition();
 	glm::vec3 rot(0.0f);
+
+    float dragonRotY = 0.0f;
 
 	while (!rgr::WindowShouldClose())
 	{	
@@ -164,15 +171,9 @@ int main(int argc, char* argv[])
 		camera->GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));
 
 		rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::GetDeltaTime();
+        dragonRotY += 1.0f * rgr::GetDeltaTime();
 		cube->GetTransform().SetRotation(rot);
-
-		if (rgr::Input::KeyPressed(RGR_KEY_M))
-		{
-			if (camera->viewMode == rgr::Camera::ViewMode::WIREFRAME)
-				camera->viewMode = rgr::Camera::ViewMode::FILL;
-			else
-				camera->viewMode = rgr::Camera::ViewMode::WIREFRAME;
-		}
+        dragon->GetTransform().SetRotation(glm::vec3(0.0, dragonRotY, 0.0));
 
 		auto x = (float)glm::cos(rgr::GetTimePassed() * 3);
 		auto z = (float)glm::sin(rgr::GetTimePassed() * 3);
@@ -180,7 +181,6 @@ int main(int argc, char* argv[])
 
         sptLight1.GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f));
         sptLight1.direction = camera->GetForwardVector();
-
 
 		rgr::Update();
 	}
