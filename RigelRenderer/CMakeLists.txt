@@ -8,7 +8,8 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/RigelRenderer/${CMAKE_BUILD_TYPE})
 
 file(GLOB_RECURSE SOURCES "source/*.cpp" "source/*.hpp")
-add_library(RigelRenderer STATIC ${SOURCES})
+add_library(RigelRenderer STATIC ${SOURCES}
+        source/internal/utility/glad.c)
 
 target_compile_definitions(RigelRenderer PRIVATE "GLEW_STATIC" "INTERNAL_LIB")
 
@@ -24,7 +25,7 @@ include_directories(
     source/built-in
 
     ${CMAKE_SOURCE_DIR}/dependencies/glfw/include/GLFW
-    ${CMAKE_SOURCE_DIR}/dependencies/glew/include/GL
+    ${CMAKE_SOURCE_DIR}/dependencies/glad/include
     ${CMAKE_SOURCE_DIR}/dependencies/glm
     ${CMAKE_SOURCE_DIR}/dependencies/obj_loader
     ${CMAKE_SOURCE_DIR}/dependencies/stb_image

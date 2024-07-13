@@ -1,5 +1,6 @@
 bin/
 CMakeBuild/
+vcpkg_installed/
 .vscode/
 .vs/
 .idea/

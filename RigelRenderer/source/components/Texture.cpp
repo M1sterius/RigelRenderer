@@ -1,7 +1,7 @@
 #include "Texture.hpp"
 
 #include "stb_image.h"
-#include "glew.h"
+#include "glad/glad.h"
 
 namespace rgr
 {

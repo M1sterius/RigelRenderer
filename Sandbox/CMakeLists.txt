@@ -18,13 +18,11 @@ include_directories(
 
 target_link_directories(Sandbox PRIVATE
     ../dependencies/glfw/lib-vc2022
-    ../dependencies/glew/lib/Release/x64
     ../dependencies/freetype/lib
 )
 
 target_link_libraries(Sandbox 
     opengl32
-    glew32s
     glfw3
     freetype
 )

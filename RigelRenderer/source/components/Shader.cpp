@@ -1,5 +1,5 @@
 #include "Shader.hpp"
-#include "glew.h"
+#include "glad/glad.h"
 #include "gtc/type_ptr.hpp"
 #include "glm.hpp"
 #include "Texture.hpp"
