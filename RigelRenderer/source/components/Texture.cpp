@@ -8,9 +8,13 @@ namespace rgr
 	Texture::Texture(const std::string& path)
 		: m_Handle(0), m_LocalBuffer(nullptr), m_Width(0), m_Height(0)
 	{
+        int width, height;
 		stbi_set_flip_vertically_on_load(1);
-		m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, nullptr, 4);
-		
+		m_LocalBuffer = stbi_load(path.c_str(), &width, &height, nullptr, 4);
+
+        m_Width = static_cast<size_t>(width);
+        m_Height = static_cast<size_t>(height);
+
 		glGenTextures(1, &m_Handle);
 		glBindTexture(GL_TEXTURE_2D, m_Handle);
 
@@ -41,20 +45,20 @@ namespace rgr
         switch (type)
         {
             case TYPE::RGB:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width,
-                             height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, static_cast<int>(width),
+                             static_cast<int>(height), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
                 break;
             case TYPE::RGBA:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width,
-                             height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, static_cast<int>(width),
+                             static_cast<int>(height), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
                 break;
             case TYPE::RGBA32F:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width,
-                             height, 0, GL_RGBA, GL_FLOAT, nullptr);
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, static_cast<int>(width),
+                             static_cast<int>(height), 0, GL_RGBA, GL_FLOAT, nullptr);
                 break;
             case TYPE::DEPTH_COMPONENT:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width,
-                             height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, static_cast<int>(width),
+                             static_cast<int>(height), 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
                 break;
         }
 
@@ -66,13 +70,13 @@ namespace rgr
 		glDeleteTextures(1, &m_Handle);
 	}
 
-	void Texture::Bind(unsigned int slot) const
+	void Texture::BindToSlot(unsigned int slot) const
 	{
 		glActiveTexture(GL_TEXTURE0 + slot);
 		glBindTexture(GL_TEXTURE_2D, m_Handle);
 	}
 
-    void Texture::BindNoSlot() const
+    void Texture::Bind() const
     {
         glBindTexture(GL_TEXTURE_2D, m_Handle);
     }
@@ -84,7 +88,7 @@ namespace rgr
 
     void Texture::SetFilter(const Texture::FILTER min, const Texture::FILTER mag) const
     {
-        this->BindNoSlot();
+        this->Bind();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(min));
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(mag));
         this->Unbind();
@@ -92,7 +96,7 @@ namespace rgr
 
     void Texture::SetWrap(const Texture::WRAP s, const Texture::WRAP t) const
     {
-        this->BindNoSlot();
+        this->Bind();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(s));
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(t));
         this->Unbind();
@@ -100,7 +104,7 @@ namespace rgr
 
     void Texture::SetBorderColor(const float* color) const
     {
-        this->BindNoSlot();
+        this->Bind();
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
         this->Unbind();
     }

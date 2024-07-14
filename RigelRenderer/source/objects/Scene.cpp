@@ -3,8 +3,9 @@
 #include "render/GBuffer.hpp"
 #include "render/RenderHandler.hpp"
 #include "renderable/CustomRenderable.hpp"
-
-#include "Logger.hpp"
+#include "Camera.hpp"
+#include "renderable/Renderable.hpp"
+#include "lights/Light.hpp"
 
 #include "glm.hpp"
 #include "glfw3.h"

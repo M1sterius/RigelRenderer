@@ -18,10 +18,6 @@ namespace rgr
 		m_Transform = rgr::Transform(position, rotation, scale);
 	}
 
-	Object::~Object()
-	{
-	}
-
 	void Object::AssignScene(const rgr::Scene* scene)
 	{
 		m_ScenePtr = scene;

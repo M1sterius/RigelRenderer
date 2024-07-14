@@ -3,6 +3,8 @@
 #include "Renderable.hpp"
 #include "glm.hpp"
 
+#include <memory>
+
 namespace rgr
 {	
 	class Mesh;
@@ -13,20 +15,19 @@ namespace rgr
 	class RenderableMesh final : public::rgr::Renderable
 	{
 	private:
-		Mesh* m_Mesh;
-
+		std::shared_ptr<Mesh> m_Mesh;
 	public:
-		explicit RenderableMesh(rgr::Mesh* mesh);
+		explicit RenderableMesh(std::shared_ptr<rgr::Mesh> mesh);
 		~RenderableMesh() override;
 
-		Texture* diffuseTexture;
-		Texture* specularTexture;
+		std::shared_ptr<Texture> diffuseTexture;
+        std::shared_ptr<Texture> specularTexture;
 
 		// Determines in what radius light will be able to affect appearance of this object
 		float affectedByLightDist = 7.0f;
 		bool shadowCaster = true;
 	INTERNAL:
-		inline Mesh* GetMesh() { return m_Mesh; }
+		inline std::shared_ptr<Mesh> GetMesh() { return m_Mesh; }
 
 		void RenderDepth(const glm::mat4& lightSpaceMatrix);
 		void RenderGeometry(rgr::Shader* shader, const glm::mat4& viewProj);

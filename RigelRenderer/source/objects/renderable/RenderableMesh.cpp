@@ -9,11 +9,12 @@
 #include "glm.hpp"
 
 #include <iostream>
+#include <utility>
 
 namespace rgr
 {
-	RenderableMesh::RenderableMesh(rgr::Mesh* mesh)
-		: m_Mesh(mesh)
+	RenderableMesh::RenderableMesh(std::shared_ptr<rgr::Mesh> mesh)
+		: m_Mesh(std::move(mesh))
 	{
 		diffuseTexture = nullptr;
 		specularTexture = nullptr;

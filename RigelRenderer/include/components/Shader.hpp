@@ -5,6 +5,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 namespace rgr
 {
@@ -35,6 +36,7 @@ namespace rgr
 		void Unbind() const;
 
 		void BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot);
+		void BindTexture(const std::string& name, const std::shared_ptr<Texture>& texture, unsigned int slot);
 		void SetUniform1i(const std::string& name, const int value);
 		void SetUniform1i(const std::string& name, const unsigned int value);
 		void SetUniform1i(const std::string& name, const size_t value);

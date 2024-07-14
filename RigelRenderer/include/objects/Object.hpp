@@ -4,6 +4,7 @@
 #include "Internal.hpp"
 
 #include <string>
+#include <memory>
 
 namespace rgr
 {	
@@ -18,9 +19,9 @@ namespace rgr
 		Object();
 		explicit Object(const rgr::Transform& transform);
 		Object(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale);
-		virtual ~Object();
+		virtual ~Object() = default;
 
-		const rgr::Scene* m_ScenePtr = nullptr;
+		const Scene* m_ScenePtr = nullptr;
 	private:
 		rgr::Transform m_Transform;
 	INTERNAL:

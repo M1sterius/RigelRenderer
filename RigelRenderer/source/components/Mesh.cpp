@@ -1,11 +1,10 @@
-#include "glAbstraction/GlAbstraction.hpp"
 #include "Mesh.hpp"
+#include "glAbstraction/GlAbstraction.hpp"
 #include "obj_loader.h"
-#include "Logger.hpp"
 
 #include <vector>
-#include <iostream>
 #include <array>
+#include <iostream>
 
 namespace rgr
 {
@@ -13,18 +12,19 @@ namespace rgr
 	{	
 		m_MeshType = MeshType::INDEXED;
 
-		m_VertexArray = new rgr::VertexArray();
+		m_VertexArray = std::make_unique<rgr::VertexArray>();
 
 		rgr::VertexBuffer verticesBuffer = rgr::VertexBuffer(vertices.data(), vertices.size() * sizeof(float));
 		rgr::VertexBuffer texCoordsBuffer = rgr::VertexBuffer(texCoords.data(), texCoords.size() * sizeof(float));
 		m_VertexArray->AddBuffer(verticesBuffer, Vec3Element, 0);
 		m_VertexArray->AddBuffer(texCoordsBuffer, Vec2Element, 1);
 
-		m_IndexBuffer = new rgr::IndexBuffer(indices.data(), indices.size());
+		m_IndexBuffer = std::make_unique<rgr::IndexBuffer>(indices.data(), indices.size());
 
 		m_VertsCount = vertices.size() / 3;
 		m_TrisCount = indices.size() / 3;
 	}
+
 	Mesh::Mesh(const std::string& objPath)
 	{	
 		m_MeshType = MeshType::INDEXED;
@@ -33,7 +33,7 @@ namespace rgr
 		
 		if (!loader.LoadFile(objPath))
 		{
-			lgr::Error("Unable to find a '.obj' file: " + objPath);
+			std::cout << "Unable to find a '.obj' file: " + objPath << '\n';
 		}
 
 		std::vector<float> vertices;
@@ -58,38 +58,38 @@ namespace rgr
 			normals.push_back(vertex.Normal.Z);
 		}
 
-		m_VertexArray = new rgr::VertexArray();
+		m_VertexArray = std::make_unique<rgr::VertexArray>();
 
-		rgr::VertexBuffer verticesBuffer = rgr::VertexBuffer(vertices.data(), vertices.size() * sizeof(float));
-		rgr::VertexBuffer texCoordsBuffer = rgr::VertexBuffer(texCoords.data(), texCoords.size() * sizeof(float));
-		rgr::VertexBuffer normalsBuffer = rgr::VertexBuffer(normals.data(), normals.size() * sizeof(float));
+		auto verticesBuffer = rgr::VertexBuffer(vertices.data(), vertices.size() * sizeof(float));
+		auto texCoordsBuffer = rgr::VertexBuffer(texCoords.data(), texCoords.size() * sizeof(float));
+		auto normalsBuffer = rgr::VertexBuffer(normals.data(), normals.size() * sizeof(float));
 	
 		m_VertexArray->AddBuffer(verticesBuffer, Vec3Element, 0);
 		m_VertexArray->AddBuffer(texCoordsBuffer, Vec2Element, 1);
 		m_VertexArray->AddBuffer(normalsBuffer, Vec3Element, 2);
 
-		m_IndexBuffer = new IndexBuffer(loader.LoadedIndices.data(), loader.LoadedIndices.size());
+		m_IndexBuffer = std::make_unique<rgr::IndexBuffer>(loader.LoadedIndices.data(), loader.LoadedIndices.size());
 	
 		m_VertsCount = loader.LoadedVertices.size() / 3;
 		m_TrisCount = loader.LoadedIndices.size() / 3;
 	}
-	Mesh::~Mesh()
-	{
-		delete m_VertexArray;
-		delete m_IndexBuffer;
-	}
+
+    Mesh::~Mesh()
+    {
+
+    }
 
 	void Mesh::Draw() const
 	{	
-		GetVertexArray()->Bind();
+		m_VertexArray->Bind();
 
 		if (GetMeshType() == Mesh::MeshType::INDEXED)
 		{
-			GetIndexBuffer()->Bind();
-			glDrawElements(GL_TRIANGLES, GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_IndexBuffer->Bind();
+			glDrawElements(GL_TRIANGLES, static_cast<int>(m_IndexBuffer->GetCount()), GL_UNSIGNED_INT, nullptr);
 		}
 		else
-			glDrawArrays(GL_TRIANGLES, 0, GetVertsCount());	
+			glDrawArrays(GL_TRIANGLES, 0, static_cast<int>(GetVertsCount()));
 	}
 
 	Mesh* Mesh::Get2DQuadMesh()
@@ -113,7 +113,7 @@ namespace rgr
 		0.0f, 0.0f
 		};
 
-		static rgr::Mesh* quad = new rgr::Mesh(quadVertices, quadIndices, quadTexCoords);
+		static auto quad = new rgr::Mesh(quadVertices, quadIndices, quadTexCoords);
 
 		return quad;
 	}

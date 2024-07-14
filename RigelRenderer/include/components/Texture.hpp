@@ -37,13 +37,13 @@ namespace rgr
         Texture(const size_t width, const size_t height, const TYPE type);
 		~Texture();
 
-		void Bind(unsigned int slot = 0) const;
-        void BindNoSlot() const;
+		void BindToSlot(unsigned int slot = 0) const;
+        void Bind() const;
 		void Unbind() const;
 
 		inline unsigned int GetHandle() const { return m_Handle; }
-		inline int GetWidth() const { return m_Width; }
-		inline int GetHeight() const { return m_Height; }
+		inline size_t GetWidth() const { return m_Width; }
+		inline size_t GetHeight() const { return m_Height; }
 
         void SetFilter(const FILTER min, const FILTER mag) const;
         void SetWrap(const WRAP s, const WRAP t) const;
@@ -51,7 +51,7 @@ namespace rgr
 	private:
 		unsigned int m_Handle;
 		unsigned char* m_LocalBuffer;
-		int m_Width, m_Height;
+		size_t m_Width, m_Height;
 	};
 }
 

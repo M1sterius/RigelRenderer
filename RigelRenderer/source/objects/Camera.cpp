@@ -1,8 +1,5 @@
 #include "Camera.hpp"
 
-#include <iostream>
-#include "gtx/string_cast.hpp"
-
 namespace rgr
 {
 	Camera::Camera(float fov, float width, float height, float near, float far)
@@ -15,18 +12,17 @@ namespace rgr
 
 		ConstructProjectionMatrices();
 	}
-	Camera::~Camera()
-	{
-		
-	}
+
 	void Camera::FlagAsMain()
 	{
 		m_IsMain = true;
 	}
+
 	void Camera::UnflagAsMain()
 	{
 		m_IsMain = false;
 	}
+
 	glm::mat4& Camera::GetView()
 	{	
 		glm::vec3 pos = GetTransform().GetPosition();
@@ -36,11 +32,13 @@ namespace rgr
 
 		return m_View;
 	}
+
 	glm::vec3 Camera::GetForwardVector()
 	{
 		glm::mat4 mat = GetTransform().GetModelMatrix();
 		return glm::normalize(glm::vec3(mat[2])) * glm::vec3(-1.0f);
 	}
+
 	void Camera::ConstructProjectionMatrices()
 	{
 		m_Perspective = glm::perspective(m_Fov, m_Width / m_Height, m_Near, m_Far);

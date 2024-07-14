@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 
 int main(int argc, char* argv[])
 {	
@@ -38,32 +39,32 @@ int main(int argc, char* argv[])
 		0.0f, 0.0f
 	};
 
-	rgr::Mesh quadMesh = rgr::Mesh(quadVertices, quadIndices, quadTexCoords);
-	rgr::Mesh cubeMesh = rgr::Mesh("resources/objects/cube.obj");
-	rgr::Mesh sphereMesh = rgr::Mesh("resources/objects/sphere.obj");
-    rgr::Mesh dragonMesh = rgr::Mesh("resources/objects/dragon-1%.obj");
+	auto quadMesh = std::make_shared<rgr::Mesh>(quadVertices, quadIndices, quadTexCoords);
+	auto cubeMesh = std::make_shared<rgr::Mesh>("resources/objects/cube.obj");
+	auto sphereMesh = std::make_shared<rgr::Mesh>("resources/objects/sphere.obj");
+    auto dragonMesh = std::make_shared<rgr::Mesh>("resources/objects/dragon-1%.obj");
 
-	auto containerDiffuse = new rgr::Texture("resources/textures/container_diffuse.png");
-	auto containerSpecular = new rgr::Texture("resources/textures/container_specular.png");
-	auto planeDiffuse = new rgr::Texture("resources/textures/plane_texture.png");
-    auto testTexture = new rgr::Texture("resources/textures/test_texture.png");
+	auto containerDiffuse = std::make_shared<rgr::Texture>("resources/textures/container_diffuse.png");
+	auto containerSpecular = std::make_shared<rgr::Texture>("resources/textures/container_specular.png");
+	auto planeDiffuse = std::make_shared<rgr::Texture>("resources/textures/plane_texture.png");
+    auto testTexture = std::make_shared<rgr::Texture>("resources/textures/test_texture.png");
 
-	auto cube = new rgr::RenderableMesh(&cubeMesh);
+	auto cube = new rgr::RenderableMesh(cubeMesh);
 	cube->diffuseTexture = containerDiffuse;
 	cube->specularTexture = containerSpecular;
 	cube->GetTransform().SetPosition(glm::vec3(0, 3, 0));
 
-	auto cube1 = new rgr::RenderableMesh(&cubeMesh);
+	auto cube1 = new rgr::RenderableMesh(cubeMesh);
 	cube1->diffuseTexture = testTexture;
 	cube1->GetTransform().SetPosition(glm::vec3(2, 0, 0));
     cube1->GetTransform().SetRotation(glm::vec3(10, 10, 10));
 
-	auto plane = new rgr::RenderableMesh(&cubeMesh);
+	auto plane = new rgr::RenderableMesh(cubeMesh);
 	plane->diffuseTexture = planeDiffuse;
 	plane->GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
 	plane->GetTransform().SetScale(glm::vec3(20, 0.01, 20));
 
-    auto dragon = new rgr::RenderableMesh(&dragonMesh);
+    auto dragon = new rgr::RenderableMesh(dragonMesh);
     dragon->GetTransform().SetPosition(glm::vec3(2, 0, 2));
 	
 	auto camera = new rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);

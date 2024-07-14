@@ -22,7 +22,7 @@ namespace rgr
 
 		virtual void SetUniforms();
 	protected:
-		Material(rgr::Shader* shader);
+		explicit Material(rgr::Shader* shader);
 
 		void BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot);
 		void SetUniform1i(const std::string& name, const int value);

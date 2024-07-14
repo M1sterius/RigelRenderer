@@ -62,16 +62,16 @@ namespace rgr
 
 	void GBuffer::BindPositionTexture() const
 	{
-        m_PositionTexture->Bind(0);
+        m_PositionTexture->BindToSlot(0);
 	}
 
 	void GBuffer::BindNormalTexture() const
 	{
-        m_NormalTexture->Bind(1);
+        m_NormalTexture->BindToSlot(1);
 	}
 
 	void GBuffer::BindColorTexture() const
 	{
-        m_ColorTexture->Bind(2);
+        m_ColorTexture->BindToSlot(2);
 	}
 }

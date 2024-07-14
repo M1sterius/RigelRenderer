@@ -10,8 +10,8 @@ namespace rgr
 	class Renderable : public rgr::Object
 	{
 	protected:
-		Renderable() { }
-		virtual ~Renderable() { }
+		Renderable() = default;
+		virtual ~Renderable() = default;
 	};
 }
 

@@ -57,7 +57,7 @@ namespace rgr
                 const auto y_pos = static_cast<size_t>(dirLightsCount / 4) * dirMapSize;
 
                 glBindFramebuffer(GL_FRAMEBUFFER, m_DirLightsFBOHandle);
-                glViewport(x_pos, y_pos, dirMapSize, dirMapSize);
+                glViewport(static_cast<int>(x_pos), static_cast<int>(y_pos), dirMapSize, dirMapSize);
 
                 dirLight->GenerateDepthMap();
 
@@ -70,7 +70,7 @@ namespace rgr
                 const auto y_pos = static_cast<size_t>(spotLightsCount / 8) * spotMapSize;
 
                 glBindFramebuffer(GL_FRAMEBUFFER, m_SpotLightsFBOHandle);
-                glViewport(x_pos, y_pos, spotMapSize, spotMapSize);
+                glViewport(static_cast<int>(x_pos), static_cast<int>(y_pos), spotMapSize, spotMapSize);
 
                 spotLight->GenerateDepthMap();
 
@@ -81,17 +81,6 @@ namespace rgr
         rgr::ViewportSize size = rgr::GetViewportSize();
         glViewport(0, 0, size.width, size.height);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-//        glViewport(0, 0, 900, 900);
-//        rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
-//        rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
-//
-//        shader->Bind();
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
-//        shader->SetUniform1i("u_Texture", m_SpotLightsDepthAtlasHandle);
-//
-//        quad->Draw();
 
         glCullFace(GL_BACK);
     }
@@ -162,8 +151,8 @@ namespace rgr
         m_GBuffer->BindNormalTexture();
         m_GBuffer->BindColorTexture();
 
-        m_DirLightsDepthAtlas->Bind(3);
-        m_SpotLightsDepthAtlas->Bind(4);
+        m_DirLightsDepthAtlas->BindToSlot(3);
+        m_SpotLightsDepthAtlas->BindToSlot(4);
 
         size_t dirCount = 0;
         size_t spotCount = 0;
@@ -262,7 +251,7 @@ namespace rgr
 //rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
 //rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
 //
-//shader->Bind();
+//shader->BindToSlot();
 //glActiveTexture(GL_TEXTURE0);
 //glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
 //shader->SetUniform1i("u_Texture", m_SpotLightsDepthAtlasHandle);

@@ -29,8 +29,8 @@ void rgr::Material::Unbind() const
 }
 
 void rgr::Material::BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot)
-{	
-	texture->Bind(slot);
+{
+    texture->BindToSlot(slot);
 	SetUniform1i(name, slot);
 }
 

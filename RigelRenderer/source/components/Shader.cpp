@@ -157,9 +157,15 @@ namespace rgr
 
 	void Shader::BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot)
 	{
-		texture->Bind(slot);
+        texture->BindToSlot(slot);
 		SetUniform1i(name, slot);
 	}
+
+    void Shader::BindTexture(const std::string &name, const std::shared_ptr<Texture>& texture, unsigned int slot)
+    {
+        texture->BindToSlot(slot);
+        SetUniform1i(name, slot);
+    }
 
 	void Shader::SetUniform1i(const std::string& name, const int value)
 	{

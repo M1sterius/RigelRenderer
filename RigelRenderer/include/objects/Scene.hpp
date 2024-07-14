@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Camera.hpp"
-#include "renderable/Renderable.hpp"
-#include "lights/Light.hpp"
+
 
 #include <vector>
 #include <string>
@@ -12,6 +10,10 @@ namespace rgr
 {
     class RenderHandler;
 	class GBuffer;
+    class Renderable;
+    class Camera;
+    class Light;
+    class Object;
 
 	/*
 	Represents the collection of objects that form a virtual environment
@@ -49,7 +51,7 @@ namespace rgr
 		/*
 		Removes Renderable, Camera or Light Object from the scene.
 		Note that this method DOES NOT delete an object entirely, it just 
-		removes it's pointer from the scene
+		removes its pointer from the scene
 		*/
 		void RemoveObject(rgr::Object* object);
 	INTERNAL:
