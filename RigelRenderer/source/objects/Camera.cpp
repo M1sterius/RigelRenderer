@@ -1,8 +1,5 @@
 #include "Camera.hpp"
 
-#include <iostream>
-#include "gtx/string_cast.hpp"
-
 namespace rgr
 {
 	Camera::Camera(float fov, float width, float height, float near, float far)

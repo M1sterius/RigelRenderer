@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glad/glad.h"
+#include "glad.h"
 
 #define Vec1Element LayoutElement(1, GL_FLOAT, false, sizeof(float), 0)
 #define Vec2Element LayoutElement(2, GL_FLOAT, false, sizeof(float) * 2, 0)

@@ -10,25 +10,24 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD
 file(GLOB_RECURSE SOURCES "source/*.cpp" "source/*.hpp")
 add_executable(Sandbox ${SOURCES})
 
-include_directories(
+set(VCPKG_INSTALLED_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed)
+
+if(WIN32)
+    set(VCPKG_TARGET_TRIPLET x64-windows-static)
+elseif (UNIX AND NOT APPLE)
+    set(VCPKG_TARGET_TRIPLET x64-linux-static)
+endif()
+
+find_package(glm CONFIG REQUIRED)
+
+target_include_directories(Sandbox PRIVATE
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/src/materials
-    ${CMAKE_SOURCE_DIR}/dependencies/glm
-)
-
-target_link_directories(Sandbox PRIVATE
-    ../dependencies/glfw/lib-vc2022
-    ../dependencies/freetype/lib
-)
-
-target_link_libraries(Sandbox 
-    opengl32
-    glfw3
-    freetype
+    ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/glm
 )
 
 target_include_directories(Sandbox PUBLIC ../RigelRenderer/include)
-target_link_libraries(Sandbox RigelRenderer)
+target_link_libraries(Sandbox PRIVATE RigelRenderer glm::glm)
 
 set(COPY_OUT_DIR ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD_TYPE}/resources)
 add_custom_command(TARGET Sandbox POST_BUILD

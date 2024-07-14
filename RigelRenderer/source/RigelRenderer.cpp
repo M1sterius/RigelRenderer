@@ -1,4 +1,4 @@
-#include "glad/glad.h"
+#include "glad.h"
 #include "glfw3.h"
 #include "utility/InputUtility.hpp"
 #include "RigelRenderer.hpp"

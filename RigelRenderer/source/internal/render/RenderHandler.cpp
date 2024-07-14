@@ -3,7 +3,7 @@
 #include "GBuffer.hpp"
 #include "RigelRenderer.hpp"
 
-#include "glad/glad.h"
+#include "glad.h"
 
 #include <vector>
 #include <iostream>

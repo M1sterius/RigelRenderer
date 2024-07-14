@@ -1,6 +1,6 @@
 #include "FreeTypeUtility.hpp"
 #include "vec2.hpp"
-#include "glad/glad.h."
+#include "glad.h."
 
 #include <iostream>
 
