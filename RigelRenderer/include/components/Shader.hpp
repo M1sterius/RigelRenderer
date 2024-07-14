@@ -14,18 +14,19 @@ namespace rgr
 	class Shader
 	{
 	private:
-		unsigned int m_Handle;
-		bool m_ShaderHasError;
-		int m_UniformsCallback = 0;
-		std::unordered_map<std::string, int> m_UniformsLocationCache;
         static std::string m_BuildInShadersPath;
-		
+
+        unsigned int m_Handle;
+        bool m_ShaderHasError;
+        int m_UniformsCallback = 0;
+        std::unordered_map<std::string, int> m_UniformsLocationCache;
+
 		Shader(const std::string& vertexSource, const std::string& fragmentSource);
 	public:
 		~Shader();
 
-		static Shader* FromFiles(const std::string& vertexPath, const std::string& fragmentPath);
-		static Shader* FromSources(const std::string& vertexSource, const std::string& fragmentSource);
+		static Shader FromFiles(const std::string& vertexPath, const std::string& fragmentPath);
+		static Shader FromSources(const std::string& vertexSource, const std::string& fragmentSource);
 	
 		inline bool GetShaderHasError() const { return m_ShaderHasError; }
 
@@ -61,7 +62,7 @@ namespace rgr
             TEXTURE_TEST
         };
 
-        static Shader* GetBuiltInShader(BUILT_IN_SHADERS type);
+        static Shader& GetBuiltInShader(BUILT_IN_SHADERS type);
 	};
 }
 

@@ -30,6 +30,6 @@ namespace rgr
 		inline std::shared_ptr<Mesh> GetMesh() { return m_Mesh; }
 
 		void RenderDepth(const glm::mat4& lightSpaceMatrix);
-		void RenderGeometry(rgr::Shader* shader, const glm::mat4& viewProj);
+		void RenderGeometry(rgr::Shader& shader, const glm::mat4& viewProj);
 	};
 }

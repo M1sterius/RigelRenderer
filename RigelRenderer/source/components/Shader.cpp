@@ -92,7 +92,7 @@ namespace rgr
 		glDeleteProgram(m_Handle);
 	}
 
-	rgr::Shader* Shader::FromFiles(const std::string& vertexPath, const std::string& fragmentPath)
+	rgr::Shader Shader::FromFiles(const std::string& vertexPath, const std::string& fragmentPath)
 	{
 		const std::string processedVertexSource = ProcessShaderSource(vertexPath);
 		const std::string processedFragmentSource = ProcessShaderSource(fragmentPath);
@@ -100,23 +100,23 @@ namespace rgr
 		if (processedVertexSource.empty())
 		{
 			std::cout << "The file at path: '" << vertexPath << "' does not exist!" << '\n';
-			return GetBuiltInShader(BUILT_IN_SHADERS::PLAIN_COLOR);
+			//return GetBuiltInShader(BUILT_IN_SHADERS::PLAIN_COLOR);
 		}
 		if (processedFragmentSource.empty())
 		{
 			std::cout << "The file at path: '" << fragmentPath << "' does not exist!" << '\n';
-			return GetBuiltInShader(BUILT_IN_SHADERS::PLAIN_COLOR);
+			//return GetBuiltInShader(BUILT_IN_SHADERS::PLAIN_COLOR);
 		}
 
-		return new rgr::Shader(processedVertexSource, processedFragmentSource);
+		return {processedVertexSource, processedFragmentSource};
 	}
 
-	rgr::Shader* Shader::FromSources(const std::string& vertexSource, const std::string& fragmentSource)
+	rgr::Shader Shader::FromSources(const std::string& vertexSource, const std::string& fragmentSource)
 	{
-		return new rgr::Shader(vertexSource, fragmentSource);
+		return { vertexSource, fragmentSource };
 	}
 
-    Shader* Shader::GetBuiltInShader(const Shader::BUILT_IN_SHADERS type)
+    Shader& Shader::GetBuiltInShader(const Shader::BUILT_IN_SHADERS type)
     {
         // Instantiation of plain color shader may create infinite recursive call chain of GetBuiltInShader() and FromFiles(), gotta fix that!!
         static auto plainColorShader = Shader::FromFiles(m_BuildInShadersPath + "/plain_color_vertex.glsl",

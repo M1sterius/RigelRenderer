@@ -20,14 +20,14 @@ namespace rgr
         InitializeDepthMapFBOs();
 
         // Set uniform variables that are persistent among bindings
-        auto lightingPassShader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::LIGHTING_PASS);
-        lightingPassShader->Bind();
-        lightingPassShader->SetUniform1i("g_Position", 0);
-        lightingPassShader->SetUniform1i("g_Normal", 1);
-        lightingPassShader->SetUniform1i("g_AlbedoSpec", 2);
-        lightingPassShader->SetUniform1i("u_DirLightsShadowAtlas", 3);
-        lightingPassShader->SetUniform1i("u_SpotLightsShadowAtlas", 4);
-        lightingPassShader->Unbind();
+        auto& lightingPassShader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::LIGHTING_PASS);
+        lightingPassShader.Bind();
+        lightingPassShader.SetUniform1i("g_Position", 0);
+        lightingPassShader.SetUniform1i("g_Normal", 1);
+        lightingPassShader.SetUniform1i("g_AlbedoSpec", 2);
+        lightingPassShader.SetUniform1i("u_DirLightsShadowAtlas", 3);
+        lightingPassShader.SetUniform1i("u_SpotLightsShadowAtlas", 4);
+        lightingPassShader.Unbind();
     }
 
     RenderHandler::~RenderHandler()
@@ -88,13 +88,13 @@ namespace rgr
     void RenderHandler::DoGeometryPass()
     {
         const auto& renderables = m_Scene->GetRenderablesInFrustum();
-        auto shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::GEOMETRY_PASS);
+        auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::GEOMETRY_PASS);
         const glm::mat4 viewProj = m_Scene->GetMainCamera()->GetPerspective() * m_Scene->GetMainCamera()->GetView();
 
         m_GBuffer->Bind();
         m_GBuffer->ClearColorDepthBufferBit();
 
-        shader->Bind();
+        shader.Bind();
 
         for (auto i : renderables)
         {
@@ -106,33 +106,33 @@ namespace rgr
         m_GBuffer->Unbind();
     }
 
-    void RenderHandler::SetDirLightUniforms(rgr::DirectionalLight* light, rgr::Shader* shader, const size_t lightIndex)
+    void RenderHandler::SetDirLightUniforms(rgr::DirectionalLight* light, rgr::Shader& shader, const size_t lightIndex)
     {
         std::string u_name = "u_DirectionalLights[" + std::to_string(lightIndex) + "].";
-        shader->SetUniformVec3(u_name + "color", light->color);
-        shader->SetUniform1f(u_name + "intensity", light->intensity);
-        shader->SetUniformVec3(u_name + "direction", light->direction);
-        shader->SetUniformBool(u_name + "smoothShadows", light->smoothShadows);
-        shader->SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
+        shader.SetUniformVec3(u_name + "color", light->color);
+        shader.SetUniform1f(u_name + "intensity", light->intensity);
+        shader.SetUniformVec3(u_name + "direction", light->direction);
+        shader.SetUniformBool(u_name + "smoothShadows", light->smoothShadows);
+        shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
     }
 
-    void RenderHandler::SetSpotLightUniforms(rgr::SpotLight* light, rgr::Shader* shader, const size_t lightIndex)
+    void RenderHandler::SetSpotLightUniforms(rgr::SpotLight* light, rgr::Shader& shader, const size_t lightIndex)
     {
         std::string u_name = "u_SpotLights[" + std::to_string(lightIndex) + "].";
-        shader->SetUniformVec3(u_name + "color", light->color);
-        shader->SetUniform1f(u_name + "intensity", light->intensity);
-        shader->SetUniformVec3(u_name + "position", light->GetTransform().GetPosition());
-        shader->SetUniformVec3(u_name + "direction", light->direction);
-        shader->SetUniform1f(u_name + "cutOff", light->GetCutOff());
-        shader->SetUniform1f(u_name + "outerCutOff", light->outerCutOff);
-        shader->SetUniform1f(u_name + "constant", light->constant);
-        shader->SetUniform1f(u_name + "linear", light->linear);
-        shader->SetUniform1f(u_name + "quadratic", light->quadratic);
-        shader->SetUniformBool(u_name + "smoothShadows", light->smoothShadows);
-        shader->SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
+        shader.SetUniformVec3(u_name + "color", light->color);
+        shader.SetUniform1f(u_name + "intensity", light->intensity);
+        shader.SetUniformVec3(u_name + "position", light->GetTransform().GetPosition());
+        shader.SetUniformVec3(u_name + "direction", light->direction);
+        shader.SetUniform1f(u_name + "cutOff", light->GetCutOff());
+        shader.SetUniform1f(u_name + "outerCutOff", light->outerCutOff);
+        shader.SetUniform1f(u_name + "constant", light->constant);
+        shader.SetUniform1f(u_name + "linear", light->linear);
+        shader.SetUniform1f(u_name + "quadratic", light->quadratic);
+        shader.SetUniformBool(u_name + "smoothShadows", light->smoothShadows);
+        shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
     }
 
-    void RenderHandler::SetPointLightUniforms(rgr::PointLight* light, rgr::Shader* shader, const size_t lightIndex)
+    void RenderHandler::SetPointLightUniforms(rgr::PointLight* light, rgr::Shader& shader, const size_t lightIndex)
     {
 
     }
@@ -140,12 +140,12 @@ namespace rgr
     void RenderHandler::DoLightingPass()
     {
         auto camera = m_Scene->GetMainCamera();
-        auto shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::LIGHTING_PASS);
+        auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::LIGHTING_PASS);
         auto quad = rgr::Mesh::Get2DQuadMesh();
         const auto& lights = m_Scene->GetLightsAround(camera->GetTransform().GetPosition(),camera->shadowsVisibilityDistance);
 
         m_GBuffer->ClearColorDepthBufferBit();
-        shader->Bind();
+        shader.Bind();
 
         m_GBuffer->BindPositionTexture();
         m_GBuffer->BindNormalTexture();
@@ -173,9 +173,9 @@ namespace rgr
             }
         }
 
-        shader->SetUniformVec3("u_ViewPos", camera->GetTransform().GetPosition());
-        shader->SetUniform1i("u_DirLightsCount", dirCount);
-        shader->SetUniform1i("u_SpotLightsCount", spotCount);
+        shader.SetUniformVec3("u_ViewPos", camera->GetTransform().GetPosition());
+        shader.SetUniform1i("u_DirLightsCount", dirCount);
+        shader.SetUniform1i("u_SpotLightsCount", spotCount);
 
         quad->Draw();
 
