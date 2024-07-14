@@ -1038,7 +1038,7 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /* <Note>                                                                */
   /*    The `memory' parameter is a typeless pointer in order to avoid     */
-  /*    un-wanted dependencies on the rest of the FreeType code.  In       */
+  /*    un-wanted Dependencies on the rest of the FreeType code.  In       */
   /*    practice, it is an @FT_Memory object, i.e., a handle to the        */
   /*    standard FreeType memory allocator.  However, this field can be    */
   /*    completely ignored by a given raster implementation.               */

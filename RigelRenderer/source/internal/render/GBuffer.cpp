@@ -1,5 +1,5 @@
 #include "GBuffer.hpp"
-#include "glew.h"
+#include "glad.h"
 #include "Texture.hpp"
 
 

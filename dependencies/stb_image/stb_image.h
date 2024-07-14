@@ -238,7 +238,7 @@ RECENT REVISION HISTORY:
 //
 //    - Portable ("ease of use")
 //    - Small source code footprint ("easy to maintain")
-//    - No dependencies ("ease of use")
+//    - No Dependencies ("ease of use")
 //
 // ===========================================================================
 //

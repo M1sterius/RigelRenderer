@@ -1,5 +1,5 @@
 #include "IndexBuffer.hpp"
-#include <glew.h>
+#include <glad.h>
 
 namespace rgr
 {

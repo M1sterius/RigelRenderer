@@ -1,8 +1,7 @@
-#include "glAbstraction/GlAbstraction.hpp"
 #include "utility/InputUtility.hpp"
 #include "RigelRenderer.hpp"
+#include "glad.h"
 #include "glfw3.h"
-#include "glew.h"
 
 #include "Logger.hpp"
 
@@ -69,10 +68,9 @@ namespace rgr
 		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 		glfwSetCursorPosCallback(window, cursor_position_callback);
 
-		if (glewInit() != GLEW_OK)
-			return -1;
+        gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 
-		// Blending must be disabled during deferred rendering
+        // Blending must be disabled during deferred rendering
 
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_DEPTH_TEST);

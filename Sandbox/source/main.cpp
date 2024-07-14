@@ -3,8 +3,6 @@
 #include "materials/Material2D.hpp"
 #include "materials/Material3D.hpp"
 
-#include "gtx/quaternion.hpp"
-#include "gtx/string_cast.hpp"
 #include "glm.hpp"
 
 #include <iostream>
