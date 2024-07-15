@@ -18,6 +18,7 @@ target_include_directories(RigelRenderer PRIVATE
     include
     include/publicUtility
     include/components
+    include/modules
     include/input
     include/objects
     source/internal

@@ -18,7 +18,7 @@
 #include "objects/renderable/Renderable.hpp"
 #include "objects/renderable/RenderableMesh.hpp"
 
-#include "input/Input.hpp"
+#include "modules/Input.hpp"
 
 #define RIGEL_OK 0
 

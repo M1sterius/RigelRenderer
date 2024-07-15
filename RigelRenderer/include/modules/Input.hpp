@@ -2,6 +2,7 @@
 
 #include "Keys.hpp"
 #include "glm.hpp"
+#include "Internal.hpp"
 
 #include <unordered_set>
 
@@ -19,11 +20,15 @@ namespace rgr
 		static bool KeyHold(int key);
 		// True only in the frame in which the key was released
 		static bool KeyReleased(int key);
+    INTERNAL:
+        static std::unordered_set<int> keys;
+        static std::unordered_set<int> oldKeys;
+        static glm::vec2 mousePos;
+        static glm::vec2 oldMousePos;
+        static glm::vec2 mouseDelta;
 
-		// True if the given key is pressed during the current frame
-		static bool InKeys(int key);
-		// True if the given key was pressed during the previous frame
-		static bool InOldKeys(int key);
+        static bool InKeys(int key);
+        static bool InOldKeys(int key);
 	};
 }
 

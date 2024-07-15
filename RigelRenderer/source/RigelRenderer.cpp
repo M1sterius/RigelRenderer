@@ -1,11 +1,9 @@
-#include "utility/InputUtility.hpp"
 #include "RigelRenderer.hpp"
 #include "glad.h"
 #include "glfw3.h"
 
 #include "Logger.hpp"
 
-#include <map>
 #include <iostream>
 
 namespace rgr
@@ -33,15 +31,15 @@ namespace rgr
 
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		if (action == GLFW_PRESS) InputUtility::keys.insert(key);
+		if (action == GLFW_PRESS) Input::keys.insert(key);
 		else if (action == GLFW_RELEASE)
 		{
-			InputUtility::keys.erase(key);
+			Input::keys.erase(key);
 		}
 	}
 	static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 	{
-		InputUtility::mousePos = glm::vec2(xpos, ypos);
+		Input::mousePos = glm::vec2(xpos, ypos);
 	}
 
 	static void CalculateDeltaTime()
@@ -105,11 +103,11 @@ namespace rgr
 			std::cout << "Active Scene pointer is set to nullptr!" << "\n";
 		}
 
-		InputUtility::oldKeys.clear();
-		InputUtility::oldKeys.insert(InputUtility::keys.begin(), InputUtility::keys.end());
+		rgr::Input::oldKeys.clear();
+		rgr::Input::oldKeys.insert(rgr::Input::keys.begin(), rgr::Input::keys.end());
 
-		InputUtility::mouseDelta = InputUtility::mousePos - InputUtility::oldMousePos;
-		InputUtility::oldMousePos = InputUtility::mousePos;
+		rgr::Input::mouseDelta = rgr::Input::mousePos - rgr::Input::oldMousePos;
+		rgr::Input::oldMousePos = rgr::Input::mousePos;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents(); // Should stay the last line in Update
