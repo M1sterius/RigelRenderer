@@ -24,7 +24,7 @@ namespace rgr
         void DoForwardPass();
     private:
         static constexpr size_t MAX_DIR_LIGHTS_COUNT = 9;
-        static constexpr size_t MAX_SPOT_LIGHTS_COUNT = 64;
+        static constexpr size_t MAX_SPOT_LIGHTS_COUNT = 32;
         static constexpr size_t MAX_POINT_LIGHTS_COUNT = 64;
 
         rgr::Scene* m_Scene;
@@ -41,8 +41,8 @@ namespace rgr
         void ClearDepthAtlases() const;
         void InitializeDepthAtlases();
 
-        static void SetDirLightUniforms(rgr::DirectionalLight* light, rgr::Shader& shader, const size_t lightIndex);
-        static void SetSpotLightUniforms(rgr::SpotLight* light, rgr::Shader& shader, const size_t lightIndex);
-        static void SetPointLightUniforms(rgr::PointLight* light, rgr::Shader& shader, const size_t lightIndex);
+        static void SetDirLightUniforms(const std::shared_ptr<DirectionalLight>& light, rgr::Shader& shader, const size_t lightIndex);
+        static void SetSpotLightUniforms(const std::shared_ptr<SpotLight>& light, rgr::Shader& shader, const size_t lightIndex);
+        static void SetPointLightUniforms(const std::shared_ptr<PointLight>& light, rgr::Shader& shader, const size_t lightIndex);
     };
 }

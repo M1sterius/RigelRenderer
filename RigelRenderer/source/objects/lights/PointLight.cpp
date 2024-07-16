@@ -24,5 +24,7 @@ void rgr::PointLight::GenerateDepthMap()
 
 const float rgr::PointLight::GetLightRange()
 {
-    return 1000.0f;
+    const float Imax = fmax(fmax(color.x, color.y), color.z) * intensity;
+    const float sq = sqrtf(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * Imax));
+    return (-linear + sq) / (2 * quadratic);
 }

@@ -3,6 +3,9 @@
 #include "RigelRenderer.hpp"
 #include "glm.hpp"
 
+#include <cmath>
+#include <algorithm>
+
 rgr::SpotLight::SpotLight(const glm::vec3 color, const float intensity, const glm::vec3& direction,
 	const float cutOff, const float outerCutOff, const float constant, const float linear, const float quadratic)
     : direction(direction), m_CutOff(cutOff), outerCutOff(outerCutOff), constant(constant), linear(linear), quadratic(quadratic)
@@ -37,9 +40,9 @@ void rgr::SpotLight::GenerateDepthMap()
 
     const glm::mat4 lightSpaceViewProj = GetLightSpaceViewProj();
 
-    for (auto i : renderables)
+    for (const auto& i : renderables)
     {
-        auto renderable = dynamic_cast<rgr::RenderableMesh*>(i);
+        auto renderable = std::dynamic_pointer_cast<rgr::RenderableMesh>(i);
 
         if (renderable == nullptr) continue;
         if (!renderable->shadowCaster) continue;
@@ -70,5 +73,7 @@ void rgr::SpotLight::CalcProjMatrix()
 
 const float rgr::SpotLight::GetLightRange()
 {
-    return 1000.0f;
+    const float Imax = fmax(fmax(color.x, color.y), color.z) * intensity;
+    const float sq = sqrtf(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * Imax));
+    return (-linear + sq) / (2 * quadratic);
 }

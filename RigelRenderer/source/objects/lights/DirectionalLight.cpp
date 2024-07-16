@@ -47,9 +47,9 @@ void rgr::DirectionalLight::GenerateDepthMap()
 
     const glm::mat4 lightSpaceViewProj = GetLightSpaceViewProj();
 
-	for (auto i : renderables)
+	for (const auto& i : renderables)
 	{
-		auto renderable = dynamic_cast<rgr::RenderableMesh*>(i);
+		auto renderable = std::dynamic_pointer_cast<rgr::RenderableMesh>(i);
 
 		if (renderable == nullptr) continue;
 		if (!renderable->shadowCaster) continue;

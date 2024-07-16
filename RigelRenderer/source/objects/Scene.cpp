@@ -24,7 +24,7 @@ namespace rgr
 
 	}
 
-	rgr::Camera* Scene::FindMainCamera() const
+	std::shared_ptr<Camera> Scene::FindMainCamera() const
 	{
 		bool noMainCameraFlag = true;
 		for (const auto& cameraIterated : m_Cameras)
@@ -59,17 +59,17 @@ namespace rgr
         m_RenderHandler->DoForwardPass();
 	}
 
-	void Scene::AddObject(rgr::Object* object)
+	void Scene::AddObject(std::shared_ptr<Object> object)
 	{
-		if (auto renderablePtr = dynamic_cast<rgr::Renderable*>(object))
+		if (auto renderablePtr = std::dynamic_pointer_cast<rgr::Renderable>(object))
 		{
 			m_Renderables.push_back(renderablePtr);
 		}
-		else if (auto cameraPtr = dynamic_cast<rgr::Camera*>(object))
+		else if (auto cameraPtr = std::dynamic_pointer_cast<rgr::Camera>(object))
 		{
 			m_Cameras.push_back(cameraPtr);
 		}
-		else if (auto lightPtr = dynamic_cast<rgr::Light*>(object))
+		else if (auto lightPtr = std::dynamic_pointer_cast<rgr::Light>(object))
 		{
 			m_Lights.push_back(lightPtr);
 		}
@@ -81,9 +81,9 @@ namespace rgr
 
 		object->AssignScene(this);
 	}
-	void Scene::RemoveObject(rgr::Object* object)
+	void Scene::RemoveObject(std::shared_ptr<Object> object)
 	{
-		if (auto renderablePtr = dynamic_cast<rgr::Renderable*>(object))
+		if (auto renderablePtr = std::dynamic_pointer_cast<rgr::Renderable>(object))
 		{
 			auto iterator = std::find(m_Renderables.begin(), m_Renderables.end(), renderablePtr);
 			if (iterator != m_Renderables.end())
@@ -96,7 +96,7 @@ namespace rgr
 				std::cout << "Unable to find a Renderable by given pointer!" << '\n';
 			}
 		}
-		else if (auto cameraIteratedPtr = dynamic_cast<rgr::Camera*>(object))
+		else if (auto cameraIteratedPtr = std::dynamic_pointer_cast<rgr::Camera>(object))
 		{
 			auto iterator = std::find(m_Cameras.begin(), m_Cameras.end(), cameraIteratedPtr);
 			if (iterator != m_Cameras.end())
@@ -106,7 +106,7 @@ namespace rgr
 				std::cout << "Unable to find a Camera by given pointer!" << '\n';
 			}
 		}
-		else if (auto lightPtr = dynamic_cast<rgr::Light*>(object))
+		else if (auto lightPtr = std::dynamic_pointer_cast<rgr::Light>(object))
 		{
 			auto iterator = std::find(m_Lights.begin(), m_Lights.end(), lightPtr);
 			if (iterator != m_Lights.end())
@@ -122,14 +122,14 @@ namespace rgr
 		}
 	}
 
-	rgr::Camera* Scene::GetMainCamera() const
+    std::shared_ptr<Camera> Scene::GetMainCamera() const
 	{
 		return m_MainCamera;
 	}
 
-	const std::vector<Light*>& Scene::GetLightsAround(const glm::vec3 point, const float radius, const size_t maxCount /*=16*/) const
+	const std::vector<std::shared_ptr<Light>>& Scene::GetLightsAround(const glm::vec3 point, const float radius, const size_t maxCount /*=16*/) const
 	{
-		static std::vector<Light*> lights(16);
+		static std::vector<std::shared_ptr<Light>> lights(16);
 
 		lights.clear();
 
@@ -137,10 +137,10 @@ namespace rgr
 		{	
 			if (lights.size() >= maxCount) return lights;
 
-			Light* light = m_Lights[i];
+			std::shared_ptr<Light> light = m_Lights[i];
 
 			if (glm::distance(light->GetTransform().GetPosition(), point) < radius ||
-				static_cast<DirectionalLight*>(light) != nullptr) // Always add all directional lights
+                    std::dynamic_pointer_cast<DirectionalLight>(light) != nullptr) // Always add all directional lights
 			{
 				lights.push_back(light);
 			}
@@ -149,14 +149,14 @@ namespace rgr
 		return lights;
 	}
 
-	const std::vector<Renderable*>& Scene::GetRenderablesInFrustum() const
+	const std::vector<std::shared_ptr<Renderable>>& Scene::GetRenderablesInFrustum() const
 	{
 		return m_Renderables;
 	}
 
-	const std::vector<Renderable*>& Scene::GetRenderablesByCondition(bool(*func)(rgr::Renderable*), const size_t maxCount /*= 64*/) const
+	const std::vector<std::shared_ptr<Renderable>>& Scene::GetRenderablesByCondition(bool(*func)(std::shared_ptr<Renderable>), const size_t maxCount /*= 64*/) const
 	{
-		static std::vector<Renderable*> renderables(16);
+		static std::vector<std::shared_ptr<Renderable>> renderables(16);
 		renderables.clear();
 
 		for (auto renderable : m_Renderables)

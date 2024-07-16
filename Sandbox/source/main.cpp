@@ -49,69 +49,70 @@ int main(int argc, char* argv[])
 	auto planeDiffuse = std::make_shared<rgr::Texture>("resources/textures/plane_texture.png");
     auto testTexture = std::make_shared<rgr::Texture>("resources/textures/test_texture.png");
 
-	auto cube = new rgr::RenderableMesh(cubeMesh);
+	auto cube = std::make_shared<rgr::RenderableMesh>(cubeMesh);
 	cube->diffuseTexture = containerDiffuse;
 	cube->specularTexture = containerSpecular;
 	cube->GetTransform().SetPosition(glm::vec3(0, 3, 0));
 
-	auto cube1 = new rgr::RenderableMesh(cubeMesh);
+	auto cube1 = std::make_shared<rgr::RenderableMesh>(cubeMesh);
 	cube1->diffuseTexture = testTexture;
 	cube1->GetTransform().SetPosition(glm::vec3(2, 0, 0));
     cube1->GetTransform().SetRotation(glm::vec3(10, 10, 10));
 
-	auto plane = new rgr::RenderableMesh(cubeMesh);
+	auto plane = std::make_shared<rgr::RenderableMesh>(cubeMesh);
 	plane->diffuseTexture = planeDiffuse;
 	plane->GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
 	plane->GetTransform().SetScale(glm::vec3(20, 0.01, 20));
 
-    auto dragon = new rgr::RenderableMesh(dragonMesh);
+    auto dragon = std::make_shared<rgr::RenderableMesh>(dragonMesh);
     dragon->GetTransform().SetPosition(glm::vec3(2, 0, 2));
 	
-	auto camera = new rgr::Camera(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
+	auto camera = std::make_shared<rgr::Camera>(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
 	camera->GetTransform().SetPosition(glm::vec3(0.0f, 4, 0.0f));
 	camera->GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 	camera->FlagAsMain();
 
-	rgr::DirectionalLight dirLight = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(-0.1, -1, 1));
-	dirLight.GetTransform().SetPosition(glm::vec3(0.1, 5, -5));
-    dirLight.smoothShadows = true;
+	auto dirLight = std::make_shared<rgr::DirectionalLight>(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(-0.1, -1, 1));
+	dirLight->GetTransform().SetPosition(glm::vec3(0.1, 5, -5));
+    dirLight->smoothShadows = true;
 
-	rgr::DirectionalLight dirLight1 = rgr::DirectionalLight(glm::vec3(1.0, 1.0, 1.0), 0.3f, glm::vec3(-0.1, -1, -1));
-	dirLight1.GetTransform().SetPosition(glm::vec3(0.1, 5, 5));
+	auto dirLight1 = std::make_shared<rgr::DirectionalLight>(glm::vec3(1.0, 1.0, 1.0), 0.3f, glm::vec3(-0.1, -1, -1));
+	dirLight1->GetTransform().SetPosition(glm::vec3(0.1, 5, 5));
 
-	rgr::PointLight pntLight = rgr::PointLight(
+	auto pntLight = std::make_shared<rgr::PointLight>(
 		glm::vec3(0.98, 0.76, 0.12),
 		3.0f,
 		1.0f,
 		0.7f,
 		1.8f
 	);
-	pntLight.GetTransform().SetPosition(glm::vec3(0, 1.2f, 0));
+	pntLight->GetTransform().SetPosition(glm::vec3(0, 1.2f, 0));
 
-	rgr::PointLight pntLight1 = rgr::PointLight(
+	auto pntLight1 = std::make_shared<rgr::PointLight>(
 		glm::vec3(1, 1, 1),
 		2.0f,
 		1.0f,
 		0.7f,
 		1.8f
 	);
-	pntLight1.GetTransform().SetPosition(glm::vec3(-2.5, -0.9f, 0));
+	pntLight1->GetTransform().SetPosition(glm::vec3(-2.5, -0.9f, 0));
 
-	rgr::SpotLight sptLight = rgr::SpotLight(
+	auto sptLight = std::make_shared<rgr::SpotLight>(
 		glm::vec3(1.0f, 1.0f, 1.0f),
 		3.0f, glm::vec3(0.05, -1.0, 0.0),
 		0.9978f, 0.953f,
 		1.0f, 0.22f, 0.2f
 	);
-	sptLight.GetTransform().SetPosition(glm::vec3(0.0, -1.3, 0));
+	sptLight->GetTransform().SetPosition(glm::vec3(0.0, -1.3, 0));
 
-	rgr::SpotLight sptLight1 = rgr::SpotLight(
+	auto sptLight1 = std::make_shared<rgr::SpotLight>(
 		glm::vec3(1.0f, 1.0f, 1.0f),
-		5.0f, glm::vec3(3, -3, 4),
+		2.0f, glm::vec3(3, -3, 4),
 		0.9978f, 0.953f,
 		1.0f, 0.22f, 0.2f
 	);
-	sptLight1.GetTransform().SetPosition(glm::vec3(-3, 2, -4));
+    sptLight1->smoothShadows = true;
+	sptLight1->GetTransform().SetPosition(glm::vec3(-3, 2, -4));
 
 	scene->AddObject(camera);
 	scene->AddObject(cube);
@@ -119,12 +120,12 @@ int main(int argc, char* argv[])
 	scene->AddObject(plane);
     scene->AddObject(dragon);
 
-	scene->AddObject(&dirLight);
-	scene->AddObject(&dirLight1);
-//	scene->AddObject(&pntLight);
-//	scene->AddObject(&pntLight1);
-	scene->AddObject(&sptLight);
-	scene->AddObject(&sptLight1);
+	scene->AddObject(dirLight);
+	scene->AddObject(dirLight1);
+	scene->AddObject(pntLight);
+	scene->AddObject(pntLight1);
+	scene->AddObject(sptLight);
+	scene->AddObject(sptLight1);
 
 	const float sensitivity = 0.3f;
 	const float flySpeed = 2.0f;
@@ -176,10 +177,12 @@ int main(int argc, char* argv[])
 
 		auto x = (float)glm::cos(rgr::GetTimePassed() * 3);
 		auto z = (float)glm::sin(rgr::GetTimePassed() * 3);
-		sptLight.direction = glm::vec3(x, 0, z);
+		sptLight->direction = glm::vec3(x, 0, z);
 
-        sptLight1.GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f));
-        sptLight1.direction = camera->GetForwardVector();
+        sptLight1->GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f));
+        sptLight1->direction = camera->GetForwardVector();
+
+        //std::cout << glm::distance(glm::vec3(0.0f), camera->GetTransform().GetPosition()) << '\n';
 
 		rgr::Update();
 	}

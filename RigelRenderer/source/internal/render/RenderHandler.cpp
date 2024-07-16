@@ -46,11 +46,11 @@ namespace rgr
         size_t dirLightsCount = 0;
         size_t spotLightsCount = 0;
 
-        for (auto light : lights)
+        for (const auto& light : lights)
         {
             if (!light->castShadows) continue;
 
-            if (auto dirLight = dynamic_cast<rgr::DirectionalLight*>(light))
+            if (auto dirLight = std::dynamic_pointer_cast<rgr::DirectionalLight>(light))
             {
                 const size_t dirMapSize = rgr::DirectionalLight::depthMapSize;
                 const auto x_pos = static_cast<size_t>(dirLightsCount % 4) * dirMapSize;
@@ -63,7 +63,7 @@ namespace rgr
 
                 dirLightsCount++;
             }
-            else if (auto spotLight = dynamic_cast<rgr::SpotLight*>(light))
+            else if (auto spotLight = std::dynamic_pointer_cast<rgr::SpotLight>(light))
             {
                 const size_t spotMapSize = rgr::SpotLight::depthMapSize;
                 const auto x_pos = static_cast<size_t>(spotLightsCount % 8) * spotMapSize;
@@ -96,9 +96,9 @@ namespace rgr
 
         shader.Bind();
 
-        for (auto i : renderables)
+        for (const auto& i : renderables)
         {
-            auto renderable = dynamic_cast<rgr::RenderableMesh*>(i);
+            auto renderable = std::dynamic_pointer_cast<rgr::RenderableMesh>(i);
             if (renderable == nullptr) continue;
             renderable->RenderGeometry(shader, viewProj);
         }
@@ -106,9 +106,9 @@ namespace rgr
         m_GBuffer->Unbind();
     }
 
-    void RenderHandler::SetDirLightUniforms(rgr::DirectionalLight* light, rgr::Shader& shader, const size_t lightIndex)
+    void RenderHandler::SetDirLightUniforms(const std::shared_ptr<DirectionalLight>& light, rgr::Shader& shader, const size_t lightIndex)
     {
-        std::string u_name = "u_DirectionalLights[" + std::to_string(lightIndex) + "].";
+        const std::string u_name = "u_DirectionalLights[" + std::to_string(lightIndex) + "].";
         shader.SetUniformVec3(u_name + "color", light->color);
         shader.SetUniform1f(u_name + "intensity", light->intensity);
         shader.SetUniformVec3(u_name + "direction", light->direction);
@@ -116,9 +116,9 @@ namespace rgr
         shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
     }
 
-    void RenderHandler::SetSpotLightUniforms(rgr::SpotLight* light, rgr::Shader& shader, const size_t lightIndex)
+    void RenderHandler::SetSpotLightUniforms(const std::shared_ptr<SpotLight>& light, rgr::Shader& shader, const size_t lightIndex)
     {
-        std::string u_name = "u_SpotLights[" + std::to_string(lightIndex) + "].";
+        const std::string u_name = "u_SpotLights[" + std::to_string(lightIndex) + "].";
         shader.SetUniformVec3(u_name + "color", light->color);
         shader.SetUniform1f(u_name + "intensity", light->intensity);
         shader.SetUniformVec3(u_name + "position", light->GetTransform().GetPosition());
@@ -132,9 +132,15 @@ namespace rgr
         shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
     }
 
-    void RenderHandler::SetPointLightUniforms(rgr::PointLight* light, rgr::Shader& shader, const size_t lightIndex)
+    void RenderHandler::SetPointLightUniforms(const std::shared_ptr<PointLight>& light, rgr::Shader& shader, const size_t lightIndex)
     {
-
+        const std::string u_name = "u_PointLights[" + std::to_string(lightIndex) + "].";
+        shader.SetUniformVec3(u_name + "color", light->color);
+        shader.SetUniform1f(u_name + "intensity", light->intensity);
+        shader.SetUniformVec3(u_name + "position", light->GetTransform().GetPosition());
+        shader.SetUniform1f(u_name + "constant", light->constant);
+        shader.SetUniform1f(u_name + "linear", light->linear);
+        shader.SetUniform1f(u_name + "quadratic", light->quadratic);
     }
 
     void RenderHandler::DoLightingPass()
@@ -156,26 +162,34 @@ namespace rgr
 
         size_t dirCount = 0;
         size_t spotCount = 0;
+        size_t pointCount = 0;
 
-        for (auto light: lights)
+        for (const auto& light: lights)
         {
-            if (auto dirLight = dynamic_cast<DirectionalLight*>(light))
+            if (auto dirLight = std::dynamic_pointer_cast<DirectionalLight>(light))
             {
                 if (dirCount > (MAX_DIR_LIGHTS_COUNT - 1)) continue;
                 SetDirLightUniforms(dirLight, shader, dirCount);
                 dirCount++;
             }
-            else if (auto spotLight = dynamic_cast<SpotLight*>(light))
+            else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(light))
             {
                 if (spotCount > (MAX_SPOT_LIGHTS_COUNT - 1)) continue;
                 SetSpotLightUniforms(spotLight, shader, spotCount);
                 spotCount++;
+            }
+            else if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light))
+            {
+                if (pointCount > (MAX_POINT_LIGHTS_COUNT - 1)) continue;
+                SetPointLightUniforms(pointLight, shader, pointCount);
+                pointCount++;
             }
         }
 
         shader.SetUniformVec3("u_ViewPos", camera->GetTransform().GetPosition());
         shader.SetUniform1i("u_DirLightsCount", dirCount);
         shader.SetUniform1i("u_SpotLightsCount", spotCount);
+        shader.SetUniform1i("u_PointLightsCount", pointCount);
 
         quad->Draw();
 
