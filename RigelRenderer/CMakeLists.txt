@@ -14,6 +14,7 @@ add_library(RigelRenderer SHARED ${SOURCES}
         ${CMAKE_SOURCE_DIR}/Dependencies/glad/src/glad.c
         source/modules/Core.cpp
         include/modules/Core.hpp
+        source/modules/Time.cpp
 )
 
 target_compile_definitions(RigelRenderer PRIVATE "INTERNAL_LIB")

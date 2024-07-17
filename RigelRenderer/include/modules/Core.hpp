@@ -24,6 +24,7 @@ namespace rgr
         static size_t m_ScreenHeight;
 
         static void OnScreenResize();
+        static void ProcessInput();
 
         static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
         static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);

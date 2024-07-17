@@ -1,5 +1,6 @@
 #include "Core.hpp"
 #include "Input.hpp"
+#include "Time.hpp"
 #include "Scene.hpp"
 #include "glad.h"
 #include "glfw3.h"
@@ -35,7 +36,7 @@ namespace rgr
         glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
         glfwSetCursorPosCallback(m_Window, cursor_position_callback);
 
-        gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+        gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
         // Blending must be disabled during deferred rendering
 
@@ -57,7 +58,7 @@ namespace rgr
 
     void Core::Update()
     {
-        // Calc delta time
+        rgr::Time::CalcTime(glfwGetTime());
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -67,12 +68,7 @@ namespace rgr
             std::cout << "Active Scene pointer is set to nullptr!" << "\n";
         }
 
-        rgr::Input::oldKeys.clear();
-        rgr::Input::oldKeys.insert(rgr::Input::keys.begin(), rgr::Input::keys.end());
-
-        rgr::Input::mouseDelta = rgr::Input::mousePos - rgr::Input::oldMousePos;
-        rgr::Input::oldMousePos = rgr::Input::mousePos;
-
+        ProcessInput();
         glfwSwapBuffers(m_Window);
         glfwPollEvents(); // Should stay the last line in Update
     }
@@ -101,6 +97,15 @@ namespace rgr
     void Core::OnScreenResize()
     {
 
+    }
+
+    void Core::ProcessInput()
+    {
+        rgr::Input::oldKeys.clear();
+        rgr::Input::oldKeys.insert(rgr::Input::keys.begin(), rgr::Input::keys.end());
+
+        rgr::Input::mouseDelta = rgr::Input::mousePos - rgr::Input::oldMousePos;
+        rgr::Input::oldMousePos = rgr::Input::mousePos;
     }
 
     void Core::framebuffer_size_callback(GLFWwindow* window, int width, int height)
