@@ -60,7 +60,7 @@ namespace rgr
 		
 		const std::vector<std::shared_ptr<Renderable>>& GetRenderablesInFrustum() const; // TODO: Add the frustum culling itself
 
-		const std::vector<std::shared_ptr<Renderable>>& GetRenderablesByCondition(bool(*func)(std::shared_ptr<Renderable>), const size_t maxCount = 64) const;
+		const std::vector<std::shared_ptr<Renderable>>& GetRenderablesByCondition(bool(*func)(const std::shared_ptr<Renderable>&), const size_t maxCount = 64) const;
 	};
 }
 

@@ -7,9 +7,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 23)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/RigelRenderer/${CMAKE_BUILD_TYPE})
+set(DEPENDENCIES_DIR ${CMAKE_SOURCE_DIR}/Dependencies)
 
 file(GLOB_RECURSE SOURCES "source/*.cpp" "source/*.hpp")
-add_library(RigelRenderer SHARED ${SOURCES} ${CMAKE_SOURCE_DIR}/Dependencies/glad/src/glad.c)
+add_library(RigelRenderer SHARED ${SOURCES}
+        ${CMAKE_SOURCE_DIR}/Dependencies/glad/src/glad.c
+        source/modules/Core.cpp
+        include/modules/Core.hpp
+)
 
 target_compile_definitions(RigelRenderer PRIVATE "INTERNAL_LIB")
 
@@ -25,15 +30,15 @@ target_include_directories(RigelRenderer PRIVATE
     source/internal/utility
     source/built-in
 
-    ${CMAKE_SOURCE_DIR}/Dependencies/glad/include/glad
-    ${CMAKE_SOURCE_DIR}/Dependencies/glad/include
-    ${CMAKE_SOURCE_DIR}/Dependencies/glfw/include/GLFW
-    ${CMAKE_SOURCE_DIR}/Dependencies/glm
-    ${CMAKE_SOURCE_DIR}/Dependencies/obj_loader
-    ${CMAKE_SOURCE_DIR}/Dependencies/stb_image
-    ${CMAKE_SOURCE_DIR}/Dependencies/freetype
-    ${CMAKE_SOURCE_DIR}/Dependencies/gltext
-    ${CMAKE_SOURCE_DIR}/Dependencies
+    ${DEPENDENCIES_DIR}/glad/include/glad
+    ${DEPENDENCIES_DIR}/glad/include
+    ${DEPENDENCIES_DIR}/glfw/include/GLFW
+    ${DEPENDENCIES_DIR}/glm
+    ${DEPENDENCIES_DIR}/obj_loader
+    ${DEPENDENCIES_DIR}/stb_image
+    ${DEPENDENCIES_DIR}/freetype
+    ${DEPENDENCIES_DIR}/gltext
+    ${DEPENDENCIES_DIR}
 )
 
 target_link_directories(RigelRenderer PUBLIC

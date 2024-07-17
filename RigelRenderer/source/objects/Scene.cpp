@@ -154,12 +154,12 @@ namespace rgr
 		return m_Renderables;
 	}
 
-	const std::vector<std::shared_ptr<Renderable>>& Scene::GetRenderablesByCondition(bool(*func)(std::shared_ptr<Renderable>), const size_t maxCount /*= 64*/) const
+	const std::vector<std::shared_ptr<Renderable>>& Scene::GetRenderablesByCondition(bool(*func)(const std::shared_ptr<Renderable>&), const size_t maxCount /*= 64*/) const
 	{
-		static std::vector<std::shared_ptr<Renderable>> renderables(16);
+		static std::vector<std::shared_ptr<Renderable>> renderables(64);
 		renderables.clear();
 
-		for (auto renderable : m_Renderables)
+		for (const auto& renderable : m_Renderables)
 		{
             if (func(renderable))
                 renderables.push_back(renderable);
