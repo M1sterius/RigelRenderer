@@ -14,7 +14,7 @@ namespace rgr
     RenderHandler::RenderHandler(rgr::Scene* scene)
     {
         m_Scene = scene;
-        m_GBuffer = std::make_unique<rgr::GBuffer>(rgr::GetViewportSize().width, rgr::GetViewportSize().height);
+        m_GBuffer = std::make_unique<rgr::GBuffer>(rgr::Core::GetWindowSize().x, rgr::Core::GetWindowSize().y);
 
         InitializeDepthAtlases();
         InitializeDepthMapFBOs();
@@ -78,8 +78,8 @@ namespace rgr
             }
         }
 
-        rgr::ViewportSize size = rgr::GetViewportSize();
-        glViewport(0, 0, size.width, size.height);
+        const glm::vec2 size = rgr::Core::GetWindowSize();
+        glViewport(0, 0, size.x, size.y);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glCullFace(GL_BACK);

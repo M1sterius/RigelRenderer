@@ -18,44 +18,6 @@
 #include "objects/renderable/Renderable.hpp"
 #include "objects/renderable/RenderableMesh.hpp"
 
+#include "modules/Core.hpp"
+#include "modules/Time.hpp"
 #include "modules/Input.hpp"
-//#include "modules/Core.hpp"
-
-#define RIGEL_OK 0
-
-namespace rgr
-{	
-	struct ViewportSize
-	{
-		size_t width;
-		size_t height;
-	};
-
-	/*
-	Initializes glfw, glew, rendering context and internal library modules,
-	as well as creates the window of given size and title.
-	Returns RIGEL_OK if the initialization was successful
-	*/
-	int Init(size_t width, size_t height, const char* title);
-
-	// Makes the scene at given pointer active, so it will be rendered and processed in rgr::Update()
-	void SetScene(rgr::Scene* scene);
-
-	// Main game loop function that renders scene, processes events and updates all library modules
-	void Update();
-
-	// Used after the game loop to properly terminate the game
-	void Quit();
-
-	// The time passed since rgr::Init() was called
-	double GetTimePassed();
-
-	// The time passed between two previous game loop iterations
-	float GetDeltaTime();
-
-	// True if the window was closed by player
-	bool WindowShouldClose();
-
-	// Returns the size of the viewport
-	ViewportSize GetViewportSize();
-}

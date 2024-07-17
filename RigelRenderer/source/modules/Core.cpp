@@ -28,7 +28,6 @@ namespace rgr
 
         m_ScreenWidth = width;
         m_ScreenHeight = height;
-        glViewport(0, 0, static_cast<int>(m_ScreenWidth), static_cast<int>(m_ScreenHeight));
 
         glfwMakeContextCurrent(m_Window);
 
@@ -37,6 +36,8 @@ namespace rgr
         glfwSetCursorPosCallback(m_Window, cursor_position_callback);
 
         gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+
+        glViewport(0, 0, static_cast<int>(m_ScreenWidth), static_cast<int>(m_ScreenHeight));
 
         // Blending must be disabled during deferred rendering
 
@@ -80,9 +81,8 @@ namespace rgr
 
     bool Core::AppShouldRun()
     {
-        return glfwWindowShouldClose(m_Window);
+        return !glfwWindowShouldClose(m_Window);
     }
-
 
     void Core::Quit()
     {

@@ -15,11 +15,11 @@ int main(int argc, char* argv[])
 	const int HEIGHT = 900;
 	const char* TITLE = "It works!";
 
-	if (rgr::Init(WIDTH, HEIGHT, TITLE) != RIGEL_OK)
+	if (!rgr::Core::Init(WIDTH, HEIGHT, TITLE))
 		return -1;
 
 	auto scene = new rgr::Scene();
-	rgr::SetScene(scene);
+	rgr::Core::LoadScene(scene);
 
 	const std::vector<float> quadVertices {
 		-50.0f, 50.0f, 0.0f,
@@ -138,12 +138,12 @@ int main(int argc, char* argv[])
 
     float dragonRotY = 0.0f;
 
-	while (!rgr::WindowShouldClose())
+	while (rgr::Core::AppShouldRun())
 	{	
 		glm::vec2 mouseDelta = rgr::Input::GetMouseDelta();
 
-		yaw -= mouseDelta.x * sensitivity * rgr::GetDeltaTime();
-		pitch -= mouseDelta.y * sensitivity * rgr::GetDeltaTime();
+		yaw -= mouseDelta.x * sensitivity * rgr::Time::GetDeltaTimeF();
+		pitch -= mouseDelta.y * sensitivity * rgr::Time::GetDeltaTimeF();
 
 		if (pitch > 1.5708f) pitch = 1.5708f;
 		else if (pitch < -1.5708f) pitch = -1.5708f;
@@ -154,29 +154,29 @@ int main(int argc, char* argv[])
 		const float speed = rgr::Input::KeyHold(RGR_KEY_LEFT_SHIFT) ? flySpeedBoost : flySpeed;
 
 		if (rgr::Input::KeyHold(RGR_KEY_W))
-			pos += fv * speed * rgr::GetDeltaTime();
+			pos += fv * speed * rgr::Time::GetDeltaTimeF();
 		if (rgr::Input::KeyHold(RGR_KEY_S))
-			pos -= fv * speed * rgr::GetDeltaTime();
+			pos -= fv * speed * rgr::Time::GetDeltaTimeF();
 		if (rgr::Input::KeyHold(RGR_KEY_D))
-			pos += rv * speed * rgr::GetDeltaTime();
+			pos += rv * speed * rgr::Time::GetDeltaTimeF();
 		if (rgr::Input::KeyHold(RGR_KEY_A))
-			pos -= rv * speed * rgr::GetDeltaTime();
+			pos -= rv * speed * rgr::Time::GetDeltaTimeF();
 
 		if (rgr::Input::KeyHold(RGR_KEY_Q))
-			pos += glm::vec3(0.0f, 1.0f, 0.0f) * speed * rgr::GetDeltaTime();
+			pos += glm::vec3(0.0f, 1.0f, 0.0f) * speed * rgr::Time::GetDeltaTimeF();
 		if (rgr::Input::KeyHold(RGR_KEY_E))
-			pos -= glm::vec3(0.0f, 1.0f, 0.0f) * speed * rgr::GetDeltaTime();
+			pos -= glm::vec3(0.0f, 1.0f, 0.0f) * speed * rgr::Time::GetDeltaTimeF();
 
 		camera->GetTransform().SetPosition(pos);
 		camera->GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));
 
-		rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::GetDeltaTime();
-        dragonRotY += 1.0f * rgr::GetDeltaTime();
+		rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::Time::GetDeltaTimeF();
+        dragonRotY += 1.0f * rgr::Time::GetDeltaTimeF();
 		cube->GetTransform().SetRotation(rot);
         dragon->GetTransform().SetRotation(glm::vec3(0.0, dragonRotY, 0.0));
 
-		auto x = (float)glm::cos(rgr::GetTimePassed() * 3);
-		auto z = (float)glm::sin(rgr::GetTimePassed() * 3);
+		auto x = (float)glm::cos(rgr::Time::GetTimeF() * 3);
+		auto z = (float)glm::sin(rgr::Time::GetTimeF() * 3);
 		sptLight->direction = glm::vec3(x, 0, z);
 
         sptLight1->GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f));
@@ -184,8 +184,8 @@ int main(int argc, char* argv[])
 
         //std::cout << glm::distance(glm::vec3(0.0f), camera->GetTransform().GetPosition()) << '\n';
 
-		rgr::Update();
+		rgr::Core::Update();
 	}
 
-	rgr::Quit();
+	rgr::Core::Quit();
 }
