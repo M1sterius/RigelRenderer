@@ -38,7 +38,7 @@ target_include_directories(RigelRenderer PRIVATE
     ${DEPENDENCIES_DIR}/stb_image
     ${DEPENDENCIES_DIR}/freetype
     ${DEPENDENCIES_DIR}/gltext
-    ${DEPENDENCIES_DIR}
+    ${DEPENDENCIES_DIR}/
 )
 
 target_link_directories(RigelRenderer PUBLIC
