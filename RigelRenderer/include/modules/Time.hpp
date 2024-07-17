@@ -11,11 +11,11 @@ namespace rgr
         static float GetTimeF();
         static double GetDeltaTime();
         static float GetDeltaTimeF();
+    INTERNAL:
+        static void CalcTime(const double timePassed);
     private:
         static double m_Time;
         static double m_OldTime;
         static double m_DeltaTime;
-    INTERNAL:
-        static void CalcTime(const double timePassed);
     };
 }

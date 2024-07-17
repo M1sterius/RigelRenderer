@@ -38,14 +38,7 @@ namespace rgr
         gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
         glViewport(0, 0, static_cast<int>(m_ScreenWidth), static_cast<int>(m_ScreenHeight));
-
-        // Blending must be disabled during deferred rendering
-
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_DEPTH_TEST);
-        //glEnable(GL_BLEND);
-        //glEnable(GL_FRAMEBUFFER_SRGB);
-
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -74,7 +67,7 @@ namespace rgr
         glfwPollEvents(); // Should stay the last line in Update
     }
 
-    void Core::LoadScene(rgr::Scene *scene)
+    void Core::LoadScene(rgr::Scene* scene)
     {
         m_LoadedScene = scene;
     }
@@ -124,7 +117,7 @@ namespace rgr
         }
     }
 
-    void Core::cursor_position_callback(GLFWwindow *window, double xpos, double ypos)
+    void Core::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
     {
         Input::mousePos = glm::vec2(xpos, ypos);
     }

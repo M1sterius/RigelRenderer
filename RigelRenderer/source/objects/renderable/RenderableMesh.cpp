@@ -51,5 +51,10 @@ namespace rgr
 			shader.BindTexture("u_SpecularTexture", specularTexture, 1);
 
 		m_Mesh->Draw();
+
+        if (diffuseTexture != nullptr)
+            diffuseTexture->Unbind();
+        if (specularTexture != nullptr)
+            specularTexture->Unbind();
 	}
 }
