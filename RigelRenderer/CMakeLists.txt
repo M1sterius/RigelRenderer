@@ -11,7 +11,7 @@ set(DEPENDENCIES_DIR ${CMAKE_SOURCE_DIR}/Dependencies)
 
 file(GLOB_RECURSE SOURCES "source/*.cpp" "source/*.hpp")
 add_library(RigelRenderer SHARED ${SOURCES}
-        ${CMAKE_SOURCE_DIR}/Dependencies/glad/src/glad.c
+        ${DEPENDENCIES_DIR}/glad/src/glad.c
         source/modules/Core.cpp
         include/modules/Core.hpp
         source/modules/Time.cpp
@@ -42,14 +42,15 @@ target_include_directories(RigelRenderer PRIVATE
     ${DEPENDENCIES_DIR}/
 )
 
+add_subdirectory(${DEPENDENCIES_DIR}/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
+
 target_link_directories(RigelRenderer PUBLIC
-        ${CMAKE_SOURCE_DIR}/Dependencies/glfw/lib-vc2022
-        ${CMAKE_SOURCE_DIR}/Dependencies/freetype/lib
+        ${DEPENDENCIES_DIR}/freetype/lib
 )
 
 target_link_libraries(RigelRenderer PUBLIC
         opengl32
-        glfw3
+        glfw
         freetype
 )
 
