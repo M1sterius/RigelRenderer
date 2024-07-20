@@ -18,6 +18,7 @@ add_library(RigelRenderer SHARED ${SOURCES}
 )
 
 target_compile_definitions(RigelRenderer PRIVATE "INTERNAL_LIB")
+set_target_properties(RigelRenderer PROPERTIES PREFIX "")
 
 target_include_directories(RigelRenderer PRIVATE
     source
@@ -43,15 +44,16 @@ target_include_directories(RigelRenderer PRIVATE
 )
 
 add_subdirectory(${DEPENDENCIES_DIR}/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
+add_subdirectory(${DEPENDENCIES_DIR}/freetype ${CMAKE_CURRENT_BINARY_DIR}/freetype)
+add_subdirectory(${DEPENDENCIES_DIR}/assimp ${CMAKE_CURRENT_BINARY_DIR}/assimp)
 
-target_link_directories(RigelRenderer PUBLIC
-        ${DEPENDENCIES_DIR}/freetype/lib
-)
+find_package(OpenGL REQUIRED)
 
-target_link_libraries(RigelRenderer PUBLIC
-        opengl32
+target_link_libraries(RigelRenderer PRIVATE
+        OpenGL::GL
         glfw
         freetype
+        assimp
 )
 
 # copy .dll file

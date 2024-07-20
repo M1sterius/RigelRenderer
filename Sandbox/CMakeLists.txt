@@ -11,8 +11,8 @@ file(GLOB_RECURSE SOURCES "source/*.cpp" "source/*.hpp")
 add_executable(Sandbox ${SOURCES})
 
 target_include_directories(Sandbox PRIVATE
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/src/materials
+    ${CMAKE_SOURCE_DIR}/source
+    ${CMAKE_SOURCE_DIR}/source/materials
     ${CMAKE_SOURCE_DIR}/Dependencies/glm
 )
 

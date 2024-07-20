@@ -4,6 +4,7 @@
 #include "render/RenderHandler.hpp"
 #include "renderable/CustomRenderable.hpp"
 #include "Camera.hpp"
+#include "FreeTypeUtility.hpp"
 #include "renderable/Renderable.hpp"
 #include "lights/Light.hpp"
 
@@ -11,6 +12,7 @@
 #include "glfw3.h"
 
 #include <iostream>
+#include <algorithm>
 
 namespace rgr
 {
