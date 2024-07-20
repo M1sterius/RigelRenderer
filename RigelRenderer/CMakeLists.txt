@@ -39,7 +39,7 @@ target_include_directories(RigelRenderer PRIVATE
     ${DEPENDENCIES_DIR}/obj_loader
     ${DEPENDENCIES_DIR}/stb_image
     ${DEPENDENCIES_DIR}/freetype
-    ${DEPENDENCIES_DIR}/gltext
+    ${DEPENDENCIES_DIR}/assimp/include/assimp
     ${DEPENDENCIES_DIR}/
 )
 
