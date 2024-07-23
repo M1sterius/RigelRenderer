@@ -22,35 +22,17 @@ int main(int argc, char* argv[])
     auto scene = new rgr::Scene();
     rgr::Core::LoadScene(scene);
 
-    auto cubeMesh = std::make_shared<rgr::Mesh>("resources/objects/cube.obj");
-    auto sphereMesh = std::make_shared<rgr::Mesh>("resources/objects/sphere.obj");
-    auto dragonMesh = std::make_shared<rgr::Mesh>("resources/objects/dragon-1%.obj");
+    auto backpackMesh = std::make_shared<rgr::Model>("resources/models/backpack/backpack.obj");
+    auto cubeMesh = std::make_shared<rgr::Model>("resources/models/cube/cube.obj");
 
-    auto containerDiffuse = std::make_shared<rgr::Texture>("resources/textures/container_diffuse.png");
-    auto containerSpecular = std::make_shared<rgr::Texture>("resources/textures/container_specular.png");
-    auto planeDiffuse = std::make_shared<rgr::Texture>("resources/textures/plane_texture.png");
-    auto testTexture = std::make_shared<rgr::Texture>("resources/textures/test_texture.png");
+    auto backpack = std::make_shared<rgr::RenderableMesh>(backpackMesh);
+    backpack->GetTransform().SetPosition(glm::vec3(0, 0, 0));
 
     auto cube = std::make_shared<rgr::RenderableMesh>(cubeMesh);
-    cube->diffuseTexture = containerDiffuse;
-    cube->specularTexture = containerSpecular;
-    cube->GetTransform().SetPosition(glm::vec3(0, 3, 0));
-
-    auto cube1 = std::make_shared<rgr::RenderableMesh>(cubeMesh);
-    cube1->diffuseTexture = testTexture;
-    cube1->GetTransform().SetPosition(glm::vec3(2, 0, 0));
-    cube1->GetTransform().SetRotation(glm::vec3(10, 10, 10));
-
-    auto plane = std::make_shared<rgr::RenderableMesh>(cubeMesh);
-    plane->diffuseTexture = planeDiffuse;
-    plane->GetTransform().SetPosition(glm::vec3(0, -1.5f, 0));
-    plane->GetTransform().SetScale(glm::vec3(20, 0.01, 20));
-
-    auto dragon = std::make_shared<rgr::RenderableMesh>(dragonMesh);
-    dragon->GetTransform().SetPosition(glm::vec3(2, 0, 2));
+    cube->GetTransform().SetPosition(glm::vec3(0, 0, 2));
 
     auto camera = std::make_shared<rgr::Camera>(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
-    camera->GetTransform().SetPosition(glm::vec3(0.0f, 4, 0.0f));
+    camera->GetTransform().SetPosition(glm::vec3(0.0f, 0, 0.0f));
     camera->GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
     camera->FlagAsMain();
 
@@ -97,15 +79,13 @@ int main(int argc, char* argv[])
     sptLight1->GetTransform().SetPosition(glm::vec3(-3, 2, -4));
 
     scene->AddObject(camera);
+    scene->AddObject(backpack);
     scene->AddObject(cube);
-    scene->AddObject(cube1);
-    scene->AddObject(plane);
-    scene->AddObject(dragon);
 
     scene->AddObject(dirLight);
     scene->AddObject(dirLight1);
-    scene->AddObject(pntLight);
-    scene->AddObject(pntLight1);
+//    scene->AddObject(pntLight);
+//    scene->AddObject(pntLight1);
     scene->AddObject(sptLight);
     scene->AddObject(sptLight1);
 
@@ -154,8 +134,8 @@ int main(int argc, char* argv[])
 
         rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::Time::GetDeltaTimeF();
         dragonRotY += 1.0f * rgr::Time::GetDeltaTimeF();
-        cube->GetTransform().SetRotation(rot);
-        dragon->GetTransform().SetRotation(glm::vec3(0.0, dragonRotY, 0.0));
+//        cube->GetTransform().SetRotation(rot);
+//        dragon->GetTransform().SetRotation(glm::vec3(0.0, dragonRotY, 0.0));
 
         auto x = (float)glm::cos(rgr::Time::GetTimeF() * 3);
         auto z = (float)glm::sin(rgr::Time::GetTimeF() * 3);

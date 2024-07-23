@@ -15,6 +15,8 @@ add_library(RigelRenderer SHARED ${SOURCES}
         source/modules/Core.cpp
         include/modules/Core.hpp
         source/modules/Time.cpp
+        source/internal/mesh/Mesh.cpp
+        source/internal/mesh/Mesh.hpp
 )
 
 target_compile_definitions(RigelRenderer PRIVATE "INTERNAL_LIB")

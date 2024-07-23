@@ -44,6 +44,7 @@ namespace rgr
 		inline unsigned int GetHandle() const { return m_Handle; }
 		inline size_t GetWidth() const { return m_Width; }
 		inline size_t GetHeight() const { return m_Height; }
+        inline std::string GetPath() const { return m_Path; }
 
         void SetFilter(const FILTER min, const FILTER mag) const;
         void SetWrap(const WRAP s, const WRAP t) const;
@@ -52,6 +53,7 @@ namespace rgr
 		unsigned int m_Handle;
 		unsigned char* m_LocalBuffer;
 		size_t m_Width, m_Height;
+        std::string m_Path;
 	};
 }
 

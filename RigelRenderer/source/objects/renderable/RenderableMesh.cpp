@@ -4,7 +4,7 @@
 #include "Camera.hpp"
 #include "Scene.hpp"
 #include "Shader.hpp"
-#include "Mesh.hpp"
+#include "Model.hpp"
 #include "Texture.hpp"
 #include "glm.hpp"
 
@@ -13,17 +13,13 @@
 
 namespace rgr
 {
-	RenderableMesh::RenderableMesh(std::shared_ptr<rgr::Mesh> mesh)
-		: m_Mesh(std::move(mesh))
-	{
-		diffuseTexture = nullptr;
-		specularTexture = nullptr;
-	}
-
-	RenderableMesh::~RenderableMesh()
+	RenderableMesh::RenderableMesh(std::shared_ptr<rgr::Model> mesh)
+		: m_Model(std::move(mesh))
 	{
 
 	}
+
+	RenderableMesh::~RenderableMesh() = default;
 
 	void RenderableMesh::RenderDepth(const glm::mat4& lightSpaceMatrix)
 	{
@@ -33,7 +29,7 @@ namespace rgr
 		depthMapShader.SetUniformMat4("u_LightSpaceMatrix", false, lightSpaceMatrix);
 		depthMapShader.SetUniformMat4("u_Model", false, GetTransform().GetModelMatrix());
 
-		m_Mesh->Draw();
+		m_Model->DrawElements();
 	}
 
 	void RenderableMesh::RenderGeometry(rgr::Shader& shader, const glm::mat4& viewProj)
@@ -45,16 +41,6 @@ namespace rgr
 		shader.SetUniformMat4("u_Model", false, model); // no transpose
 		shader.SetUniformMat3("u_NormalMatrix", false, GetTransform().GetNormalMatrix()); // no transpose
 
-		if (diffuseTexture != nullptr)
-			shader.BindTexture("u_DiffuseTexture", diffuseTexture, 0);
-		if (specularTexture != nullptr)
-			shader.BindTexture("u_SpecularTexture", specularTexture, 1);
-
-		m_Mesh->Draw();
-
-        if (diffuseTexture != nullptr)
-            diffuseTexture->Unbind();
-        if (specularTexture != nullptr)
-            specularTexture->Unbind();
+		m_Model->Draw(shader);
 	}
 }

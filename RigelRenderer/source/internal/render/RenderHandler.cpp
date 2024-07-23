@@ -2,6 +2,7 @@
 
 #include "GBuffer.hpp"
 #include "RigelRenderer.hpp"
+#include "mesh/Mesh.hpp"
 
 #include "glad.h"
 
@@ -83,6 +84,17 @@ namespace rgr
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glCullFace(GL_BACK);
+
+//        glViewport(0, 0, 900, 900);
+//        const auto& quad = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::QUAD);
+//        auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
+//
+//        shader.Bind();
+//        shader.BindTexture("u_Texture", m_DirLightsDepthAtlas.get(), 0);
+//
+//        quad.DrawElements();
+//
+//        shader.Unbind();
     }
 
     void RenderHandler::DoGeometryPass()
@@ -147,7 +159,7 @@ namespace rgr
     {
         auto camera = m_Scene->GetMainCamera();
         auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::LIGHTING_PASS);
-        auto quad = rgr::Mesh::Get2DQuadMesh();
+        const auto& quad = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::QUAD);
         const auto& lights = m_Scene->GetLightsAround(camera->GetTransform().GetPosition(),camera->shadowsVisibilityDistance);
 
         m_GBuffer->ClearColorDepthBufferBit();
@@ -169,20 +181,17 @@ namespace rgr
             if (auto dirLight = std::dynamic_pointer_cast<DirectionalLight>(light))
             {
                 if (dirCount > (MAX_DIR_LIGHTS_COUNT - 1)) continue;
-                SetDirLightUniforms(dirLight, shader, dirCount);
-                dirCount++;
+                SetDirLightUniforms(dirLight, shader, dirCount++);
             }
             else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(light))
             {
                 if (spotCount > (MAX_SPOT_LIGHTS_COUNT - 1)) continue;
-                SetSpotLightUniforms(spotLight, shader, spotCount);
-                spotCount++;
+                SetSpotLightUniforms(spotLight, shader, spotCount++);
             }
             else if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light))
             {
                 if (pointCount > (MAX_POINT_LIGHTS_COUNT - 1)) continue;
-                SetPointLightUniforms(pointLight, shader, pointCount);
-                pointCount++;
+                SetPointLightUniforms(pointLight, shader, pointCount++);
             }
         }
 
@@ -191,7 +200,7 @@ namespace rgr
         shader.SetUniform1i("u_SpotLightsCount", spotCount);
         shader.SetUniform1i("u_PointLightsCount", pointCount);
 
-        quad->Draw();
+        quad.DrawElements();
 
         BlitDeferredFBO();
     }

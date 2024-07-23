@@ -7,7 +7,7 @@
 
 namespace rgr
 {	
-	class Mesh;
+	class Model;
 	class Shader;
 	class Texture;
 
@@ -15,19 +15,16 @@ namespace rgr
 	class RenderableMesh final : public::rgr::Renderable
 	{
 	private:
-		std::shared_ptr<Mesh> m_Mesh;
+		std::shared_ptr<rgr::Model> m_Model;
 	public:
-		explicit RenderableMesh(std::shared_ptr<rgr::Mesh> mesh);
+		explicit RenderableMesh(std::shared_ptr<rgr::Model> mesh);
 		~RenderableMesh() override;
-
-		std::shared_ptr<Texture> diffuseTexture;
-        std::shared_ptr<Texture> specularTexture;
 
 		// Determines in what radius light will be able to affect appearance of this object
 		float affectedByLightDist = 7.0f;
 		bool shadowCaster = true;
 	INTERNAL:
-		inline std::shared_ptr<Mesh> GetMesh() { return m_Mesh; }
+		inline std::shared_ptr<Model> GetModel() { return m_Model; }
 
 		void RenderDepth(const glm::mat4& lightSpaceMatrix);
 		void RenderGeometry(rgr::Shader& shader, const glm::mat4& viewProj);
