@@ -12,9 +12,8 @@
 namespace rgr
 {
 
-    RenderHandler::RenderHandler(rgr::Scene* scene)
+    RenderHandler::RenderHandler()
     {
-        m_Scene = scene;
         m_GBuffer = std::make_unique<rgr::GBuffer>(rgr::Core::GetWindowSize().x, rgr::Core::GetWindowSize().y);
 
         InitializeDepthAtlases();
@@ -29,6 +28,11 @@ namespace rgr
         lightingPassShader.SetUniform1i("u_DirLightsShadowAtlas", 3);
         lightingPassShader.SetUniform1i("u_SpotLightsShadowAtlas", 4);
         lightingPassShader.Unbind();
+    }
+
+    void RenderHandler::SetScene(rgr::Scene *scene)
+    {
+        m_Scene = scene;
     }
 
     RenderHandler::~RenderHandler()
@@ -84,17 +88,6 @@ namespace rgr
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glCullFace(GL_BACK);
-
-//        glViewport(0, 0, 900, 900);
-//        const auto& quad = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::QUAD);
-//        auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
-//
-//        shader.Bind();
-//        shader.BindTexture("u_Texture", m_DirLightsDepthAtlas.get(), 0);
-//
-//        quad.DrawElements();
-//
-//        shader.Unbind();
     }
 
     void RenderHandler::DoGeometryPass()
@@ -110,7 +103,7 @@ namespace rgr
 
         for (const auto& i : renderables)
         {
-            auto renderable = std::dynamic_pointer_cast<rgr::RenderableMesh>(i);
+            auto renderable = std::dynamic_pointer_cast<rgr::RenderableModel>(i);
             if (renderable == nullptr) continue;
             renderable->RenderGeometry(shader, viewProj);
         }

@@ -6,18 +6,13 @@
 #include "mat4x4.hpp"
 #include "glm.hpp"
 
+#include <memory>
+
 namespace rgr
 {
 	class Camera : public rgr::Object
 	{
 	public:
-		enum class ViewMode
-		{
-			FILL,
-			WIREFRAME
-		};
-
-		ViewMode viewMode = ViewMode::FILL;
 		float shadowsVisibilityDistance = 30.0f;
 
 		Camera(float fov, float width, float height, float near, float far);
@@ -29,6 +24,8 @@ namespace rgr
 
 		glm::mat4& GetView();
 		glm::vec3 GetForwardVector();
+        glm::quat LookAt(const glm::vec3& target);
+        glm::quat LookAt(const std::shared_ptr<rgr::Object>& object);
 		inline glm::mat4& GetPerspective() const { return m_Perspective; }
 		inline glm::mat4& GetOrthographic() const { return m_Orthographic; }
 	private:

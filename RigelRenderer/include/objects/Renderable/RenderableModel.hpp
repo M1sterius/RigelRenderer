@@ -11,14 +11,14 @@ namespace rgr
 	class Shader;
 	class Texture;
 
-	// Represents 3D mesh affectable by light
-	class RenderableMesh final : public::rgr::Renderable
+	// Represents 3D model affectable by light
+	class RenderableModel final : public::rgr::Renderable
 	{
 	private:
 		std::shared_ptr<rgr::Model> m_Model;
 	public:
-		explicit RenderableMesh(std::shared_ptr<rgr::Model> mesh);
-		~RenderableMesh() override;
+		explicit RenderableModel(std::shared_ptr<rgr::Model> mesh);
+		~RenderableModel() override;
 
 		// Determines in what radius light will be able to affect appearance of this object
 		float affectedByLightDist = 7.0f;

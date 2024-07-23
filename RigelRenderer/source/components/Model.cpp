@@ -51,6 +51,11 @@ namespace rgr
         std::vector<float> normals;
         std::vector<uint32_t> indices;
 
+        positions.reserve(mesh->mNumVertices * 3);
+        texCoords.reserve(mesh->mNumVertices * 2);
+        normals.reserve(mesh->mNumVertices * 3);
+        indices.reserve(mesh->mNumFaces);
+
         // Retrieve positions, texture coordinates and normals of each mesh vertex
         for (size_t i = 0; i < mesh->mNumVertices; i++)
         {

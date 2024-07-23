@@ -15,8 +15,8 @@ namespace rgr
     {
     public:
         Mesh(const std::vector<float>& positions, const std::vector<float>& texCoords, const std::vector<float>& normals,
-             const std::vector<unsigned int>& indices);
-        Mesh(const std::vector<float>& positions, const std::vector<float>& texCoords, const std::vector<unsigned int>& indices);
+             const std::vector<uint32_t>& indices);
+        Mesh(const std::vector<float>& positions, const std::vector<float>& texCoords, const std::vector<uint32_t>& indices);
         ~Mesh();
 
         void DrawElements() const;

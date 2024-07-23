@@ -1,4 +1,4 @@
-#include "renderable/RenderableMesh.hpp"
+#include "renderable/RenderableModel.hpp"
 #include "Logger.hpp"
 #include "glAbstraction/GlAbstraction.hpp"
 #include "Camera.hpp"
@@ -13,15 +13,15 @@
 
 namespace rgr
 {
-	RenderableMesh::RenderableMesh(std::shared_ptr<rgr::Model> mesh)
+	RenderableModel::RenderableModel(std::shared_ptr<rgr::Model> mesh)
 		: m_Model(std::move(mesh))
 	{
 
 	}
 
-	RenderableMesh::~RenderableMesh() = default;
+	RenderableModel::~RenderableModel() = default;
 
-	void RenderableMesh::RenderDepth(const glm::mat4& lightSpaceMatrix)
+	void RenderableModel::RenderDepth(const glm::mat4& lightSpaceMatrix)
 	{
 		auto& depthMapShader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DEPTH_MAP);
 
@@ -32,7 +32,7 @@ namespace rgr
 		m_Model->DrawElements();
 	}
 
-	void RenderableMesh::RenderGeometry(rgr::Shader& shader, const glm::mat4& viewProj)
+	void RenderableModel::RenderGeometry(rgr::Shader& shader, const glm::mat4& viewProj)
 	{	
 		const glm::mat4 model = GetTransform().GetModelMatrix();
 		const glm::mat4 mvp = viewProj * model;

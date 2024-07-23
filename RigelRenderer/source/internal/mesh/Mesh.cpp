@@ -9,7 +9,7 @@
 namespace rgr
 {
     Mesh::Mesh(const std::vector<float>& positions, const std::vector<float>& texCoords,
-               const std::vector<float>& normals, const std::vector<unsigned int>& indices)
+               const std::vector<float>& normals, const std::vector<uint32_t>& indices)
     {
         diffuseTexture = nullptr;
         specularTexture = nullptr;
@@ -31,7 +31,7 @@ namespace rgr
     }
 
     Mesh::Mesh(const std::vector<float>& positions, const std::vector<float>& texCoords,
-               const std::vector<unsigned int>& indices)
+               const std::vector<uint32_t>& indices)
     {
         diffuseTexture = nullptr;
         specularTexture = nullptr;

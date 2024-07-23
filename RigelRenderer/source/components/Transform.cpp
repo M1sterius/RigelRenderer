@@ -21,9 +21,7 @@ namespace rgr
 		}
 	}
 
-	Transform::~Transform()
-	{
-	}
+	Transform::~Transform() = default;
 
 	void Transform::SetPosition(const glm::vec3& position)
 	{
@@ -43,17 +41,24 @@ namespace rgr
 
 	glm::vec3 Transform::GetForwardVector()
 	{
-		glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f);
-		glm::vec4 res = GetModelMatrix() * glm::vec4(forward, 0.0f);
+		constexpr auto forward = glm::vec3(0.0f, 0.0f, -1.0f);
+		const glm::vec4 res = GetModelMatrix() * glm::vec4(forward, 0.0f);
 		return glm::normalize(glm::vec3(res));
 	}
 
 	glm::vec3 Transform::GetRightVector()
 	{
-		glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
-		glm::vec4 res = GetModelMatrix() * glm::vec4(right, 0.0f);
+        constexpr auto right = glm::vec3(1.0f, 0.0f, 0.0f);
+		const glm::vec4 res = GetModelMatrix() * glm::vec4(right, 0.0f);
 		return glm::normalize(glm::vec3(res));
 	}
+
+    glm::vec3 Transform::GetUpVector()
+    {
+        constexpr auto up = glm::vec3(0.0f, 1.0f, 0.0f);
+        const glm::vec4 res = GetModelMatrix() * glm::vec4(up, 0.0f);
+        return res;
+    }
 
 	glm::mat4& Transform::GetModelMatrix()
 	{

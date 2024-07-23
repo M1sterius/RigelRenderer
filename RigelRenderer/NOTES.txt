@@ -5,7 +5,7 @@ Rendering pipeline:
 	4) Forward rendering
 
 
-RenderableMesh:
+RenderableModel:
 	1) Uses pre-defined material with built-in shaders
 	2) Goes through deferred rendering pipeline
 	3) Included in depth map generation

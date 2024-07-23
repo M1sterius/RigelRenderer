@@ -16,7 +16,7 @@
 #include "objects/lights/SpotLight.hpp"
 
 #include "objects/renderable/Renderable.hpp"
-#include "objects/renderable/RenderableMesh.hpp"
+#include "objects/renderable/RenderableModel.hpp"
 
 #include "modules/Core.hpp"
 #include "modules/Time.hpp"

@@ -15,8 +15,10 @@ namespace rgr
     class RenderHandler
     {
     public:
-        explicit RenderHandler(rgr::Scene* scene);
+        RenderHandler();
         ~RenderHandler();
+
+        void SetScene(rgr::Scene* scene);
 
         void GenerateDepthMaps();
         void DoGeometryPass();

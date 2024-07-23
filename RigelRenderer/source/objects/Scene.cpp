@@ -3,9 +3,6 @@
 #include "render/GBuffer.hpp"
 #include "render/RenderHandler.hpp"
 #include "renderable/CustomRenderable.hpp"
-#include "Camera.hpp"
-#include "renderable/Renderable.hpp"
-#include "lights/Light.hpp"
 
 #include "glm.hpp"
 #include "glfw3.h"
@@ -15,15 +12,8 @@
 
 namespace rgr
 {
-	Scene::Scene()
-	{
-        m_RenderHandler = std::make_unique<RenderHandler>(this);
-    }
-
-	Scene::~Scene()
-	{
-
-	}
+	Scene::Scene() = default;
+	Scene::~Scene() = default;
 
 	std::shared_ptr<Camera> Scene::FindMainCamera() const
 	{
@@ -54,10 +44,7 @@ namespace rgr
 		if (m_MainCamera == nullptr)
 			return;
 
-        m_RenderHandler->GenerateDepthMaps();
-        m_RenderHandler->DoGeometryPass();
-        m_RenderHandler->DoLightingPass();
-        m_RenderHandler->DoForwardPass();
+        rgr::Core::RenderHandlerSceneUpdate();
 	}
 
 	void Scene::AddObject(std::shared_ptr<Object> object)

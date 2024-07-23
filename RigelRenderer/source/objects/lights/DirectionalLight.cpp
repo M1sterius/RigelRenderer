@@ -1,5 +1,5 @@
 #include "lights/DirectionalLight.hpp"
-#include "renderable/RenderableMesh.hpp"
+#include "renderable/RenderableModel.hpp"
 #include "RigelRenderer.hpp"
 #include "glm.hpp"
 
@@ -49,7 +49,7 @@ void rgr::DirectionalLight::GenerateDepthMap()
 
 	for (const auto& i : renderables)
 	{
-		auto renderable = std::dynamic_pointer_cast<rgr::RenderableMesh>(i);
+		auto renderable = std::dynamic_pointer_cast<rgr::RenderableModel>(i);
 
 		if (renderable == nullptr) continue;
 		if (!renderable->shadowCaster) continue;

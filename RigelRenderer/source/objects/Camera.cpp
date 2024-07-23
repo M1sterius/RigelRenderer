@@ -44,4 +44,21 @@ namespace rgr
 		m_Perspective = glm::perspective(m_Fov, m_Width / m_Height, m_Near, m_Far);
 		m_Orthographic = glm::ortho(-m_Width / 2, m_Width / 2, -m_Height / 2, m_Height / 2, -1.0f, 1.0f);
 	}
+
+    glm::quat Camera::LookAt(const glm::vec3& target)
+    {
+        auto& transform = GetTransform();
+        const auto pos = GetTransform().GetPosition();
+        const auto mat = glm::lookAt(pos, target, transform.GetUpVector());
+
+        const auto quat = glm::quat_cast(glm::transpose(mat));
+        transform.SetRotation(quat);
+
+        return quat;
+    }
+
+    glm::quat Camera::LookAt(const std::shared_ptr<rgr::Object>& object)
+    {
+        return LookAt(object->GetTransform().GetPosition());
+    }
 }

@@ -30,6 +30,7 @@ namespace rgr
         inline glm::vec3 GetScale() const { return m_Scale; }
         glm::vec3 GetForwardVector();
         glm::vec3 GetRightVector();
+        glm::vec3 GetUpVector();
 
         glm::mat4& GetModelMatrix();
         glm::mat3& GetNormalMatrix();

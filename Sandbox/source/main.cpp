@@ -25,15 +25,15 @@ int main(int argc, char* argv[])
     auto backpackMesh = std::make_shared<rgr::Model>("resources/models/backpack/backpack.obj");
     auto cubeMesh = std::make_shared<rgr::Model>("resources/models/cube/cube.obj");
 
-    auto backpack = std::make_shared<rgr::RenderableMesh>(backpackMesh);
+    auto backpack = std::make_shared<rgr::RenderableModel>(backpackMesh);
     backpack->GetTransform().SetPosition(glm::vec3(0, 0, 0));
+    backpack->GetTransform().SetScale(glm::vec3(0.5, 0.5, 0.5));
 
-    auto cube = std::make_shared<rgr::RenderableMesh>(cubeMesh);
+    auto cube = std::make_shared<rgr::RenderableModel>(cubeMesh);
     cube->GetTransform().SetPosition(glm::vec3(0, 0, 2));
 
     auto camera = std::make_shared<rgr::Camera>(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
-    camera->GetTransform().SetPosition(glm::vec3(0.0f, 0, 0.0f));
-    camera->GetTransform().SetRotation(glm::quat(glm::vec3(0, 0, 0)));
+    camera->GetTransform().SetPosition(glm::vec3(-3.0f, 0, 0.0f));
     camera->FlagAsMain();
 
     auto dirLight = std::make_shared<rgr::DirectionalLight>(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(-0.1, -1, 1));
@@ -98,8 +98,6 @@ int main(int argc, char* argv[])
     glm::vec3 pos = camera->GetTransform().GetPosition();
     glm::vec3 rot(0.0f);
 
-    float dragonRotY = 0.0f;
-
     while (rgr::Core::AppShouldRun())
     {
         glm::vec2 mouseDelta = rgr::Input::GetMouseDelta();
@@ -133,9 +131,6 @@ int main(int argc, char* argv[])
         camera->GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));
 
         rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::Time::GetDeltaTimeF();
-        dragonRotY += 1.0f * rgr::Time::GetDeltaTimeF();
-//        cube->GetTransform().SetRotation(rot);
-//        dragon->GetTransform().SetRotation(glm::vec3(0.0, dragonRotY, 0.0));
 
         auto x = (float)glm::cos(rgr::Time::GetTimeF() * 3);
         auto z = (float)glm::sin(rgr::Time::GetTimeF() * 3);
@@ -143,8 +138,6 @@ int main(int argc, char* argv[])
 
         sptLight1->GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f));
         sptLight1->direction = camera->GetForwardVector();
-
-        //std::cout << glm::distance(glm::vec3(0.0f), camera->GetTransform().GetPosition()) << '\n';
 
         rgr::Core::Update();
     }

@@ -2,6 +2,7 @@
 #include "Input.hpp"
 #include "Time.hpp"
 #include "Scene.hpp"
+#include "render/RenderHandler.hpp"
 #include "glad.h"
 #include "glfw3.h"
 
@@ -13,6 +14,7 @@ namespace rgr
     rgr::Scene* Core::m_LoadedScene = nullptr;
     size_t Core::m_ScreenWidth = 0;
     size_t Core::m_ScreenHeight = 0;
+    std::unique_ptr<RenderHandler> Core::m_RenderHandler = nullptr;
 
     bool Core::Init(size_t width, size_t height, const char* title)
     {
@@ -43,7 +45,9 @@ namespace rgr
 
         glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, GLFW_FALSE);
+        m_RenderHandler = std::make_unique<rgr::RenderHandler>();
+
+		//glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, GLFW_FALSE);
 //		glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 165);
 //		glfwSwapInterval(0);
 
@@ -56,7 +60,10 @@ namespace rgr
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (m_LoadedScene != nullptr) m_LoadedScene->Update();
+        if (m_LoadedScene != nullptr)
+        {
+            m_LoadedScene->Update();
+        }
         else
         {
             std::cout << "Active Scene pointer is set to nullptr!" << "\n";
@@ -69,7 +76,11 @@ namespace rgr
 
     void Core::LoadScene(rgr::Scene* scene)
     {
+        if (scene == nullptr)
+            return;
+
         m_LoadedScene = scene;
+        m_RenderHandler->SetScene(m_LoadedScene);
     }
 
     bool Core::AppShouldRun()
@@ -120,5 +131,13 @@ namespace rgr
     void Core::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
     {
         Input::mousePos = glm::vec2(xpos, ypos);
+    }
+
+    void Core::RenderHandlerSceneUpdate()
+    {
+        m_RenderHandler->GenerateDepthMaps();
+        m_RenderHandler->DoGeometryPass();
+        m_RenderHandler->DoLightingPass();
+        m_RenderHandler->DoForwardPass();
     }
 }
