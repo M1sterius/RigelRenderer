@@ -1,10 +1,5 @@
 #include "RigelRenderer.hpp"
-
-#include "materials/Material2D.hpp"
-#include "materials/Material3D.hpp"
-
 #include "glm.hpp"
-#include "gtx/string_cast.hpp"
 
 #include <iostream>
 #include <vector>
@@ -32,7 +27,7 @@ int main(int argc, char* argv[])
     auto cube = std::make_shared<rgr::RenderableModel>(cubeMesh);
     cube->GetTransform().SetPosition(glm::vec3(0, 0, 2));
 
-    auto camera = std::make_shared<rgr::Camera>(glm::radians(60.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
+    auto camera = std::make_shared<rgr::Camera>(glm::radians(75.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
     camera->GetTransform().SetPosition(glm::vec3(-3.0f, 0, 0.0f));
     camera->FlagAsMain();
 
