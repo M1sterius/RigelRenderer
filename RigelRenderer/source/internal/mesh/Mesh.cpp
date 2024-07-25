@@ -52,7 +52,7 @@ namespace rgr
 
     Mesh::~Mesh() = default;
 
-    void Mesh::Draw(rgr::Shader& shader) const
+    void Mesh::Draw(const rgr::Shader& shader) const
     {
         if(diffuseTexture != nullptr)
             shader.BindTexture("u_DiffuseTexture", diffuseTexture, 0);

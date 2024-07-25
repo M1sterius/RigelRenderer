@@ -5,8 +5,12 @@
 #include "render/RenderHandler.hpp"
 #include "glad.h"
 #include "glfw3.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #include <iostream>
+#include <thread>
 
 namespace rgr
 {
@@ -15,13 +19,16 @@ namespace rgr
     size_t Core::m_ScreenWidth = 0;
     size_t Core::m_ScreenHeight = 0;
     std::unique_ptr<RenderHandler> Core::m_RenderHandler = nullptr;
+    bool Core::m_DrawDebugGUI = true;
 
     bool Core::Init(size_t width, size_t height, const char* title)
     {
         if (!glfwInit())
             return false;
 
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+        #ifdef _DEBUG
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+        #endif
 
         m_Window = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height), title, nullptr, nullptr);
         if (!m_Window)
@@ -41,20 +48,25 @@ namespace rgr
 
         gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
-        int flags; glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-        if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
-        {
-            glEnable(GL_DEBUG_OUTPUT);
-            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-            glDebugMessageCallback(gl_debug_output, nullptr);
-            glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-        }
+        ImGui::CreateContext();
+        ImGui::StyleColorsDark();
+        ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+        ImGui_ImplOpenGL3_Init();
+
+        #ifdef _DEBUG
+            int flags;
+            glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+            if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
+            {
+                glEnable(GL_DEBUG_OUTPUT);
+                glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+                glDebugMessageCallback(gl_debug_output_callback, nullptr);
+                glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+            }
+        #endif
 
         glViewport(0, 0, static_cast<int>(m_ScreenWidth), static_cast<int>(m_ScreenHeight));
-        glEnable(GL_DEPTH_TEST);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-        glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         m_RenderHandler = std::make_unique<rgr::RenderHandler>();
 
@@ -67,22 +79,29 @@ namespace rgr
 
     void Core::Update()
     {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        if (m_DrawDebugGUI)
+            DrawDebugGUI();
+
         rgr::Time::CalcTime(glfwGetTime());
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (m_LoadedScene != nullptr)
-        {
-            m_LoadedScene->Update();
-        }
+        if (m_LoadedScene != nullptr) m_LoadedScene->Update();
         else
         {
             std::cout << "Active Scene pointer is set to nullptr!" << "\n";
         }
 
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         ProcessInput();
         glfwSwapBuffers(m_Window);
-        glfwPollEvents(); // Should stay the last line in Update
+        glfwPollEvents(); // This line should stay after the call to ProcessInput() function
     }
 
     void Core::LoadScene(rgr::Scene* scene)
@@ -123,6 +142,25 @@ namespace rgr
         rgr::Input::oldMousePos = rgr::Input::mousePos;
     }
 
+    void Core::DrawDebugGUI()
+    {
+        const auto fpsText = "FPS: " + std::to_string(1 / rgr::Time::GetDeltaTimeF());
+
+        ImGui::Begin("Hello, world!");
+        ImGui::Text("%s", fpsText.c_str());
+        ImGui::End();
+    }
+
+    void Core::EnableDebugGUI()
+    {
+        m_DrawDebugGUI = true;
+    }
+
+    void Core::DisableDebugGUI()
+    {
+        m_DrawDebugGUI = false;
+    }
+
     void Core::framebuffer_size_callback(GLFWwindow* window, int width, int height)
     {
         m_ScreenWidth = width;
@@ -144,9 +182,9 @@ namespace rgr
         Input::mousePos = glm::vec2(xpos, ypos);
     }
 
-    void Core::gl_debug_output(uint32_t source, uint32_t type, unsigned int id,
-                               uint32_t severity, int length,
-                               const char *message, const void* userParam)
+    void Core::gl_debug_output_callback(uint32_t source, uint32_t type, uint32_t id,
+                                        uint32_t severity, int length,
+                                        const char *message, const void* userParam)
     {
         // ignore non-significant error/warning codes
         if(id == 131169 || id == 131185 || id == 131218 || id == 131204) return;

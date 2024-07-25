@@ -21,3 +21,4 @@
 #include "modules/Core.hpp"
 #include "modules/Time.hpp"
 #include "modules/Input.hpp"
+#include "modules/Cursor.hpp"

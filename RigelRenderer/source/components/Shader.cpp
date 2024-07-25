@@ -116,7 +116,7 @@ namespace rgr
 		return { vertexSource, fragmentSource };
 	}
 
-    Shader& Shader::GetBuiltInShader(const Shader::BUILT_IN_SHADERS type)
+    const Shader& Shader::GetBuiltInShader(const Shader::BUILT_IN_SHADERS type)
     {
         // Instantiation of plain color shader may create infinite recursive call chain of GetBuiltInShader() and FromFiles(), gotta fix that!!
         static auto plainColorShader = Shader::FromFiles(m_BuildInShadersPath + "/plain_color_vertex.glsl",
@@ -155,89 +155,89 @@ namespace rgr
 		glUseProgram(0);
 	}
 
-	void Shader::BindTexture(const std::string& name, const rgr::Texture* texture, const int slot)
+	void Shader::BindTexture(const std::string& name, const rgr::Texture* texture, const int slot) const
 	{
         texture->BindToSlot(slot);
 		SetUniform1is(name, slot);
 	}
 
-    void Shader::BindTexture(const std::string &name, const std::shared_ptr<Texture>& texture, const int slot)
+    void Shader::BindTexture(const std::string &name, const std::shared_ptr<Texture>& texture, const int slot) const
     {
         texture->BindToSlot(slot);
         SetUniform1is(name, slot);
     }
 
-	void Shader::SetUniform1is(const std::string& name, const int value)
+	void Shader::SetUniform1is(const std::string& name, const int value) const
 	{
 		const int location = FindUniform(name);
 		if (location == -1) return;
 		glUniform1i(location, value);
 	}
 
-	void Shader::SetUniform1i(const std::string& name, const unsigned int value)
+	void Shader::SetUniform1i(const std::string& name, const unsigned int value) const
 	{
 		const int location = FindUniform(name);
 		if (location == -1) return;
 		glUniform1ui(location, value);
 	}
 
-	void Shader::SetUniform1i(const std::string& name, const size_t value)
+	void Shader::SetUniform1i(const std::string& name, const size_t value) const
 	{
 		const int location = FindUniform(name);
 		if (location == -1) return;
 		glUniform1ui(location, value);
 	}
 
-	void Shader::SetUniform1f(const std::string& name, const float value)
+	void Shader::SetUniform1f(const std::string& name, const float value) const
 	{
 		const int location = FindUniform(name);
 		if (location == -1) return;
 		glUniform1f(location, value);
 	}
 
-    void Shader::SetUniformBool(const std::string &name, const bool value)
+    void Shader::SetUniformBool(const std::string &name, const bool value) const
     {
         const int location = FindUniform(name);
         if (location == -1) return;
         glUniform1i(location, value);
     }
 
-	void Shader::SetUniformVec2(const std::string& name, const glm::vec2& value)
+	void Shader::SetUniformVec2(const std::string& name, const glm::vec2& value) const
 	{
 		const int location = FindUniform(name);
 		if (location == -1) return;
 		glUniform2f(location, value.x, value.y);
 	}
 
-	void Shader::SetUniformVec3(const std::string& name, const glm::vec3& value)
+	void Shader::SetUniformVec3(const std::string& name, const glm::vec3& value) const
 	{
 		const int location = FindUniform(name);
 		if (location == -1) return;
 		glUniform3f(location, value.x, value.y, value.z);
 	}
 
-	void Shader::SetUniformVec4(const std::string& name, const glm::vec4& value)
+	void Shader::SetUniformVec4(const std::string& name, const glm::vec4& value) const
 	{
 		const int location = FindUniform(name);
 		if (location == -1) return;
 		glUniform4f(location, value.x, value.y, value.z, value.w);
 	}
 
-	void Shader::SetUniformMat3(const std::string& name, const bool transpose, const glm::mat3& value)
+	void Shader::SetUniformMat3(const std::string& name, const bool transpose, const glm::mat3& value) const
 	{
 		const int location = FindUniform(name);
 		if (location == -1) return;
 		glUniformMatrix3fv(location, 1, transpose, glm::value_ptr(value));
 	}
 
-	void Shader::SetUniformMat4(const std::string& name, const bool transpose, const glm::mat4& value)
+	void Shader::SetUniformMat4(const std::string& name, const bool transpose, const glm::mat4& value) const
 	{
 		const int location = FindUniform(name);
 		if (location == -1) return;
 		glUniformMatrix4fv(location, 1, transpose, glm::value_ptr(value));
 	}
 
-	int Shader::FindUniform(const std::string& name)
+	int Shader::FindUniform(const std::string& name) const
 	{
 		if (m_UniformsLocationCache.find(name) != m_UniformsLocationCache.end())
 			return m_UniformsLocationCache[name];
@@ -249,15 +249,7 @@ namespace rgr
 			return location;
 		}
 		std::cout << "Unable to find uniform named: " << name << '\n';
-		m_UniformsCallback++;
 		return -1;
-	}
-
-	int Shader::GetUniformsCallback()
-	{
-		int callback = m_UniformsCallback;
-        m_UniformsCallback = 0;
-		return callback;
 	}
 
     void Shader::SetBuildInShadersPath(const std::string &path)

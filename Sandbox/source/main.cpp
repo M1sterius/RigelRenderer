@@ -14,6 +14,8 @@ int main(int argc, char* argv[])
     if (!rgr::Core::Init(WIDTH, HEIGHT, TITLE))
         return -1;
 
+    rgr::Cursor::SetCursorState(rgr::Cursor::CURSOR_STATE::DISABLED);
+
     auto scene = new rgr::Scene();
     rgr::Core::LoadScene(scene);
 
@@ -93,12 +95,17 @@ int main(int argc, char* argv[])
     glm::vec3 pos = camera->GetTransform().GetPosition();
     glm::vec3 rot(0.0f);
 
+    rgr::Cursor::CURSOR_STATE cursorState = rgr::Cursor::GetCursorState();
+
     while (rgr::Core::AppShouldRun())
     {
         glm::vec2 mouseDelta = rgr::Input::GetMouseDelta();
 
-        yaw -= mouseDelta.x * sensitivity * rgr::Time::GetDeltaTimeF();
-        pitch -= mouseDelta.y * sensitivity * rgr::Time::GetDeltaTimeF();
+        if (rgr::Cursor::GetCursorState() == rgr::Cursor::CURSOR_STATE::DISABLED)
+        {
+            yaw -= mouseDelta.x * sensitivity * rgr::Time::GetDeltaTimeF();
+            pitch -= mouseDelta.y * sensitivity * rgr::Time::GetDeltaTimeF();
+        }
 
         if (pitch > 1.5708f) pitch = 1.5708f;
         else if (pitch < -1.5708f) pitch = -1.5708f;
@@ -121,6 +128,14 @@ int main(int argc, char* argv[])
             pos += glm::vec3(0.0f, 1.0f, 0.0f) * speed * rgr::Time::GetDeltaTimeF();
         if (rgr::Input::KeyHold(RGR_KEY_E))
             pos -= glm::vec3(0.0f, 1.0f, 0.0f) * speed * rgr::Time::GetDeltaTimeF();
+
+        if (rgr::Input::KeyPressed(RGR_KEY_ESCAPE))
+        {
+            if (rgr::Cursor::GetCursorState() == rgr::Cursor::CURSOR_STATE::NORMAL)
+                rgr::Cursor::SetCursorState(rgr::Cursor::CURSOR_STATE::DISABLED);
+            else if(rgr::Cursor::GetCursorState() == rgr::Cursor::CURSOR_STATE::DISABLED)
+                rgr::Cursor::SetCursorState(rgr::Cursor::CURSOR_STATE::NORMAL);
+        }
 
         camera->GetTransform().SetPosition(pos);
         camera->GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));

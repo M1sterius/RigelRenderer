@@ -154,7 +154,7 @@ namespace rgr
             mesh->DrawElements();
     }
 
-    void Model::Draw(Shader& shader)
+    void Model::Draw(const Shader& shader)
     {
         for (const auto mesh : m_Meshes)
             mesh->Draw(shader);

@@ -32,7 +32,7 @@ namespace rgr
 		m_Model->DrawElements();
 	}
 
-	void RenderableModel::RenderGeometry(rgr::Shader& shader, const glm::mat4& viewProj)
+	void RenderableModel::RenderGeometry(const rgr::Shader& shader, const glm::mat4& viewProj)
 	{	
 		const glm::mat4 model = GetTransform().GetModelMatrix();
 		const glm::mat4 mvp = viewProj * model;

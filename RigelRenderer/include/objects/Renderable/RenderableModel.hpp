@@ -27,6 +27,6 @@ namespace rgr
 		inline std::shared_ptr<Model> GetModel() { return m_Model; }
 
 		void RenderDepth(const glm::mat4& lightSpaceMatrix);
-		void RenderGeometry(rgr::Shader& shader, const glm::mat4& viewProj);
+		void RenderGeometry(const rgr::Shader& shader, const glm::mat4& viewProj);
 	};
 }

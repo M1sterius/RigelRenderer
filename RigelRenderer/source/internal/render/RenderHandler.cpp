@@ -13,6 +13,7 @@ namespace rgr
 {
 
     RenderHandler::RenderHandler()
+        : m_Scene(nullptr)
     {
         m_GBuffer = std::make_unique<rgr::GBuffer>(rgr::Core::GetWindowSize().x, rgr::Core::GetWindowSize().y);
 
@@ -20,7 +21,7 @@ namespace rgr
         InitializeDepthMapFBOs();
 
         // Set uniform variables that are persistent among bindings
-        auto& lightingPassShader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::LIGHTING_PASS);
+        const auto& lightingPassShader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::LIGHTING_PASS);
         lightingPassShader.Bind();
         lightingPassShader.SetUniform1is("g_Position", 0);
         lightingPassShader.SetUniform1is("g_Normal", 1);
@@ -46,6 +47,7 @@ namespace rgr
         const auto& lights = m_Scene->GetLightsAround(camera->GetTransform().GetPosition(), camera->shadowsVisibilityDistance);
 
         glCullFace(GL_FRONT);
+        glEnable(GL_DEPTH_TEST);
         ClearDepthAtlases();
 
         size_t dirLightsCount = 0;
@@ -88,13 +90,16 @@ namespace rgr
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glCullFace(GL_BACK);
+        glDisable(GL_DEPTH_TEST);
     }
 
     void RenderHandler::DoGeometryPass()
     {
         const auto& renderables = m_Scene->GetRenderablesInFrustum();
-        auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::GEOMETRY_PASS);
+        const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::GEOMETRY_PASS);
         const glm::mat4 viewProj = m_Scene->GetMainCamera()->GetPerspective() * m_Scene->GetMainCamera()->GetView();
+
+        glEnable(GL_DEPTH_TEST);
 
         m_GBuffer->Bind();
         m_GBuffer->ClearColorDepthBufferBit();
@@ -109,9 +114,11 @@ namespace rgr
         }
 
         m_GBuffer->Unbind();
+
+        glDisable(GL_DEPTH_TEST);
     }
 
-    void RenderHandler::SetDirLightUniforms(const std::shared_ptr<DirectionalLight>& light, rgr::Shader& shader, const size_t lightIndex)
+    void RenderHandler::SetDirLightUniforms(const std::shared_ptr<DirectionalLight>& light, const rgr::Shader& shader, const size_t lightIndex)
     {
         const std::string u_name = "u_DirectionalLights[" + std::to_string(lightIndex) + "].";
         shader.SetUniformVec3(u_name + "color", light->color);
@@ -121,7 +128,7 @@ namespace rgr
         shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
     }
 
-    void RenderHandler::SetSpotLightUniforms(const std::shared_ptr<SpotLight>& light, rgr::Shader& shader, const size_t lightIndex)
+    void RenderHandler::SetSpotLightUniforms(const std::shared_ptr<SpotLight>& light, const rgr::Shader& shader, const size_t lightIndex)
     {
         const std::string u_name = "u_SpotLights[" + std::to_string(lightIndex) + "].";
         shader.SetUniformVec3(u_name + "color", light->color);
@@ -137,7 +144,7 @@ namespace rgr
         shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
     }
 
-    void RenderHandler::SetPointLightUniforms(const std::shared_ptr<PointLight>& light, rgr::Shader& shader, const size_t lightIndex)
+    void RenderHandler::SetPointLightUniforms(const std::shared_ptr<PointLight>& light, const rgr::Shader& shader, const size_t lightIndex)
     {
         const std::string u_name = "u_PointLights[" + std::to_string(lightIndex) + "].";
         shader.SetUniformVec3(u_name + "color", light->color);
@@ -151,7 +158,7 @@ namespace rgr
     void RenderHandler::DoLightingPass()
     {
         auto camera = m_Scene->GetMainCamera();
-        auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::LIGHTING_PASS);
+        const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::LIGHTING_PASS);
         const auto& quad = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::QUAD);
         const auto& lights = m_Scene->GetLightsAround(camera->GetTransform().GetPosition(),camera->shadowsVisibilityDistance);
 

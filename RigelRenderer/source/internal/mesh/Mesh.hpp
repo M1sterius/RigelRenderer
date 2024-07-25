@@ -20,7 +20,7 @@ namespace rgr
         ~Mesh();
 
         void DrawElements() const;
-        void Draw(rgr::Shader& shader) const;
+        void Draw(const rgr::Shader& shader) const;
 
         inline size_t VerticesCount() const { return m_VerticesCount; }
         inline size_t TrisCount() const { return m_TrisCount; }

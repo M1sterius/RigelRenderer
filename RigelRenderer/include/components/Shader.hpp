@@ -13,15 +13,6 @@ namespace rgr
 
 	class Shader
 	{
-	private:
-        static std::string m_BuildInShadersPath;
-
-        unsigned int m_Handle;
-        bool m_ShaderHasError;
-        int m_UniformsCallback = 0;
-        std::unordered_map<std::string, int> m_UniformsLocationCache;
-
-		Shader(const std::string& vertexSource, const std::string& fragmentSource);
 	public:
 		~Shader();
 
@@ -32,26 +23,33 @@ namespace rgr
 
         static void SetBuildInShadersPath(const std::string& path);
         static std::string GetBuildInShadersPath();
+    private:
+        static std::string m_BuildInShadersPath;
+
+        unsigned int m_Handle;
+        bool m_ShaderHasError;
+        mutable std::unordered_map<std::string, int> m_UniformsLocationCache;
+
+        Shader(const std::string& vertexSource, const std::string& fragmentSource);
 	INTERNAL:
 		void Bind() const;
 		void Unbind() const;
 
-		void BindTexture(const std::string& name, const rgr::Texture* texture, const int slot);
-		void BindTexture(const std::string& name, const std::shared_ptr<Texture>& texture, const int slot);
-		void SetUniform1is(const std::string& name, const int value);
-		void SetUniform1i(const std::string& name, const unsigned int value);
-		void SetUniform1i(const std::string& name, const size_t value);
-		void SetUniform1f(const std::string& name, const float value);
-        void SetUniformBool(const std::string& name, const bool value);
-		void SetUniformVec2(const std::string& name, const glm::vec2& value);
-		void SetUniformVec3(const std::string& name, const glm::vec3& value);
-		void SetUniformVec4(const std::string& name, const glm::vec4& value);
-		void SetUniformMat3(const std::string& name, const bool transpose, const glm::mat3& value);
-		void SetUniformMat4(const std::string& name, const bool transpose, const glm::mat4& value);
+		void BindTexture(const std::string& name, const rgr::Texture* texture, const int slot) const;
+		void BindTexture(const std::string& name, const std::shared_ptr<Texture>& texture, const int slot) const;
+		void SetUniform1is(const std::string& name, const int value) const;
+		void SetUniform1i(const std::string& name, const unsigned int value) const;
+		void SetUniform1i(const std::string& name, const size_t value) const;
+		void SetUniform1f(const std::string& name, const float value) const;
+        void SetUniformBool(const std::string& name, const bool value) const;
+		void SetUniformVec2(const std::string& name, const glm::vec2& value) const;
+		void SetUniformVec3(const std::string& name, const glm::vec3& value) const;
+		void SetUniformVec4(const std::string& name, const glm::vec4& value) const;
+		void SetUniformMat3(const std::string& name, const bool transpose, const glm::mat3& value) const;
+		void SetUniformMat4(const std::string& name, const bool transpose, const glm::mat4& value) const;
 
 		inline unsigned int GetHandle() const { return m_Handle; }
-		int FindUniform(const std::string& name);
-		int GetUniformsCallback();
+		int FindUniform(const std::string& name) const;
 
         enum class BUILT_IN_SHADERS
         {
@@ -62,7 +60,7 @@ namespace rgr
             TEXTURE_TEST
         };
 
-        static Shader& GetBuiltInShader(BUILT_IN_SHADERS type);
+        static const Shader& GetBuiltInShader(BUILT_IN_SHADERS type);
 	};
 }
 

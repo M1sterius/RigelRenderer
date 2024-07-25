@@ -10,7 +10,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/RigelRenderer/${CMAKE
 set(DEPENDENCIES_DIR ${CMAKE_SOURCE_DIR}/Dependencies)
 
 file(GLOB_RECURSE SOURCES "source/*.cpp" "source/*.hpp")
-add_library(RigelRenderer SHARED ${SOURCES}
+file(GLOB IMGUI_SOURCES "${DEPENDENCIES_DIR}/imgui/*.h" "${DEPENDENCIES_DIR}/imgui/*.cpp")
+add_library(RigelRenderer SHARED ${SOURCES} ${IMGUI_SOURCES}
         ${DEPENDENCIES_DIR}/glad/src/glad.c
         source/modules/Core.cpp
         include/modules/Core.hpp
@@ -42,6 +43,7 @@ target_include_directories(RigelRenderer PRIVATE
     ${DEPENDENCIES_DIR}/stb_image
     ${DEPENDENCIES_DIR}/freetype
     ${DEPENDENCIES_DIR}/assimp/include/assimp
+    ${DEPENDENCIES_DIR}/imgui
     ${DEPENDENCIES_DIR}/
 )
 

@@ -29,6 +29,6 @@ namespace rgr
         rgr::Mesh* ProcessMesh(aiMesh* mesh, const aiScene* scene);
     INTERNAL:
         void DrawElements();
-        void Draw(Shader& shader);
+        void Draw(const Shader& shader);
 	};
 }
