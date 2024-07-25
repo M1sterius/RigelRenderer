@@ -22,11 +22,11 @@ namespace rgr
         // Set uniform variables that are persistent among bindings
         auto& lightingPassShader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::LIGHTING_PASS);
         lightingPassShader.Bind();
-        lightingPassShader.SetUniform1i("g_Position", 0);
-        lightingPassShader.SetUniform1i("g_Normal", 1);
-        lightingPassShader.SetUniform1i("g_AlbedoSpec", 2);
-        lightingPassShader.SetUniform1i("u_DirLightsShadowAtlas", 3);
-        lightingPassShader.SetUniform1i("u_SpotLightsShadowAtlas", 4);
+        lightingPassShader.SetUniform1is("g_Position", 0);
+        lightingPassShader.SetUniform1is("g_Normal", 1);
+        lightingPassShader.SetUniform1is("g_AlbedoSpec", 2);
+        lightingPassShader.SetUniform1is("u_DirLightsShadowAtlas", 3);
+        lightingPassShader.SetUniform1is("u_SpotLightsShadowAtlas", 4);
         lightingPassShader.Unbind();
     }
 

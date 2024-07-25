@@ -155,19 +155,19 @@ namespace rgr
 		glUseProgram(0);
 	}
 
-	void Shader::BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot)
+	void Shader::BindTexture(const std::string& name, const rgr::Texture* texture, const int slot)
 	{
         texture->BindToSlot(slot);
-		SetUniform1i(name, slot);
+		SetUniform1is(name, slot);
 	}
 
-    void Shader::BindTexture(const std::string &name, const std::shared_ptr<Texture>& texture, unsigned int slot)
+    void Shader::BindTexture(const std::string &name, const std::shared_ptr<Texture>& texture, const int slot)
     {
         texture->BindToSlot(slot);
-        SetUniform1i(name, slot);
+        SetUniform1is(name, slot);
     }
 
-	void Shader::SetUniform1i(const std::string& name, const int value)
+	void Shader::SetUniform1is(const std::string& name, const int value)
 	{
 		const int location = FindUniform(name);
 		if (location == -1) return;

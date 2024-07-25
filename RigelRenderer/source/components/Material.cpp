@@ -36,7 +36,7 @@ void rgr::Material::BindTexture(const std::string& name, const rgr::Texture* tex
 
 void rgr::Material::SetUniform1i(const std::string& name, const int value)
 {
-	m_Shader->SetUniform1i(name, value);
+    m_Shader->SetUniform1is(name, value);
 }
 
 void rgr::Material::SetUniform1i(const std::string& name, const unsigned int value)

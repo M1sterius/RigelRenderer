@@ -36,9 +36,9 @@ namespace rgr
 		void Bind() const;
 		void Unbind() const;
 
-		void BindTexture(const std::string& name, const rgr::Texture* texture, unsigned int slot);
-		void BindTexture(const std::string& name, const std::shared_ptr<Texture>& texture, unsigned int slot);
-		void SetUniform1i(const std::string& name, const int value);
+		void BindTexture(const std::string& name, const rgr::Texture* texture, const int slot);
+		void BindTexture(const std::string& name, const std::shared_ptr<Texture>& texture, const int slot);
+		void SetUniform1is(const std::string& name, const int value);
 		void SetUniform1i(const std::string& name, const unsigned int value);
 		void SetUniform1i(const std::string& name, const size_t value);
 		void SetUniform1f(const std::string& name, const float value);

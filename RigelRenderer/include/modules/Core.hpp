@@ -34,6 +34,8 @@ namespace rgr
         static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
         static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
         static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
+        static void __stdcall gl_debug_output(uint32_t source, uint32_t type, unsigned int id, uint32_t severity,
+            int length, const char *message, const void *userParam);
     INTERNAL:
         static void RenderHandlerSceneUpdate();
     };
