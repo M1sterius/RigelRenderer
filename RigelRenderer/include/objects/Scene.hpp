@@ -52,9 +52,12 @@ namespace rgr
 		removes its pointer from the scene
 		*/
 		void RemoveObject(std::shared_ptr<Object> object);
-	INTERNAL:
-		// Helps find a suitable rendering camera
+
+        inline size_t GetObjectsCount() const {return m_Renderables.size() + m_Cameras.size() + m_Lights.size(); }
+
+        // Helps find a suitable rendering camera
         std::shared_ptr<Camera> GetMainCamera() const;
+    INTERNAL:
 		// Returns all lights closer than radius around the point, up to maxCount of lights
 		const std::vector<std::shared_ptr<Light>>& GetLightsAround(const glm::vec3 point, const float radius, const size_t maxCount = 16) const;
 		

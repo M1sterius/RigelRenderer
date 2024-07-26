@@ -11,6 +11,7 @@ namespace rgr
         static float GetTimeF();
         static double GetDeltaTime();
         static float GetDeltaTimeF();
+        static size_t GetFPS();
     INTERNAL:
         static void CalcTime(const double timePassed);
     private:

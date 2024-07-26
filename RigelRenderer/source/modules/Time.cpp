@@ -32,4 +32,9 @@ namespace rgr
         m_DeltaTime = m_Time - m_OldTime;
         m_OldTime = m_Time;
     }
+
+    size_t Time::GetFPS()
+    {
+        return static_cast<size_t>(1 / GetDeltaTime());
+    }
 }

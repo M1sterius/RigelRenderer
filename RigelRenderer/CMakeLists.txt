@@ -18,6 +18,7 @@ add_library(RigelRenderer SHARED ${SOURCES} ${IMGUI_SOURCES}
         source/modules/Time.cpp
         source/internal/mesh/Mesh.cpp
         source/internal/mesh/Mesh.hpp
+        ${DEPENDENCIES_DIR}/stb_image/stb_image.cpp
 )
 
 target_compile_definitions(RigelRenderer PRIVATE "INTERNAL_LIB")
@@ -26,7 +27,7 @@ set_target_properties(RigelRenderer PROPERTIES PREFIX "")
 target_include_directories(RigelRenderer PRIVATE
     source
     include
-    include/publicUtility
+        include/utility
     include/components
     include/modules
     include/input

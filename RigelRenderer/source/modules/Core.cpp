@@ -30,6 +30,9 @@ namespace rgr
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
         #endif
 
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+
         m_Window = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height), title, nullptr, nullptr);
         if (!m_Window)
         {
@@ -70,9 +73,9 @@ namespace rgr
 
         m_RenderHandler = std::make_unique<rgr::RenderHandler>();
 
-		//glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, GLFW_FALSE);
+		glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, GLFW_FALSE);
 //		glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 165);
-//		glfwSwapInterval(0);
+		//glfwSwapInterval(0);
 
         return true;
     }
@@ -144,10 +147,25 @@ namespace rgr
 
     void Core::DrawDebugGUI()
     {
-        const auto fpsText = "FPS: " + std::to_string(1 / rgr::Time::GetDeltaTimeF());
+        const auto isSceneNotNull = m_LoadedScene != nullptr;
 
-        ImGui::Begin("Hello, world!");
+        const auto fpsText = "FPS: " + std::to_string(1 / rgr::Time::GetDeltaTimeF());
+        const auto loadedSceneText = isSceneNotNull ? "Loaded Scene: " + m_LoadedScene->name : "Loaded Scene: None";
+        const auto sceneObjectCountText = isSceneNotNull ? "Loaded Objs Count: " + std::to_string(m_LoadedScene->GetObjectsCount()) : "Loaded Objs Count: None";
+
+        const size_t frametimeSamples = 100;
+        static std::vector<float> frametimes;
+        frametimes.push_back(rgr::Time::GetDeltaTimeF());
+        if (frametimes.size() > frametimeSamples)
+            frametimes.erase(frametimes.begin());
+
+        ImGui::Begin("Debug GUI");
+
         ImGui::Text("%s", fpsText.c_str());
+        ImGui::PlotLines("", frametimes.data(), static_cast<int>(frametimes.size()));
+        ImGui::Text("%s", loadedSceneText.c_str());
+        ImGui::Text("%s", sceneObjectCountText.c_str());
+
         ImGui::End();
     }
 

@@ -17,6 +17,7 @@ int main(int argc, char* argv[])
     rgr::Cursor::SetCursorState(rgr::Cursor::CURSOR_STATE::DISABLED);
 
     auto scene = new rgr::Scene();
+    scene->name = "Test Scene";
     rgr::Core::LoadScene(scene);
 
     auto backpackMesh = std::make_shared<rgr::Model>("resources/models/backpack/backpack.obj");
