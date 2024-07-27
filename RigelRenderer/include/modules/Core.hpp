@@ -24,6 +24,11 @@ namespace rgr
 
         static void EnableDebugGUI();
         static void DisableDebugGUI();
+
+        static void EnableVSync();
+        static void DisableVSync();
+
+        static void SetTargetFPS(const size_t fps);
     private:
         static GLFWwindow* m_Window;
         static Scene* m_LoadedScene;
@@ -31,6 +36,8 @@ namespace rgr
         static size_t m_ScreenHeight;
         static std::unique_ptr<RenderHandler> m_RenderHandler;
         static bool m_DrawDebugGUI;
+        static bool m_UseVSync;
+        static double m_TargetFrameTime;
 
         static void OnScreenResize();
         static void ProcessInput();

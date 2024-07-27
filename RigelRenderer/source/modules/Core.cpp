@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <thread>
+#include <chrono>
 
 namespace rgr
 {
@@ -20,9 +21,17 @@ namespace rgr
     size_t Core::m_ScreenHeight = 0;
     std::unique_ptr<RenderHandler> Core::m_RenderHandler = nullptr;
     bool Core::m_DrawDebugGUI = true;
+    bool Core::m_UseVSync = false;
+    double Core::m_TargetFrameTime = 0.00606;
 
     bool Core::Init(size_t width, size_t height, const char* title)
     {
+        if (m_Window)
+        {
+            std::cout << "RigelRenderer has already been initialized!" << '\n';
+            return false;
+        }
+        
         if (!glfwInit())
             return false;
 
@@ -75,21 +84,23 @@ namespace rgr
 
 		glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, GLFW_FALSE);
 //		glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 165);
-		//glfwSwapInterval(0);
+		glfwSwapInterval(0);
 
         return true;
     }
 
     void Core::Update()
     {
+        const auto frameBeginTime = std::chrono::high_resolution_clock::now();
+
+        rgr::Time::CalcTime(glfwGetTime());
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
         if (m_DrawDebugGUI)
             DrawDebugGUI();
-
-        rgr::Time::CalcTime(glfwGetTime());
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -105,6 +116,15 @@ namespace rgr
         ProcessInput();
         glfwSwapBuffers(m_Window);
         glfwPollEvents(); // This line should stay after the call to ProcessInput() function
+
+        if (m_UseVSync)
+            return;
+
+        const auto frameEndTime = std::chrono::high_resolution_clock::now();
+        const std::chrono::duration<double> frameDuration = frameEndTime - frameBeginTime;
+        const double sleepTime = m_TargetFrameTime - frameDuration.count();
+        if (sleepTime > 0)
+            rgr::Time::BusyWaitSleep(sleepTime);
     }
 
     void Core::LoadScene(rgr::Scene* scene)
@@ -177,6 +197,23 @@ namespace rgr
     void Core::DisableDebugGUI()
     {
         m_DrawDebugGUI = false;
+    }
+
+    void Core::EnableVSync()
+    {
+        m_UseVSync = true;
+        glfwSwapInterval(1);
+    }
+
+    void Core::DisableVSync()
+    {
+        m_UseVSync = false;
+        glfwSwapInterval(0);
+    }
+
+    void Core::SetTargetFPS(const size_t fps)
+    {
+        m_TargetFrameTime = 1.0 / static_cast<double>(fps);
     }
 
     void Core::framebuffer_size_callback(GLFWwindow* window, int width, int height)

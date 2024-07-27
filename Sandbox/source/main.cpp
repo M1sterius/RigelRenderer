@@ -13,6 +13,7 @@ int main(int argc, char* argv[])
 
     if (!rgr::Core::Init(WIDTH, HEIGHT, TITLE))
         return -1;
+    rgr::Core::SetTargetFPS(165);
 
     rgr::Cursor::SetCursorState(rgr::Cursor::CURSOR_STATE::DISABLED);
 

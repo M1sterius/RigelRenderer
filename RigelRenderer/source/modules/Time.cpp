@@ -1,5 +1,7 @@
 #include "Time.hpp"
 
+#include <chrono>
+
 namespace rgr
 {
     double Time::m_Time = 0.0;
@@ -36,5 +38,16 @@ namespace rgr
     size_t Time::GetFPS()
     {
         return static_cast<size_t>(1 / GetDeltaTime());
+    }
+
+    void Time::BusyWaitSleep(const double seconds)
+    {
+        const auto beginTime = std::chrono::high_resolution_clock::now();
+
+        while (true)
+        {
+            const std::chrono::duration<double> passed = std::chrono::high_resolution_clock::now() - beginTime;
+            if (passed.count() >= seconds) break;
+        }
     }
 }

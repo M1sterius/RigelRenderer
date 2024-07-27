@@ -12,6 +12,7 @@ namespace rgr
         static double GetDeltaTime();
         static float GetDeltaTimeF();
         static size_t GetFPS();
+        static void BusyWaitSleep(const double seconds);
     INTERNAL:
         static void CalcTime(const double timePassed);
     private:

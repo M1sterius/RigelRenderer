@@ -31,7 +31,7 @@ namespace rgr
         lightingPassShader.Unbind();
     }
 
-    void RenderHandler::SetScene(rgr::Scene *scene)
+    void RenderHandler::SetScene(rgr::Scene* scene)
     {
         m_Scene = scene;
     }
@@ -86,7 +86,7 @@ namespace rgr
         }
 
         const glm::vec2 size = rgr::Core::GetWindowSize();
-        glViewport(0, 0, size.x, size.y);
+        glViewport(0, 0, static_cast<int>(size.x), static_cast<int>(size.y));
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glCullFace(GL_BACK);
@@ -221,8 +221,9 @@ namespace rgr
     {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, m_GBuffer->GetFBOHandle());
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glBlitFramebuffer(0, 0, m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight(),
-                          0, 0, m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+        glBlitFramebuffer(0, 0, static_cast<int>(m_GBuffer->GetBufferWidth()), static_cast<int>(m_GBuffer->GetBufferHeight()),
+                          0, 0, static_cast<int>(m_GBuffer->GetBufferWidth()), static_cast<int>(m_GBuffer->GetBufferHeight()),
+                          GL_DEPTH_BUFFER_BIT, GL_NEAREST);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
