@@ -9,16 +9,49 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/RigelRenderer/${CMAKE_BUILD_TYPE})
 set(DEPENDENCIES_DIR ${CMAKE_SOURCE_DIR}/Dependencies)
 
-file(GLOB_RECURSE SOURCES "source/*.cpp" "source/*.hpp")
-file(GLOB IMGUI_SOURCES "${DEPENDENCIES_DIR}/imgui/*.h" "${DEPENDENCIES_DIR}/imgui/*.cpp")
-add_library(RigelRenderer SHARED ${SOURCES} ${IMGUI_SOURCES}
+file(GLOB IMGUI_SOURCES
+        "${DEPENDENCIES_DIR}/imgui/*.h"
+        "${DEPENDENCIES_DIR}/imgui/*.cpp"
+)
+set(DEPENDENCIES_SOURCES
+        ${IMGUI_SOURCES}
         ${DEPENDENCIES_DIR}/glad/src/glad.c
-        source/modules/Core.cpp
-        include/modules/Core.hpp
-        source/modules/Time.cpp
-        source/internal/mesh/Mesh.cpp
-        source/internal/mesh/Mesh.hpp
         ${DEPENDENCIES_DIR}/stb_image/stb_image.cpp
+)
+add_library(RigelRenderer SHARED ${DEPENDENCIES_SOURCES}
+
+        source/components/Material.cpp
+        source/components/MaterialLit.cpp
+        source/components/Model.cpp
+        source/components/Shader.cpp
+        source/components/Texture.cpp
+        source/components/Transform.cpp
+
+        source/internal/glAbstraction/IndexBuffer.cpp
+        source/internal/glAbstraction/LayoutElement.cpp
+        source/internal/glAbstraction/UniformBuffer.cpp
+        source/internal/glAbstraction/VertexArray.cpp
+        source/internal/glAbstraction/VertexBuffer.cpp
+
+        source/internal/mesh/Mesh.cpp
+
+        source/internal/render/GBuffer.cpp
+        source/internal/render/RenderHandler.cpp
+
+        source/modules/Core.cpp
+        source/modules/Cursor.cpp
+        source/modules/Input.cpp
+        source/modules/Time.cpp
+
+        source/objects/lights/DirectionalLight.cpp
+        source/objects/lights/PointLight.cpp
+        source/objects/lights/SpotLight.cpp
+
+        source/objects/renderable/RenderableModel.cpp
+
+        source/objects/Camera.cpp
+        source/objects/Object.cpp
+        source/objects/Scene.cpp
 )
 
 target_compile_definitions(RigelRenderer PRIVATE "INTERNAL_LIB")
@@ -27,7 +60,7 @@ set_target_properties(RigelRenderer PROPERTIES PREFIX "")
 target_include_directories(RigelRenderer PRIVATE
     source
     include
-        include/utility
+    include/utility
     include/components
     include/modules
     include/input

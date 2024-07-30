@@ -7,13 +7,14 @@
 
 int main(int argc, char* argv[])
 {
-    const int WIDTH = 1600;
-    const int HEIGHT = 900;
+    const size_t WIDTH = 1600;
+    const size_t HEIGHT = 900;
     const char* TITLE = "It works!";
 
     if (!rgr::Core::Init(WIDTH, HEIGHT, TITLE))
         return -1;
-    rgr::Core::SetTargetFPS(165);
+    //rgr::Core::SetTargetFPS(165);
+    rgr::Core::EnableVSync();
 
     rgr::Cursor::SetCursorState(rgr::Cursor::CURSOR_STATE::DISABLED);
 
