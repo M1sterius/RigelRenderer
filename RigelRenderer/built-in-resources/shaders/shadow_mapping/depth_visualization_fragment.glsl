@@ -3,6 +3,7 @@
 in vec2 v_TexCoords;
 
 uniform sampler2D u_Texture;
+uniform bool u_IsLinear;
 
 out vec4 FragColor;
 
@@ -18,6 +19,9 @@ float LinearizeDepth(float depth)
 void main()
 {
     float depth = texture(u_Texture, v_TexCoords).r;
-    FragColor = vec4(vec3(depth), 1.0); // orthographic
-    //FragColor = vec4(vec3(LinearizeDepth(depth) / far), 1.0); // perspective
+
+    if (u_IsLinear)
+        FragColor = vec4(vec3(depth), 1.0);
+    else
+        FragColor = vec4(vec3(LinearizeDepth(depth) / far), 1.0);
 }

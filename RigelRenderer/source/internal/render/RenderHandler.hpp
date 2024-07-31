@@ -46,5 +46,9 @@ namespace rgr
         static void SetDirLightUniforms(const std::shared_ptr<DirectionalLight>& light, const rgr::Shader& shader, const size_t lightIndex);
         static void SetSpotLightUniforms(const std::shared_ptr<SpotLight>& light, const rgr::Shader& shader, const size_t lightIndex);
         static void SetPointLightUniforms(const std::shared_ptr<PointLight>& light, const rgr::Shader& shader, const size_t lightIndex);
+
+        static void DrawDirLight(const std::shared_ptr<PointLight>& light);
+//        static void DrawSpotLight(const std::shared_ptr<PointLight>& light);
+//        static void DrawPointLight(const std::shared_ptr<PointLight>& light);
     };
 }

@@ -155,6 +155,11 @@ namespace rgr
         shader.SetUniform1f(u_name + "quadratic", light->quadratic);
     }
 
+    void RenderHandler::DrawDirLight(const std::shared_ptr<PointLight>& light)
+    {
+
+    }
+
     void RenderHandler::DoLightingPass()
     {
         auto camera = m_Scene->GetMainCamera();

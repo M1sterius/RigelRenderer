@@ -122,14 +122,14 @@ namespace rgr
         // Instantiation of plain color shader may create infinite recursive call chain of GetBuiltInShader() and FromFiles(), gotta fix that!!
         static auto plainColorShader = Shader::FromFiles(builtInShadersPath + "/plain_color_vertex.glsl",
                                                          builtInShadersPath + "/plain_color_fragment.glsl");
-        static auto depthMapShader = Shader::FromFiles(builtInShadersPath + "/depth_map_vertex.glsl",
-                                                       builtInShadersPath + "/depth_map_fragment.glsl");
-        static auto geometryPassShader = Shader::FromFiles(builtInShadersPath + "/geometry_pass_vertex.glsl",
-                                                           builtInShadersPath + "/geometry_pass_fragment.glsl");
-        static auto lightingPassShader = Shader::FromFiles(builtInShadersPath + "/lighting_pass_vertex.glsl",
-                                                           builtInShadersPath + "/lighting_pass_fragment.glsl");
-        static auto textureTestShader = Shader::FromFiles(builtInShadersPath + "/texture_test_vertex.glsl",
-                                                          builtInShadersPath + "/texture_test_fragment.glsl");
+        static auto depthMapShader = Shader::FromFiles(builtInShadersPath + "/shadow_mapping/depth_map_vertex.glsl",
+                                                       builtInShadersPath + "/shadow_mapping/depth_map_fragment.glsl");
+        static auto geometryPassShader = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/geometry_pass_vertex.glsl",
+                                                           builtInShadersPath + "/deferred_rendering/geometry_pass_fragment.glsl");
+        static auto lightingPassShader = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/lighting_pass_vertex.glsl",
+                                                           builtInShadersPath + "/deferred_rendering/lighting_pass_fragment.glsl");
+        static auto depthVisualizationShader = Shader::FromFiles(builtInShadersPath + "/shadow_mapping/depth_visualization_vertex.glsl",
+                                                          builtInShadersPath + "/shadow_mapping/depth_visualization_fragment.glsl");
 
         switch (type)
         {
@@ -141,8 +141,8 @@ namespace rgr
                 return geometryPassShader;
             case BUILT_IN_SHADERS::LIGHTING_PASS:
                 return lightingPassShader;
-            case BUILT_IN_SHADERS::TEXTURE_TEST:
-                return textureTestShader;
+            case BUILT_IN_SHADERS::DEPTH_VISUALIZATION:
+                return depthVisualizationShader;
         }
     }
 
