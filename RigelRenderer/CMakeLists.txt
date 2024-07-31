@@ -104,7 +104,7 @@ add_custom_command(TARGET RigelRenderer POST_BUILD
 )
 
 # Copy library's built-in resources (e.g shaders) to the output directory of the test project
-set(COPY_OUT_DIR ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD_TYPE}/built-in-resources)
+set(COPY_OUT_DIR ${CMAKE_SOURCE_DIR}/bin/Sandbox/${CMAKE_BUILD_TYPE}/resources/built-in)
 add_custom_command(TARGET RigelRenderer POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/built-in-resources/

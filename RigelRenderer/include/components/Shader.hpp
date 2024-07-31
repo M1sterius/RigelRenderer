@@ -20,11 +20,7 @@ namespace rgr
 		static Shader FromSources(const std::string& vertexSource, const std::string& fragmentSource);
 	
 		inline bool GetShaderHasError() const { return m_ShaderHasError; }
-
-        static void SetBuildInShadersPath(const std::string& path);
-        static std::string GetBuildInShadersPath();
     private:
-        static std::string m_BuildInShadersPath;
 
         unsigned int m_Handle;
         bool m_ShaderHasError;

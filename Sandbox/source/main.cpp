@@ -11,10 +11,8 @@ int main(int argc, char* argv[])
     const size_t HEIGHT = 900;
     const char* TITLE = "It works!";
 
-    if (!rgr::Core::Init(WIDTH, HEIGHT, TITLE))
+    if (!rgr::Core::Init(WIDTH, HEIGHT, TITLE, true))
         return -1;
-    //rgr::Core::SetTargetFPS(165);
-    rgr::Core::EnableVSync();
 
     rgr::Cursor::SetCursorState(rgr::Cursor::CURSOR_STATE::DISABLED);
 
@@ -22,14 +20,14 @@ int main(int argc, char* argv[])
     scene->name = "Test Scene";
     rgr::Core::LoadScene(scene);
 
-    auto backpackMesh = std::make_shared<rgr::Model>("resources/models/backpack/backpack.obj");
-    auto cubeMesh = std::make_shared<rgr::Model>("resources/models/cube/cube.obj");
+    auto backpackModel = std::make_shared<rgr::Model>("resources/models/backpack/backpack.obj");
+    auto cubeModel = std::make_shared<rgr::Model>("resources/models/cube/cube.obj");
 
-    auto backpack = std::make_shared<rgr::RenderableModel>(backpackMesh);
+    auto backpack = std::make_shared<rgr::RenderableModel>(backpackModel);
     backpack->GetTransform().SetPosition(glm::vec3(0, 0, 0));
     backpack->GetTransform().SetScale(glm::vec3(0.5, 0.5, 0.5));
 
-    auto cube = std::make_shared<rgr::RenderableModel>(cubeMesh);
+    auto cube = std::make_shared<rgr::RenderableModel>(cubeModel);
     cube->GetTransform().SetPosition(glm::vec3(0, 0, 2));
 
     auto camera = std::make_shared<rgr::Camera>(glm::radians(75.0f), WIDTH, HEIGHT, 0.1f, 100.0f);

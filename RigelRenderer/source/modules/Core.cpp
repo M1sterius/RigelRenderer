@@ -22,9 +22,10 @@ namespace rgr
     std::unique_ptr<RenderHandler> Core::m_RenderHandler = nullptr;
     bool Core::m_DrawDebugGUI = true;
     bool Core::m_UseVSync = false;
-    double Core::m_TargetFrameTime = 0.00606;
+    double Core::m_TargetFrameTime = 0.001;
+    std::string Core::m_BuiltInResourcesPath = "resources/built-in";
 
-    bool Core::Init(size_t width, size_t height, const char* title)
+    bool Core::Init(size_t width, size_t height, const char* title, const bool vsync)
     {
         if (m_Window)
         {
@@ -85,6 +86,11 @@ namespace rgr
 		glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, GLFW_FALSE);
 //		glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 165);
 		glfwSwapInterval(0);
+
+        if (vsync)
+            EnableVSync();
+        else
+            DisableVSync();
 
         return true;
     }
@@ -214,6 +220,16 @@ namespace rgr
     void Core::SetTargetFPS(const size_t fps)
     {
         m_TargetFrameTime = 1.0 / static_cast<double>(fps);
+    }
+
+    void Core::SetBuiltInResourcesPath(const std::string& dir)
+    {
+        m_BuiltInResourcesPath = dir;
+    }
+
+    std::string &Core::GetBuiltInResourcesPath()
+    {
+        return m_BuiltInResourcesPath;
     }
 
     void Core::framebuffer_size_callback(GLFWwindow* window, int width, int height)

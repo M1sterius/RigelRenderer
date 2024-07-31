@@ -3,6 +3,7 @@
 #include "gtc/type_ptr.hpp"
 #include "glm.hpp"
 #include "Texture.hpp"
+#include "Core.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -47,8 +48,6 @@ namespace rgr
 
 		return temp;
 	}
-
-    std::string Shader::m_BuildInShadersPath = "built-in-resources/shaders";
 
 	Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)
 	{	
@@ -118,17 +117,19 @@ namespace rgr
 
     const Shader& Shader::GetBuiltInShader(const Shader::BUILT_IN_SHADERS type)
     {
+        static const std::string builtInShadersPath = rgr::Core::GetBuiltInResourcesPath() + "/shaders";
+
         // Instantiation of plain color shader may create infinite recursive call chain of GetBuiltInShader() and FromFiles(), gotta fix that!!
-        static auto plainColorShader = Shader::FromFiles(m_BuildInShadersPath + "/plain_color_vertex.glsl",
-                                                         m_BuildInShadersPath + "/plain_color_fragment.glsl");
-        static auto depthMapShader = Shader::FromFiles(m_BuildInShadersPath + "/depth_map_vertex.glsl",
-                                                       m_BuildInShadersPath + "/depth_map_fragment.glsl");
-        static auto geometryPassShader = Shader::FromFiles(m_BuildInShadersPath + "/geometry_pass_vertex.glsl",
-                                                           m_BuildInShadersPath + "/geometry_pass_fragment.glsl");
-        static auto lightingPassShader = Shader::FromFiles(m_BuildInShadersPath + "/lighting_pass_vertex.glsl",
-                                                           m_BuildInShadersPath + "/lighting_pass_fragment.glsl");
-        static auto textureTestShader = Shader::FromFiles(m_BuildInShadersPath + "/texture_test_vertex.glsl",
-                                                          m_BuildInShadersPath + "/texture_test_fragment.glsl");
+        static auto plainColorShader = Shader::FromFiles(builtInShadersPath + "/plain_color_vertex.glsl",
+                                                         builtInShadersPath + "/plain_color_fragment.glsl");
+        static auto depthMapShader = Shader::FromFiles(builtInShadersPath + "/depth_map_vertex.glsl",
+                                                       builtInShadersPath + "/depth_map_fragment.glsl");
+        static auto geometryPassShader = Shader::FromFiles(builtInShadersPath + "/geometry_pass_vertex.glsl",
+                                                           builtInShadersPath + "/geometry_pass_fragment.glsl");
+        static auto lightingPassShader = Shader::FromFiles(builtInShadersPath + "/lighting_pass_vertex.glsl",
+                                                           builtInShadersPath + "/lighting_pass_fragment.glsl");
+        static auto textureTestShader = Shader::FromFiles(builtInShadersPath + "/texture_test_vertex.glsl",
+                                                          builtInShadersPath + "/texture_test_fragment.glsl");
 
         switch (type)
         {
@@ -251,14 +252,4 @@ namespace rgr
 		std::cout << "Unable to find uniform named: " << name << '\n';
 		return -1;
 	}
-
-    void Shader::SetBuildInShadersPath(const std::string &path)
-    {
-        m_BuildInShadersPath = path;
-    }
-
-    std::string Shader::GetBuildInShadersPath()
-    {
-        return m_BuildInShadersPath;
-    }
 }
