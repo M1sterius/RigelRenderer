@@ -30,7 +30,8 @@ namespace rgr
 
         enum class BUILT_IN_MESHES
         {
-            QUAD,
+            QUAD_NDC_FULLSCREEN,
+            SPHERE
         };
 
         static rgr::Mesh& GetBuiltInMesh(const BUILT_IN_MESHES type);

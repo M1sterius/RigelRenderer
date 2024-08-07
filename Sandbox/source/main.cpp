@@ -36,45 +36,44 @@ int main(int argc, char* argv[])
 
     auto dirLight = std::make_shared<rgr::DirectionalLight>(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(-0.1, -1, 1));
     dirLight->GetTransform().SetPosition(glm::vec3(0.1, 5, -5));
-    dirLight->smoothShadows = true;
 
     auto dirLight1 = std::make_shared<rgr::DirectionalLight>(glm::vec3(1.0, 1.0, 1.0), 0.3f, glm::vec3(-0.1, -1, -1));
     dirLight1->GetTransform().SetPosition(glm::vec3(0.1, 5, 5));
 
-    auto pntLight = std::make_shared<rgr::PointLight>(
-            glm::vec3(0.98, 0.76, 0.12),
-            3.0f,
-            1.0f,
-            0.7f,
-            1.8f
-    );
-    pntLight->GetTransform().SetPosition(glm::vec3(0, 1.2f, 0));
-
-    auto pntLight1 = std::make_shared<rgr::PointLight>(
-            glm::vec3(1, 1, 1),
-            2.0f,
-            1.0f,
-            0.7f,
-            1.8f
-    );
-    pntLight1->GetTransform().SetPosition(glm::vec3(-2.5, -0.9f, 0));
-
-    auto sptLight = std::make_shared<rgr::SpotLight>(
-            glm::vec3(1.0f, 1.0f, 1.0f),
-            3.0f, glm::vec3(0.05, -1.0, 0.0),
-            0.9978f, 0.953f,
-            1.0f, 0.22f, 0.2f
-    );
-    sptLight->GetTransform().SetPosition(glm::vec3(0.0, -1.3, 0));
-
-    auto sptLight1 = std::make_shared<rgr::SpotLight>(
-            glm::vec3(1.0f, 1.0f, 1.0f),
-            2.0f, glm::vec3(3, -3, 4),
-            0.9978f, 0.953f,
-            1.0f, 0.22f, 0.2f
-    );
-    sptLight1->smoothShadows = true;
-    sptLight1->GetTransform().SetPosition(glm::vec3(-3, 2, -4));
+//    auto pntLight = std::make_shared<rgr::PointLight>(
+//            glm::vec3(0.98, 0.76, 0.12),
+//            3.0f,
+//            1.0f,
+//            0.7f,
+//            1.8f
+//    );
+//    pntLight->GetTransform().SetPosition(glm::vec3(0, 1.2f, 0));
+//
+//    auto pntLight1 = std::make_shared<rgr::PointLight>(
+//            glm::vec3(1, 1, 1),
+//            2.0f,
+//            1.0f,
+//            0.7f,
+//            1.8f
+//    );
+//    pntLight1->GetTransform().SetPosition(glm::vec3(-2.5, -0.9f, 0));
+//
+//    auto sptLight = std::make_shared<rgr::SpotLight>(
+//            glm::vec3(1.0f, 1.0f, 1.0f),
+//            3.0f, glm::vec3(0.05, -1.0, 0.0),
+//            0.9978f, 0.953f,
+//            1.0f, 0.22f, 0.2f
+//    );
+//    sptLight->GetTransform().SetPosition(glm::vec3(0.0, -1.3, 0));
+//
+//    auto sptLight1 = std::make_shared<rgr::SpotLight>(
+//            glm::vec3(1.0f, 1.0f, 1.0f),
+//            2.0f, glm::vec3(3, -3, 4),
+//            0.9978f, 0.953f,
+//            1.0f, 0.22f, 0.2f
+//    );
+//    sptLight1->smoothShadows = true;
+//    sptLight1->GetTransform().SetPosition(glm::vec3(-3, 2, -4));
 
     scene->AddObject(camera);
     scene->AddObject(backpack);
@@ -84,8 +83,8 @@ int main(int argc, char* argv[])
     scene->AddObject(dirLight1);
 //    scene->AddObject(pntLight);
 //    scene->AddObject(pntLight1);
-    scene->AddObject(sptLight);
-    scene->AddObject(sptLight1);
+//    scene->AddObject(sptLight);
+//    scene->AddObject(sptLight1);
 
     const float sensitivity = 0.3f;
     const float flySpeed = 2.0f;
@@ -145,10 +144,10 @@ int main(int argc, char* argv[])
 
         auto x = (float)glm::cos(rgr::Time::GetTimeF() * 3);
         auto z = (float)glm::sin(rgr::Time::GetTimeF() * 3);
-        sptLight->direction = glm::vec3(x, 0, z);
-
-        sptLight1->GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f));
-        sptLight1->direction = camera->GetForwardVector();
+//        sptLight->direction = glm::vec3(x, 0, z);
+//
+//        sptLight1->GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f));
+//        sptLight1->direction = camera->GetForwardVector();
 
         rgr::Core::Update();
     }

@@ -131,6 +131,13 @@ namespace rgr
         static auto depthVisualizationShader = Shader::FromFiles(builtInShadersPath + "/shadow_mapping/depth_visualization_vertex.glsl",
                                                           builtInShadersPath + "/shadow_mapping/depth_visualization_fragment.glsl");
 
+        static auto dirLightNoShadows = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/directional_light/dir_light_no_shadows_vertex.glsl",
+                                                          builtInShadersPath + "/deferred_rendering/directional_light/dir_light_no_shadows_fragment.glsl");
+        static auto dirLightShadowsNoPcf = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/directional_light/dir_light_shadows_no_pcf_vertex.glsl",
+                                                          builtInShadersPath + "/deferred_rendering/directional_light/dir_light_shadows_no_pcf_fragment.glsl");
+        static auto dirLightShadowsPcf = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/directional_light/dir_light_shadows_pcf_vertex.glsl",
+                                                             builtInShadersPath + "/deferred_rendering/directional_light/dir_light_shadows_pcf_fragment.glsl");
+
         switch (type)
         {
             case BUILT_IN_SHADERS::PLAIN_COLOR:
@@ -143,6 +150,13 @@ namespace rgr
                 return lightingPassShader;
             case BUILT_IN_SHADERS::DEPTH_VISUALIZATION:
                 return depthVisualizationShader;
+
+            case BUILT_IN_SHADERS::DIR_LIGHT_NO_SHADOWS:
+                return dirLightNoShadows;
+            case BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_NO_PCF:
+                return dirLightShadowsNoPcf;
+            case BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_PCF:
+                return dirLightShadowsPcf;
         }
     }
 

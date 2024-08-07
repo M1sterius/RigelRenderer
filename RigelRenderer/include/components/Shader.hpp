@@ -53,7 +53,11 @@ namespace rgr
             DEPTH_MAP,
             GEOMETRY_PASS,
             LIGHTING_PASS,
-            DEPTH_VISUALIZATION
+            DEPTH_VISUALIZATION,
+
+            DIR_LIGHT_NO_SHADOWS,
+            DIR_LIGHT_SHADOWS_NO_PCF,
+            DIR_LIGHT_SHADOWS_PCF
         };
 
         static const Shader& GetBuiltInShader(BUILT_IN_SHADERS type);

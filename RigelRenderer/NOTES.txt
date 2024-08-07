@@ -1,10 +1,3 @@
-Rendering pipeline:
-	1) Generate depth maps
-	2) Geometry pass
-	3) Lighting pass
-	4) Forward rendering
-
-
 RenderableModel:
 	1) Uses pre-defined material with built-in shaders
 	2) Goes through deferred rendering pipeline
@@ -19,14 +12,3 @@ CustomRenderable:
 	4) Is not included into depth map creation
 	5) Is not affected by lighting
 
-Shadow atlases generation:
-    1) Specify the desired size of a shadow map for directional light (1024x1024)
-    2) Generate an atlas that can accommodate desired amount of shadow maps (4096x4096 for 16 maps)
-
-    1) Iterate over all lights on the scene
-    2) Check if light is a directional light
-    3) Keep count of lights that has already been generated maps for
-    4) Based on the count of lights determine the position in the atlas where the next map should be generated (using % and //)
-    5) Set the viewport so that the next map is generated at the appropriate position inside the atlas
-    6) Render the scene to the part of the atlas
-    7) Move on to the next directional light

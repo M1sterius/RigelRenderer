@@ -106,7 +106,7 @@ namespace rgr
 
         switch (type)
         {
-            case BUILT_IN_MESHES::QUAD:
+            case BUILT_IN_MESHES::QUAD_NDC_FULLSCREEN:
                 return quadMesh;
         }
     }

@@ -16,8 +16,6 @@ namespace rgr
 
         void CalcProjMatrix();
 	public:
-        static const size_t depthMapSize = 2048;
-
 		glm::vec3 direction;
 
 		DirectionalLight(const glm::vec3& color, const float intensity, const glm::vec3& direction);
@@ -31,5 +29,6 @@ namespace rgr
         inline glm::vec4 GetDepthProjectionClip() const { return {m_DepthProjNear, m_DepthProjFar, m_ProjWidth, m_ProjHeight}; }
 	INTERNAL:
 		void GenerateDepthMap() override;
+        glm::vec2 atlasOffset;
 	};
 }
