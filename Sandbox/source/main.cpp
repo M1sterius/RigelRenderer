@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
     backpack->GetTransform().SetScale(glm::vec3(0.5, 0.5, 0.5));
 
     auto cube = std::make_shared<rgr::RenderableModel>(cubeModel);
-    cube->GetTransform().SetPosition(glm::vec3(0, 0, 2));
+    cube->GetTransform().SetPosition(glm::vec3(0, -0.6, 2));
 
     auto camera = std::make_shared<rgr::Camera>(glm::radians(75.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
     camera->GetTransform().SetPosition(glm::vec3(-3.0f, 0, 0.0f));
@@ -36,9 +36,11 @@ int main(int argc, char* argv[])
 
     auto dirLight = std::make_shared<rgr::DirectionalLight>(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(-0.1, -1, 1));
     dirLight->GetTransform().SetPosition(glm::vec3(0.1, 5, -5));
+    dirLight->smoothShadows = true;
 
     auto dirLight1 = std::make_shared<rgr::DirectionalLight>(glm::vec3(1.0, 1.0, 1.0), 0.3f, glm::vec3(-0.1, -1, -1));
     dirLight1->GetTransform().SetPosition(glm::vec3(0.1, 5, 5));
+    dirLight1->smoothShadows = true;
 
 //    auto pntLight = std::make_shared<rgr::PointLight>(
 //            glm::vec3(0.98, 0.76, 0.12),

@@ -155,26 +155,28 @@ namespace rgr
         if (!light->castShadows) // no shadows
         {
             const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_NO_SHADOWS);
-        }
-        else if (light->castShadows && !light->smoothShadows) // shadows without PCF
-        {
-            const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_NO_PCF);
-            shader.Bind();
 
-            shader.SetUniformVec3("u_ViewPos", m_Scene->GetMainCamera()->GetTransform().GetPosition());
-            shader.SetUniformVec2("u_ScreenSize", glm::vec2(m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight()));
+            // --------------------
 
-            const std::string u_name = "u_DirectionalLight.";
-            shader.SetUniformVec3(u_name + "color", light->color);
-            shader.SetUniform1f(u_name + "intensity", light->intensity);
-            shader.SetUniformVec3(u_name + "direction", light->direction);
-            shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
-            shader.SetUniformVec2(u_name + "atlasOffset", light->atlasOffset);
+            quad.DrawElements();
+            return;
         }
-        else if (light->castShadows && light->smoothShadows) // shadows with PCF
-        {
-            const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_PCF);
-        }
+
+        const auto& shader = light->castShadows && !light->smoothShadows ?
+                 rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_NO_PCF) :
+                 rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_PCF);
+
+        shader.Bind();
+
+        shader.SetUniformVec3("u_ViewPos", m_Scene->GetMainCamera()->GetTransform().GetPosition());
+        shader.SetUniformVec2("u_ScreenSize", glm::vec2(m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight()));
+
+        const std::string u_name = "u_DirectionalLight.";
+        shader.SetUniformVec3(u_name + "color", light->color);
+        shader.SetUniform1f(u_name + "intensity", light->intensity);
+        shader.SetUniformVec3(u_name + "direction", light->direction);
+        shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
+        shader.SetUniformVec2(u_name + "atlasOffset", light->atlasOffset);
 
         quad.DrawElements();
     }
@@ -275,6 +277,15 @@ namespace rgr
         dirLightNoPCF.SetUniform1is("g_AlbedoSpec", 2);
         dirLightNoPCF.SetUniform1is("u_DepthMapAtlas", 3);
         dirLightNoPCF.SetUniform1f("u_OneShadowMapOffset", (1.0f / DIR_LIGHT_MAPS_PER_ATLAS_AXIS));
+
+        // Shader for directional lights with shadows and without pcf
+        const auto& dirLightPCF = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_PCF);
+        dirLightPCF.Bind();
+        dirLightPCF.SetUniform1is("g_Position", 0);
+        dirLightPCF.SetUniform1is("g_Normal", 1);
+        dirLightPCF.SetUniform1is("g_AlbedoSpec", 2);
+        dirLightPCF.SetUniform1is("u_DepthMapAtlas", 3);
+        dirLightPCF.SetUniform1f("u_OneShadowMapOffset", (1.0f / DIR_LIGHT_MAPS_PER_ATLAS_AXIS));
     }
 }
 
