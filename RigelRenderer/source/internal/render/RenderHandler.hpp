@@ -28,6 +28,7 @@ namespace rgr
         static constexpr size_t DIR_LIGHT_SHADOW_MAP_SIZE = 2048;
         static constexpr size_t DIR_LIGHT_MAPS_PER_ATLAS_AXIS = 3;
         static constexpr size_t DIR_LIGHT_ATLAS_SIZE = DIR_LIGHT_SHADOW_MAP_SIZE * DIR_LIGHT_MAPS_PER_ATLAS_AXIS;
+        static constexpr size_t DIR_LIGHT_MAX_SHADOW_MAPS_IN_ATLAS = DIR_LIGHT_MAPS_PER_ATLAS_AXIS * DIR_LIGHT_MAPS_PER_ATLAS_AXIS;
 
         rgr::Scene* m_Scene;
         std::unique_ptr<GBuffer> m_GBuffer;
@@ -49,6 +50,7 @@ namespace rgr
         static void SetPointLightUniforms(const std::shared_ptr<PointLight>& light, const rgr::Shader& shader, const size_t lightIndex);
 
         void DrawDirLight(const std::shared_ptr<DirectionalLight>& light);
+        void SetDirLightCommonUniforms(const std::shared_ptr<DirectionalLight>& light, const rgr::Shader& shader);
 //        static void DrawSpotLight(const std::shared_ptr<PointLight>& light);
 //        static void DrawPointLight(const std::shared_ptr<PointLight>& light);
     };
