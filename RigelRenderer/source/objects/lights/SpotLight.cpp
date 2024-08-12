@@ -80,11 +80,22 @@ const float rgr::SpotLight::GetLightRange()
 
 glm::mat4 rgr::SpotLight::GetLightVolumeModelMatrix()
 {
-    const float scale = GetLightRange() / 2;
+    const float range = GetLightRange();
+    auto& transform = GetTransform();
+    const auto pos = transform.GetPosition();
 
     auto model = glm::mat4(1.0f);
 
+    model = glm::translate(model, pos);
 
+    constexpr auto initDirection = glm::vec3(0, -1.0f, 0);
+    const auto rot = glm::cross(initDirection, direction);
+    const auto angle = acos(glm::dot(glm::normalize(initDirection), glm::normalize(direction)));
+    model = glm::rotate(model, angle, glm::normalize(rot));
+
+    constexpr float defaultConeAngleInRads = 0.463f;
+    const float scaleXZ = range * (outerCutOff / defaultConeAngleInRads);
+    model = glm::scale(model, glm::vec3(scaleXZ, range, scaleXZ));
 
     return model;
 }

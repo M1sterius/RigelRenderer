@@ -53,11 +53,12 @@ int main(int argc, char* argv[])
 
     auto sptLight = std::make_shared<rgr::SpotLight>(
             glm::vec3(1.0f, 1.0f, 1.0f),
-            3.0f, glm::vec3(0.05, -1.0, 0.0),
+            1.0f, glm::vec3(1, 1, 1.0),
             0.9978f, 0.953f,
             1.0f, 0.22f, 0.2f
     );
-    sptLight->GetTransform().SetPosition(glm::vec3(0.0, 0, 0));
+    sptLight->GetTransform().SetPosition(glm::vec3(5, 0, 0));
+    std::cout << pntLight->GetLightRange() << '\n';
 
     scene->AddObject(camera);
     scene->AddObject(backpack);
@@ -66,7 +67,7 @@ int main(int argc, char* argv[])
     scene->AddObject(dirLight);
     scene->AddObject(dirLight1);
     scene->AddObject(pntLight);
-    scene->AddObject(sptLight);
+    //scene->AddObject(sptLight);
 
     const float sensitivity = 0.3f;
     const float flySpeed = 2.0f;

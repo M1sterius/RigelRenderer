@@ -186,8 +186,7 @@ namespace rgr
                 const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
                 const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
 
-                //const auto mvp = camera->GetPerspective() * camera->GetView() * spotLight->GetLightVolumeModelMatrix();
-                const auto mvp = camera->GetPerspective() * camera->GetView() * spotLight->GetTransform().GetModelMatrix();
+                const auto mvp = camera->GetPerspective() * camera->GetView() * spotLight->GetLightVolumeModelMatrix();
 
                 shader.Bind();
                 shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));

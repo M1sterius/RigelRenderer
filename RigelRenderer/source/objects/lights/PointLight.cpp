@@ -31,7 +31,7 @@ const float rgr::PointLight::GetLightRange()
 
 glm::mat4 rgr::PointLight::GetLightVolumeModelMatrix()
 {
-    const float scale = GetLightRange() / 2;
+    const float scale = GetLightRange() * 2;
 
     auto model = glm::mat4(1.0f);
 
