@@ -11,17 +11,17 @@
 
 namespace rgr
 {
-    Model::Model(const std::string& meshPath)
+    Model::Model(const std::string& modelPath)
     {
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(meshPath, aiProcess_Triangulate | aiProcess_FlipUVs);
+        const aiScene* scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_FlipUVs);
 
         if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {
             std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << '\n';
             return;
         }
-        m_Directory = meshPath.substr(0, meshPath.find_last_of('/'));
+        m_Directory = modelPath.substr(0, modelPath.find_last_of('/'));
 
         ProcessNode(scene->mRootNode, scene);
     }
@@ -101,6 +101,7 @@ namespace rgr
 
                 const std::string loadPath = m_Directory + '/' + diffuseTextureName.C_Str();
 
+                // Check if the texture has already been loaded
                 bool foundLoadedTexture = false;
                 for (const auto loadedMesh : m_Meshes)
                 {
@@ -123,6 +124,7 @@ namespace rgr
 
                 const std::string loadPath = m_Directory + '/' + specularTextureName.C_Str();
 
+                // Check if the texture has already been loaded
                 bool foundLoadedTexture = false;
                 for (const auto loadedMesh : m_Meshes)
                 {

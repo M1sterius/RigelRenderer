@@ -19,7 +19,8 @@ namespace rgr
 	class Model
 	{
     public:
-        explicit Model(const std::string& meshPath);
+        explicit Model(const std::string& modelPath);
+        // TODO: Add a constructor to instantiate model from a vector of meshes
         ~Model();
     private:
         std::vector<rgr::Mesh*> m_Meshes;

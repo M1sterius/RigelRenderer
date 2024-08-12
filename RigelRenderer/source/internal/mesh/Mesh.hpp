@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Internal.hpp"
+
+#include <string>
 #include <vector>
 #include <memory>
 
@@ -31,7 +34,8 @@ namespace rgr
         enum class BUILT_IN_MESHES
         {
             QUAD_NDC_FULLSCREEN,
-            SPHERE
+            SPHERE,
+            CONE
         };
 
         static rgr::Mesh& GetBuiltInMesh(const BUILT_IN_MESHES type);
@@ -41,5 +45,7 @@ namespace rgr
 
         size_t m_VerticesCount;
         size_t m_TrisCount;
+
+        explicit Mesh(const std::string& path);
     };
 }

@@ -45,10 +45,6 @@ namespace rgr
         void InitializeDepthAtlases();
         static void SetShadersConstantUniforms();
 
-        static void SetDirLightUniforms(const std::shared_ptr<DirectionalLight>& light, const rgr::Shader& shader, const size_t lightIndex);
-        static void SetSpotLightUniforms(const std::shared_ptr<SpotLight>& light, const rgr::Shader& shader, const size_t lightIndex);
-        static void SetPointLightUniforms(const std::shared_ptr<PointLight>& light, const rgr::Shader& shader, const size_t lightIndex);
-
         void DrawDirLight(const std::shared_ptr<DirectionalLight>& light);
         void SetDirLightCommonUniforms(const std::shared_ptr<DirectionalLight>& light, const rgr::Shader& shader);
 //        static void DrawSpotLight(const std::shared_ptr<PointLight>& light);

@@ -42,14 +42,15 @@ int main(int argc, char* argv[])
     dirLight1->GetTransform().SetPosition(glm::vec3(0.1, 5, 5));
     dirLight1->smoothShadows = true;
 
-//    auto pntLight = std::make_shared<rgr::PointLight>(
-//            glm::vec3(0.98, 0.76, 0.12),
-//            3.0f,
-//            1.0f,
-//            0.7f,
-//            1.8f
-//    );
-//    pntLight->GetTransform().SetPosition(glm::vec3(0, 1.2f, 0));
+    auto pntLight = std::make_shared<rgr::PointLight>(
+            glm::vec3(0.98, 0.76, 0.12),
+            3.0f,
+            1.0f,
+            0.7f,
+            1.8f
+    );
+    pntLight->GetTransform().SetPosition(glm::vec3(0, 0, 0));
+    pntLight->GetTransform().SetScale(glm::vec3(0.5, 0.5, 0.5));
 //
 //    auto pntLight1 = std::make_shared<rgr::PointLight>(
 //            glm::vec3(1, 1, 1),
@@ -83,7 +84,7 @@ int main(int argc, char* argv[])
 
     scene->AddObject(dirLight);
     scene->AddObject(dirLight1);
-//    scene->AddObject(pntLight);
+    scene->AddObject(pntLight);
 //    scene->AddObject(pntLight1);
 //    scene->AddObject(sptLight);
 //    scene->AddObject(sptLight1);

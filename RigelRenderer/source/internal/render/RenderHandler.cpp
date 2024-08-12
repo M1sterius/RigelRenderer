@@ -109,43 +109,6 @@ namespace rgr
         glDisable(GL_DEPTH_TEST);
     }
 
-    void RenderHandler::SetDirLightUniforms(const std::shared_ptr<DirectionalLight>& light, const rgr::Shader& shader, const size_t lightIndex)
-    {
-        const std::string u_name = "u_DirectionalLights[" + std::to_string(lightIndex) + "].";
-        shader.SetUniformVec3(u_name + "color", light->color);
-        shader.SetUniform1f(u_name + "intensity", light->intensity);
-        shader.SetUniformVec3(u_name + "direction", light->direction);
-        shader.SetUniformBool(u_name + "smoothShadows", light->smoothShadows);
-        shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
-    }
-
-    void RenderHandler::SetSpotLightUniforms(const std::shared_ptr<SpotLight>& light, const rgr::Shader& shader, const size_t lightIndex)
-    {
-        const std::string u_name = "u_SpotLights[" + std::to_string(lightIndex) + "].";
-        shader.SetUniformVec3(u_name + "color", light->color);
-        shader.SetUniform1f(u_name + "intensity", light->intensity);
-        shader.SetUniformVec3(u_name + "position", light->GetTransform().GetPosition());
-        shader.SetUniformVec3(u_name + "direction", light->direction);
-        shader.SetUniform1f(u_name + "cutOff", light->GetCutOff());
-        shader.SetUniform1f(u_name + "outerCutOff", light->outerCutOff);
-        shader.SetUniform1f(u_name + "constant", light->constant);
-        shader.SetUniform1f(u_name + "linear", light->linear);
-        shader.SetUniform1f(u_name + "quadratic", light->quadratic);
-        shader.SetUniformBool(u_name + "smoothShadows", light->smoothShadows);
-        shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
-    }
-
-    void RenderHandler::SetPointLightUniforms(const std::shared_ptr<PointLight>& light, const rgr::Shader& shader, const size_t lightIndex)
-    {
-        const std::string u_name = "u_PointLights[" + std::to_string(lightIndex) + "].";
-        shader.SetUniformVec3(u_name + "color", light->color);
-        shader.SetUniform1f(u_name + "intensity", light->intensity);
-        shader.SetUniformVec3(u_name + "position", light->GetTransform().GetPosition());
-        shader.SetUniform1f(u_name + "constant", light->constant);
-        shader.SetUniform1f(u_name + "linear", light->linear);
-        shader.SetUniform1f(u_name + "quadratic", light->quadratic);
-    }
-
     void RenderHandler::SetDirLightCommonUniforms(const std::shared_ptr<DirectionalLight>& light, const Shader& shader)
     {
         shader.SetUniformVec3("u_ViewPos", m_Scene->GetMainCamera()->GetTransform().GetPosition());
@@ -204,6 +167,22 @@ namespace rgr
         {
             if (auto dirLight = std::dynamic_pointer_cast<DirectionalLight>(light))
                 DrawDirLight(dirLight);
+            else if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light))
+            {
+//                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
+//                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
+//
+//                const auto mvp = camera->GetPerspective() * camera->GetView() * pointLight->GetTransform().GetModelMatrix();
+//
+//                shader.Bind();
+//                shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
+//                shader.SetUniformMat4("u_MVP", true, mvp);
+//                mesh.DrawElements();
+            }
+            else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(light))
+            {
+
+            }
         }
 
         glDisable(GL_BLEND);
