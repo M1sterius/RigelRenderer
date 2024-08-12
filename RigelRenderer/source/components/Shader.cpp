@@ -120,36 +120,36 @@ namespace rgr
         static const std::string builtInShadersPath = rgr::Core::GetBuiltInResourcesPath() + "/shaders";
 
         // Instantiation of plain color shader may create infinite recursive call chain of GetBuiltInShader() and FromFiles(), gotta fix that!!
-        static auto plainColorShader = Shader::FromFiles(builtInShadersPath + "/plain_color_vertex.glsl",
+        static auto plainColor = Shader::FromFiles(builtInShadersPath + "/plain_color_vertex.glsl",
                                                          builtInShadersPath + "/plain_color_fragment.glsl");
-        static auto depthMapShader = Shader::FromFiles(builtInShadersPath + "/shadow_mapping/depth_map_vertex.glsl",
+        static auto depthMap = Shader::FromFiles(builtInShadersPath + "/shadow_mapping/depth_map_vertex.glsl",
                                                        builtInShadersPath + "/shadow_mapping/depth_map_fragment.glsl");
-        static auto geometryPassShader = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/geometry_pass_vertex.glsl",
+        static auto geometryPass = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/geometry_pass_vertex.glsl",
                                                            builtInShadersPath + "/deferred_rendering/geometry_pass_fragment.glsl");
-        static auto lightingPassShader = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/lighting_pass_vertex.glsl",
-                                                           builtInShadersPath + "/deferred_rendering/lighting_pass_fragment.glsl");
-        static auto depthVisualizationShader = Shader::FromFiles(builtInShadersPath + "/shadow_mapping/depth_visualization_vertex.glsl",
+        static auto stencilPass = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/stencil_pass_vertex.glsl",
+                                                    builtInShadersPath + "/deferred_rendering/stencil_pass_fragment.glsl");
+        static auto depthVisualization = Shader::FromFiles(builtInShadersPath + "/shadow_mapping/depth_visualization_vertex.glsl",
                                                           builtInShadersPath + "/shadow_mapping/depth_visualization_fragment.glsl");
 
-        static auto dirLightNoShadows = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/directional_light/dir_light_no_shadows_vertex.glsl",
+        static auto dirLightNoShadows = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/directional_light/dir_light_vertex.glsl",
                                                           builtInShadersPath + "/deferred_rendering/directional_light/dir_light_no_shadows_fragment.glsl");
-        static auto dirLightShadowsNoPcf = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/directional_light/dir_light_shadows_no_pcf_vertex.glsl",
+        static auto dirLightShadowsNoPcf = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/directional_light/dir_light_vertex.glsl",
                                                           builtInShadersPath + "/deferred_rendering/directional_light/dir_light_shadows_no_pcf_fragment.glsl");
-        static auto dirLightShadowsPcf = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/directional_light/dir_light_shadows_pcf_vertex.glsl",
+        static auto dirLightShadowsPcf = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/directional_light/dir_light_vertex.glsl",
                                                              builtInShadersPath + "/deferred_rendering/directional_light/dir_light_shadows_pcf_fragment.glsl");
 
         switch (type)
         {
             case BUILT_IN_SHADERS::PLAIN_COLOR:
-                return plainColorShader;
+                return plainColor;
             case BUILT_IN_SHADERS::DEPTH_MAP:
-                return depthMapShader;
+                return depthMap;
             case BUILT_IN_SHADERS::GEOMETRY_PASS:
-                return geometryPassShader;
-            case BUILT_IN_SHADERS::LIGHTING_PASS:
-                return lightingPassShader;
+                return geometryPass;
+            case BUILT_IN_SHADERS::STENCIL_PASS:
+                return stencilPass;
             case BUILT_IN_SHADERS::DEPTH_VISUALIZATION:
-                return depthVisualizationShader;
+                return depthVisualization;
 
             case BUILT_IN_SHADERS::DIR_LIGHT_NO_SHADOWS:
                 return dirLightNoShadows;

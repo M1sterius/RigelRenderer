@@ -40,7 +40,6 @@ namespace rgr
 
         void InitializeDepthMapFBOs();
         void DeleteDepthMapFBOs();
-        void BlitDeferredFBO();
         void ClearDepthAtlases() const;
         void InitializeDepthAtlases();
         static void SetShadersConstantUniforms();

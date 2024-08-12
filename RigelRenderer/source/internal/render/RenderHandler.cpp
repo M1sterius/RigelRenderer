@@ -210,16 +210,6 @@ namespace rgr
         glDeleteFramebuffers(1, &m_SpotLightsFBOHandle);
     }
 
-    void RenderHandler::BlitDeferredFBO()
-    {
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_GBuffer->GetFBOHandle());
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glBlitFramebuffer(0, 0, static_cast<int>(m_GBuffer->GetBufferWidth()), static_cast<int>(m_GBuffer->GetBufferHeight()),
-                          0, 0, static_cast<int>(m_GBuffer->GetBufferWidth()), static_cast<int>(m_GBuffer->GetBufferHeight()),
-                          GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
-
     void RenderHandler::InitializeDepthAtlases()
     {
         constexpr float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };

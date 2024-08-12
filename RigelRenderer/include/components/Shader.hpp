@@ -52,7 +52,7 @@ namespace rgr
             PLAIN_COLOR,
             DEPTH_MAP,
             GEOMETRY_PASS,
-            LIGHTING_PASS,
+            STENCIL_PASS,
             DEPTH_VISUALIZATION,
 
             DIR_LIGHT_NO_SHADOWS,

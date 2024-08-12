@@ -58,7 +58,6 @@ int main(int argc, char* argv[])
             1.0f, 0.22f, 0.2f
     );
     sptLight->GetTransform().SetPosition(glm::vec3(5, 0, 0));
-    std::cout << pntLight->GetLightRange() << '\n';
 
     scene->AddObject(camera);
     scene->AddObject(backpack);
@@ -67,7 +66,7 @@ int main(int argc, char* argv[])
     scene->AddObject(dirLight);
     scene->AddObject(dirLight1);
     scene->AddObject(pntLight);
-    //scene->AddObject(sptLight);
+    scene->AddObject(sptLight);
 
     const float sensitivity = 0.3f;
     const float flySpeed = 2.0f;
