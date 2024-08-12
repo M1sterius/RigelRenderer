@@ -44,39 +44,20 @@ int main(int argc, char* argv[])
 
     auto pntLight = std::make_shared<rgr::PointLight>(
             glm::vec3(0.98, 0.76, 0.12),
-            3.0f,
+            1.0f,
             1.0f,
             0.7f,
             1.8f
     );
-    pntLight->GetTransform().SetPosition(glm::vec3(0, 0, 0));
-    pntLight->GetTransform().SetScale(glm::vec3(0.5, 0.5, 0.5));
-//
-//    auto pntLight1 = std::make_shared<rgr::PointLight>(
-//            glm::vec3(1, 1, 1),
-//            2.0f,
-//            1.0f,
-//            0.7f,
-//            1.8f
-//    );
-//    pntLight1->GetTransform().SetPosition(glm::vec3(-2.5, -0.9f, 0));
-//
-//    auto sptLight = std::make_shared<rgr::SpotLight>(
-//            glm::vec3(1.0f, 1.0f, 1.0f),
-//            3.0f, glm::vec3(0.05, -1.0, 0.0),
-//            0.9978f, 0.953f,
-//            1.0f, 0.22f, 0.2f
-//    );
-//    sptLight->GetTransform().SetPosition(glm::vec3(0.0, -1.3, 0));
-//
-//    auto sptLight1 = std::make_shared<rgr::SpotLight>(
-//            glm::vec3(1.0f, 1.0f, 1.0f),
-//            2.0f, glm::vec3(3, -3, 4),
-//            0.9978f, 0.953f,
-//            1.0f, 0.22f, 0.2f
-//    );
-//    sptLight1->smoothShadows = true;
-//    sptLight1->GetTransform().SetPosition(glm::vec3(-3, 2, -4));
+    pntLight->GetTransform().SetPosition(glm::vec3(3, 3, 3));
+
+    auto sptLight = std::make_shared<rgr::SpotLight>(
+            glm::vec3(1.0f, 1.0f, 1.0f),
+            3.0f, glm::vec3(0.05, -1.0, 0.0),
+            0.9978f, 0.953f,
+            1.0f, 0.22f, 0.2f
+    );
+    sptLight->GetTransform().SetPosition(glm::vec3(0.0, 0, 0));
 
     scene->AddObject(camera);
     scene->AddObject(backpack);
@@ -85,9 +66,7 @@ int main(int argc, char* argv[])
     scene->AddObject(dirLight);
     scene->AddObject(dirLight1);
     scene->AddObject(pntLight);
-//    scene->AddObject(pntLight1);
-//    scene->AddObject(sptLight);
-//    scene->AddObject(sptLight1);
+    scene->AddObject(sptLight);
 
     const float sensitivity = 0.3f;
     const float flySpeed = 2.0f;

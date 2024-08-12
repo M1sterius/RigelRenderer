@@ -15,6 +15,7 @@ namespace rgr
 		~PointLight() override = default;
 
         const float GetLightRange() override;
+        glm::mat4 GetLightVolumeModelMatrix();
 		const glm::mat4 GetLightSpaceView() override;
 		const glm::mat4 GetLightSpaceViewProj() override;
 	INTERNAL:

@@ -77,3 +77,14 @@ const float rgr::SpotLight::GetLightRange()
     const float sq = sqrtf(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * Imax));
     return (-linear + sq) / (2 * quadratic);
 }
+
+glm::mat4 rgr::SpotLight::GetLightVolumeModelMatrix()
+{
+    const float scale = GetLightRange() / 2;
+
+    auto model = glm::mat4(1.0f);
+
+
+
+    return model;
+}

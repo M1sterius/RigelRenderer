@@ -2,12 +2,15 @@
 #include "Input.hpp"
 #include "Time.hpp"
 #include "Scene.hpp"
+#include "Camera.hpp"
+#include "Transform.hpp"
 #include "render/RenderHandler.hpp"
 #include "glad.h"
 #include "glfw3.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "glm/gtx/string_cast.hpp"
 
 #include <iostream>
 #include <thread>
@@ -179,6 +182,19 @@ namespace rgr
         const auto loadedSceneText = isSceneNotNull ? "Loaded Scene: " + m_LoadedScene->name : "Loaded Scene: None";
         const auto sceneObjectCountText = isSceneNotNull ? "Loaded Objs Count: " + std::to_string(m_LoadedScene->GetObjectsCount()) : "Loaded Objs Count: None";
 
+        std::string cameraPosText = "Cam Pos: None";
+        std::string cameraDirText = "Cam Dir: None";
+
+        if (isSceneNotNull)
+        {
+            auto camera = m_LoadedScene->GetMainCamera();
+            if (camera != nullptr)
+            {
+                cameraPosText = "Cam Pos: " + glm::to_string(camera->GetTransform().GetPosition());
+                cameraDirText = "Cam Dir: " + glm::to_string(camera->GetForwardVector());
+            }
+        }
+
         const size_t frametimeSamples = 100;
         static std::vector<float> frametimes;
         frametimes.push_back(rgr::Time::GetDeltaTimeF());
@@ -191,6 +207,8 @@ namespace rgr
         ImGui::PlotLines("", frametimes.data(), static_cast<int>(frametimes.size()));
         ImGui::Text("%s", loadedSceneText.c_str());
         ImGui::Text("%s", sceneObjectCountText.c_str());
+        ImGui::Text("%s", cameraPosText.c_str());
+        ImGui::Text("%s", cameraDirText.c_str());
 
         ImGui::End();
     }
