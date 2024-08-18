@@ -171,27 +171,27 @@ namespace rgr
             }
             else if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light))
             {
-                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::SPHERE);
-                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
-
-                const auto mvp = camera->GetPerspective() * camera->GetView() * pointLight->GetLightVolumeModelMatrix();
-
-                shader.Bind();
-                shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
-                shader.SetUniformMat4("u_MVP", true, mvp);
-                mesh.DrawElements();
+//                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::SPHERE);
+//                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
+//
+//                const auto mvp = camera->GetPerspective() * camera->GetView() * pointLight->GetLightVolumeModelMatrix();
+//
+//                shader.Bind();
+//                shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
+//                shader.SetUniformMat4("u_MVP", true, mvp);
+//                mesh.DrawElements();
             }
             else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(light))
             {
-                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
-                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
-
-                const auto mvp = camera->GetPerspective() * camera->GetView() * spotLight->GetLightVolumeModelMatrix();
-
-                shader.Bind();
-                shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
-                shader.SetUniformMat4("u_MVP", true, mvp);
-                mesh.DrawElements();
+//                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
+//                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
+//
+//                const auto mvp = camera->GetPerspective() * camera->GetView() * spotLight->GetLightVolumeModelMatrix();
+//
+//                shader.Bind();
+//                shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
+//                shader.SetUniformMat4("u_MVP", true, mvp);
+//                mesh.DrawElements();
             }
         }
 

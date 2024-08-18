@@ -1,12 +1,12 @@
 #include "GBuffer.hpp"
 #include "glad.h"
 #include "Texture.hpp"
-
+#include "glAbstraction/GlAbstraction.hpp"
 
 namespace rgr
 {
 	GBuffer::GBuffer(const size_t screenWidth, const size_t screenHeight)
-		: m_ScreenWidth(screenWidth), m_ScreenHeight(screenHeight), m_FBO(0), m_DepthRBO(0)
+		: m_ScreenWidth(screenWidth), m_ScreenHeight(screenHeight), m_FBO(0)
 	{
 		glGenFramebuffers(1, &m_FBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
@@ -30,17 +30,14 @@ namespace rgr
 		glDrawBuffers(3, attachments);
 
 		// Depth buffer
-		glGenRenderbuffers(1, &m_DepthRBO);
-		glBindRenderbuffer(GL_RENDERBUFFER, m_DepthRBO);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_ScreenWidth, m_ScreenHeight);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_DepthRBO);
+        m_Renderbuffer = std::make_unique<Renderbuffer>(m_ScreenWidth, m_ScreenHeight, rgr::Renderbuffer::Type::DEPTH);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_Renderbuffer->GetHandle());
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	GBuffer::~GBuffer()
 	{
-		glDeleteRenderbuffers(1, &m_DepthRBO);
 		glDeleteFramebuffers(1, &m_FBO);
 	}
 

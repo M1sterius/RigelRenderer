@@ -8,7 +8,7 @@
 namespace rgr
 {
 	Texture::Texture(const std::string& path)
-		: m_Handle(0), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_Path(path)
+		: m_Handle(0), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_Path(path), m_Type(TYPE::RGBA)
 	{
         int width, height;
 		stbi_set_flip_vertically_on_load(1);
@@ -34,7 +34,7 @@ namespace rgr
 	}
 
     Texture::Texture(const size_t width, const size_t height, const Texture::TYPE type)
-        : m_Handle(0), m_LocalBuffer(nullptr), m_Width(width), m_Height(height)
+        : m_Handle(0), m_LocalBuffer(nullptr), m_Width(width), m_Height(height), m_Type(type)
     {
         glGenTextures(1, &m_Handle);
         glBindTexture(GL_TEXTURE_2D, m_Handle);

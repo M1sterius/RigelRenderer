@@ -13,11 +13,13 @@ file(GLOB IMGUI_SOURCES
         "${DEPENDENCIES_DIR}/imgui/*.h"
         "${DEPENDENCIES_DIR}/imgui/*.cpp"
 )
+
 set(DEPENDENCIES_SOURCES
         ${IMGUI_SOURCES}
         ${DEPENDENCIES_DIR}/glad/src/glad.c
         ${DEPENDENCIES_DIR}/stb_image/stb_image.cpp
 )
+
 add_library(RigelRenderer SHARED ${DEPENDENCIES_SOURCES}
 
         source/components/Material.cpp
@@ -29,9 +31,9 @@ add_library(RigelRenderer SHARED ${DEPENDENCIES_SOURCES}
 
         source/internal/glAbstraction/IndexBuffer.cpp
         source/internal/glAbstraction/LayoutElement.cpp
-        source/internal/glAbstraction/UniformBuffer.cpp
         source/internal/glAbstraction/VertexArray.cpp
         source/internal/glAbstraction/VertexBuffer.cpp
+        source/internal/glAbstraction/Renderbuffer.cpp
 
         source/internal/mesh/Mesh.cpp
 

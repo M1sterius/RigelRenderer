@@ -5,16 +5,17 @@
 namespace rgr
 {
     class Texture;
+    class Renderbuffer;
 
 	class GBuffer
 	{
 	private:
 		unsigned int m_FBO;
-		unsigned int m_DepthRBO;
 
         std::unique_ptr<Texture> m_PositionTexture;
         std::unique_ptr<Texture> m_NormalTexture;
         std::unique_ptr<Texture> m_ColorTexture;
+        std::unique_ptr<Renderbuffer> m_Renderbuffer;
 
 		size_t m_ScreenWidth;
 		size_t m_ScreenHeight;

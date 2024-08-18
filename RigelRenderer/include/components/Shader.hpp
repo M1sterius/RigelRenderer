@@ -63,4 +63,3 @@ namespace rgr
         static const Shader& GetBuiltInShader(BUILT_IN_SHADERS type);
 	};
 }
-
