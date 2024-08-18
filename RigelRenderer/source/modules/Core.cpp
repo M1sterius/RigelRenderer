@@ -4,7 +4,7 @@
 #include "Scene.hpp"
 #include "Camera.hpp"
 #include "Transform.hpp"
-#include "render/RenderHandler.hpp"
+#include "render/Renderer.hpp"
 #include "glad.h"
 #include "glfw3.h"
 #include "imgui.h"
@@ -22,7 +22,7 @@ namespace rgr
     rgr::Scene* Core::m_LoadedScene = nullptr;
     size_t Core::m_ScreenWidth = 0;
     size_t Core::m_ScreenHeight = 0;
-    std::unique_ptr<RenderHandler> Core::m_RenderHandler = nullptr;
+    rgr::Renderer* Core::m_Renderer = nullptr;
     bool Core::m_DrawDebugGUI = true;
     bool Core::m_UseVSync = false;
     double Core::m_TargetFrameTime = 0.001;
@@ -84,7 +84,7 @@ namespace rgr
         glViewport(0, 0, static_cast<int>(m_ScreenWidth), static_cast<int>(m_ScreenHeight));
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        m_RenderHandler = std::make_unique<rgr::RenderHandler>();
+        m_Renderer = new rgr::Renderer();
 
 		glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, GLFW_FALSE);
 //		glfwSetWindowMonitor(m_Window, glfwGetPrimaryMonitor(), 0, 0, 1920, 1080, 165);
@@ -142,7 +142,6 @@ namespace rgr
             return;
 
         m_LoadedScene = scene;
-        m_RenderHandler->SetScene(m_LoadedScene);
     }
 
     bool Core::AppShouldRun()
@@ -312,13 +311,5 @@ namespace rgr
             case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Severity: notification"; break;
         } std::cout << std::endl;
         std::cout << std::endl;
-    }
-
-    void Core::RenderHandlerSceneUpdate()
-    {
-        m_RenderHandler->GenerateDepthMaps();
-        m_RenderHandler->DoGeometryPass();
-        m_RenderHandler->DoLightingPass();
-        m_RenderHandler->DoForwardPass();
     }
 }

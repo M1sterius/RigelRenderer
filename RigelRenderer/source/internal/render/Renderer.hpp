@@ -12,18 +12,13 @@ namespace rgr
     class Shader;
     class Texture;
 
-    class RenderHandler
+    class Renderer
     {
     public:
-        RenderHandler();
-        ~RenderHandler();
+        Renderer();
+        ~Renderer();
 
-        void SetScene(rgr::Scene* scene);
-
-        void GenerateDepthMaps();
-        void DoGeometryPass();
-        void DoLightingPass();
-        void DoForwardPass();
+        void RenderScene(rgr::Scene* scene);
     private:
         static constexpr size_t DIR_LIGHT_SHADOW_MAP_SIZE = 2048;
         static constexpr size_t DIR_LIGHT_MAPS_PER_ATLAS_AXIS = 3;
@@ -38,11 +33,19 @@ namespace rgr
         unsigned int m_DirLightsFBOHandle = 0;
         unsigned int m_SpotLightsFBOHandle = 0;
 
+        void GenerateDepthMaps();
+        void DoGeometryPass();
+        void DoLightingPass();
+        void DoForwardPass();
+
         void InitializeDepthMapFBOs();
         void DeleteDepthMapFBOs();
         void ClearDepthAtlases() const;
         void InitializeDepthAtlases();
         static void SetShadersConstantUniforms();
+
+        void DoStencilPass();
+        void DoFinalPass();
 
         void DrawDirLight(const std::shared_ptr<DirectionalLight>& light);
         void SetDirLightCommonUniforms(const std::shared_ptr<DirectionalLight>& light, const rgr::Shader& shader);

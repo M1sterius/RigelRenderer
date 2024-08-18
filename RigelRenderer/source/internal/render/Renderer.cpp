@@ -1,4 +1,4 @@
-#include "RenderHandler.hpp"
+#include "Renderer.hpp"
 
 #include "GBuffer.hpp"
 #include "RigelRenderer.hpp"
@@ -12,7 +12,7 @@
 namespace rgr
 {
 
-    RenderHandler::RenderHandler()
+    Renderer::Renderer()
         : m_Scene(nullptr)
     {
         m_GBuffer = std::make_unique<rgr::GBuffer>(rgr::Core::GetWindowSize().x, rgr::Core::GetWindowSize().y);
@@ -22,17 +22,12 @@ namespace rgr
         SetShadersConstantUniforms();
     }
 
-    void RenderHandler::SetScene(rgr::Scene* scene)
-    {
-        m_Scene = scene;
-    }
-
-    RenderHandler::~RenderHandler()
+    Renderer::~Renderer()
     {
         DeleteDepthMapFBOs();
     }
 
-    void RenderHandler::GenerateDepthMaps()
+    void Renderer::GenerateDepthMaps()
     {
         auto camera = m_Scene->GetMainCamera();
         const auto& lights = m_Scene->GetLightsAround(camera->GetTransform().GetPosition(), camera->shadowsVisibilityDistance);
@@ -84,7 +79,7 @@ namespace rgr
         glDisable(GL_DEPTH_TEST);
     }
 
-    void RenderHandler::DoGeometryPass()
+    void Renderer::DoGeometryPass()
     {
         const auto& renderables = m_Scene->GetRenderablesInFrustum();
         const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::GEOMETRY_PASS);
@@ -109,7 +104,7 @@ namespace rgr
         glDisable(GL_DEPTH_TEST);
     }
 
-    void RenderHandler::SetDirLightCommonUniforms(const std::shared_ptr<DirectionalLight>& light, const Shader& shader)
+    void Renderer::SetDirLightCommonUniforms(const std::shared_ptr<DirectionalLight>& light, const Shader& shader)
     {
         shader.SetUniformVec3("u_ViewPos", m_Scene->GetMainCamera()->GetTransform().GetPosition());
         shader.SetUniformVec2("u_ScreenSize", glm::vec2(m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight()));
@@ -120,7 +115,7 @@ namespace rgr
         shader.SetUniformVec3(u_name + "direction", light->direction);
     }
 
-    void RenderHandler::DrawDirLight(const std::shared_ptr<DirectionalLight>& light)
+    void Renderer::DrawDirLight(const std::shared_ptr<DirectionalLight>& light)
     {
         const auto& quad = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::QUAD_NDC_FULLSCREEN);
 
@@ -150,7 +145,17 @@ namespace rgr
         quad.DrawElements();
     }
 
-    void RenderHandler::DoLightingPass()
+    void Renderer::DoStencilPass()
+    {
+
+    }
+
+    void Renderer::DoFinalPass()
+    {
+
+    }
+
+    void Renderer::DoLightingPass()
     {
         auto camera = m_Scene->GetMainCamera();
         const auto& lights = m_Scene->GetLightsAround(camera->GetTransform().GetPosition(),camera->shadowsVisibilityDistance);
@@ -198,19 +203,19 @@ namespace rgr
         glDisable(GL_BLEND);
     }
 
-    void RenderHandler::DoForwardPass()
+    void Renderer::DoForwardPass()
     {
 
     }
 
-    void RenderHandler::DeleteDepthMapFBOs()
+    void Renderer::DeleteDepthMapFBOs()
     {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteFramebuffers(1, &m_DirLightsFBOHandle);
         glDeleteFramebuffers(1, &m_SpotLightsFBOHandle);
     }
 
-    void RenderHandler::InitializeDepthAtlases()
+    void Renderer::InitializeDepthAtlases()
     {
         constexpr float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -225,7 +230,7 @@ namespace rgr
         m_SpotLightsDepthAtlas = std::make_unique<rgr::Texture>(SPOT_LIGHTS_ATLAS_SIZE, SPOT_LIGHTS_ATLAS_SIZE, rgr::Texture::TYPE::DEPTH_COMPONENT);
     }
 
-    void RenderHandler::InitializeDepthMapFBOs()
+    void Renderer::InitializeDepthMapFBOs()
     {
         // Directional lights FBO
         glGenFramebuffers(1, &m_DirLightsFBOHandle);
@@ -243,7 +248,7 @@ namespace rgr
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void RenderHandler::ClearDepthAtlases() const
+    void Renderer::ClearDepthAtlases() const
     {
         glBindFramebuffer(GL_FRAMEBUFFER, m_DirLightsFBOHandle);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -252,7 +257,7 @@ namespace rgr
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void RenderHandler::SetShadersConstantUniforms()
+    void Renderer::SetShadersConstantUniforms()
     {
         // Shader for directional lights with shadows and without pcf
         const auto& dirLightNoPCF = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_NO_PCF);
@@ -279,15 +284,14 @@ namespace rgr
         dirLightNoShadows.SetUniform1is("g_Normal", 1);
         dirLightNoShadows.SetUniform1is("g_AlbedoSpec", 2);
     }
-}
 
-//glViewport(0, 0, 900, 900);
-//rgr::Mesh* quad = rgr::Mesh::Get2DQuadMesh();
-//rgr::Shader* shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::TEXTURE_TEST);
-//
-//shader->BindToSlot();
-//glActiveTexture(GL_TEXTURE0);
-//glBindTexture(GL_TEXTURE_2D, m_SpotLightsDepthAtlasHandle);
-//shader->SetUniform1i("u_Texture", m_SpotLightsDepthAtlasHandle);
-//
-//quad->Draw();
+    void Renderer::RenderScene(rgr::Scene* scene)
+    {
+        m_Scene = scene;
+
+        GenerateDepthMaps();
+        DoGeometryPass();
+        DoLightingPass();
+        DoForwardPass();
+    }
+}

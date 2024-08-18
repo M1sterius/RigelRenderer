@@ -38,7 +38,7 @@ add_library(RigelRenderer SHARED ${DEPENDENCIES_SOURCES}
         source/internal/mesh/Mesh.cpp
 
         source/internal/render/GBuffer.cpp
-        source/internal/render/RenderHandler.cpp
+        source/internal/render/Renderer.cpp
 
         source/modules/Core.cpp
         source/modules/Cursor.cpp

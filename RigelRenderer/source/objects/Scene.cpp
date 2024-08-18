@@ -1,7 +1,7 @@
 #include "RigelRenderer.hpp"
 #include "glAbstraction/GlAbstraction.hpp"
 #include "render/GBuffer.hpp"
-#include "render/RenderHandler.hpp"
+#include "render/Renderer.hpp"
 #include "renderable/CustomRenderable.hpp"
 
 #include "glm.hpp"
@@ -44,7 +44,7 @@ namespace rgr
 		if (m_MainCamera == nullptr)
 			return;
 
-        rgr::Core::RenderHandlerSceneUpdate();
+        rgr::Core::GetRendererInstance()->RenderScene(this);
 	}
 
 	void Scene::AddObject(std::shared_ptr<Object> object)

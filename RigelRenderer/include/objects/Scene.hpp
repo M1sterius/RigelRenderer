@@ -6,7 +6,7 @@
 
 namespace rgr
 {
-    class RenderHandler;
+    class Renderer;
 	class GBuffer;
     class Renderable;
     class Camera;
@@ -23,7 +23,7 @@ namespace rgr
 		std::vector<std::shared_ptr<Camera>> m_Cameras;
 		std::vector<std::shared_ptr<Light>> m_Lights;
 
-        std::unique_ptr<RenderHandler> m_RenderHandler;
+        std::unique_ptr<Renderer> m_RenderHandler;
 
 		std::shared_ptr<Camera> m_MainCamera = nullptr;
         std::shared_ptr<Camera> FindMainCamera() const;

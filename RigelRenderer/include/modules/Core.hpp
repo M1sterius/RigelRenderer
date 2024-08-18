@@ -11,7 +11,7 @@ struct GLFWwindow;
 namespace rgr
 {
     class Scene;
-    class RenderHandler;
+    class Renderer;
 
     class Core
     {
@@ -38,7 +38,7 @@ namespace rgr
         static Scene* m_LoadedScene;
         static size_t m_ScreenWidth;
         static size_t m_ScreenHeight;
-        static std::unique_ptr<RenderHandler> m_RenderHandler;
+        static Renderer* m_Renderer;
         static bool m_DrawDebugGUI;
         static bool m_UseVSync;
         static double m_TargetFrameTime;
@@ -54,7 +54,7 @@ namespace rgr
         static void __stdcall gl_debug_output_callback(uint32_t source, uint32_t type, uint32_t id, uint32_t severity,
                                                        int length, const char *message, const void *userParam);
     INTERNAL:
-        static void RenderHandlerSceneUpdate();
         inline static GLFWwindow* GetWindowPtr() { return m_Window; }
+        inline static Renderer* GetRendererInstance() { return m_Renderer; }
     };
 }
