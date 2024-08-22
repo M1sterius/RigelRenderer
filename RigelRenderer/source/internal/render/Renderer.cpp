@@ -3,6 +3,7 @@
 #include "GBuffer.hpp"
 #include "RigelRenderer.hpp"
 #include "mesh/Mesh.hpp"
+#include "glAbstraction/Renderbuffer.hpp"
 
 #include "glad.h"
 
@@ -17,14 +18,17 @@ namespace rgr
     {
         m_GBuffer = std::make_unique<rgr::GBuffer>(rgr::Core::GetWindowSize().x, rgr::Core::GetWindowSize().y);
 
-        InitializeDepthAtlases();
-        InitializeDepthMapFBOs();
+        InitializeShadowAtlases();
         SetShadersConstantUniforms();
+        InitializeLightingPass();
     }
 
     Renderer::~Renderer()
     {
-        DeleteDepthMapFBOs();
+        // Delete shadow mapping framebuffers
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glDeleteFramebuffers(1, &m_DirLightsFBOHandle);
+        glDeleteFramebuffers(1, &m_SpotLightsFBOHandle);
     }
 
     void Renderer::GenerateDepthMaps()
@@ -32,8 +36,10 @@ namespace rgr
         auto camera = m_Scene->GetMainCamera();
         const auto& lights = m_Scene->GetLightsAround(camera->GetTransform().GetPosition(), camera->shadowsVisibilityDistance);
 
+        glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
         glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
         ClearDepthAtlases();
 
         size_t dirLightsCount = 0;
@@ -102,6 +108,8 @@ namespace rgr
         m_GBuffer->Unbind();
 
         glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        glDepthMask(GL_FALSE);
     }
 
     void Renderer::SetDirLightCommonUniforms(const std::shared_ptr<DirectionalLight>& light, const Shader& shader)
@@ -147,18 +155,92 @@ namespace rgr
 
     void Renderer::DoStencilPass()
     {
+        glEnable(GL_DEPTH_TEST);
 
+        glStencilFunc(GL_ALWAYS, 0, 0);
+
+        glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+        glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
+
+        auto camera = m_Scene->GetMainCamera();
+        const auto& lights = m_Scene->GetLightsAround(camera->GetTransform().GetPosition(),camera->shadowsVisibilityDistance);
+
+        for (const auto& light : lights)
+        {
+            if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light))
+            {
+                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::SPHERE);
+                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::STENCIL_PASS);
+                const auto mvp = camera->GetPerspective() * camera->GetView() * pointLight->GetLightVolumeModelMatrix();
+
+                shader.Bind();
+                shader.SetUniformMat4("u_MVP", true, mvp);
+                mesh.DrawElements();
+            }
+            else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(light))
+            {
+                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
+                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::STENCIL_PASS);
+                const auto mvp = camera->GetPerspective() * camera->GetView() * spotLight->GetLightVolumeModelMatrix();
+
+                shader.Bind();
+                shader.SetUniformMat4("u_MVP", true, mvp);
+                mesh.DrawElements();
+            }
+        }
+
+        glDisable(GL_DEPTH_TEST);
     }
 
     void Renderer::DoFinalPass()
     {
+        glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
 
+        auto camera = m_Scene->GetMainCamera();
+        const auto& lights = m_Scene->GetLightsAround(camera->GetTransform().GetPosition(),camera->shadowsVisibilityDistance);
+
+        for (const auto& light : lights)
+        {
+            if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light))
+            {
+                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::SPHERE);
+                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
+
+                const auto mvp = camera->GetPerspective() * camera->GetView() * pointLight->GetLightVolumeModelMatrix();
+
+                shader.Bind();
+                shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
+                shader.SetUniformMat4("u_MVP", true, mvp);
+                mesh.DrawElements();
+            }
+            else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(light))
+            {
+                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
+                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
+
+                const auto mvp = camera->GetPerspective() * camera->GetView() * spotLight->GetLightVolumeModelMatrix();
+
+                shader.Bind();
+                shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
+                shader.SetUniformMat4("u_MVP", true, mvp);
+                mesh.DrawElements();
+            }
+        }
+
+        glDisable(GL_CULL_FACE);
     }
 
     void Renderer::DoLightingPass()
     {
         auto camera = m_Scene->GetMainCamera();
         const auto& lights = m_Scene->GetLightsAround(camera->GetTransform().GetPosition(),camera->shadowsVisibilityDistance);
+
+        BlitForStencilPass();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, m_LightingPassFBOHandle);
+        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);
@@ -168,39 +250,21 @@ namespace rgr
         m_GBuffer->BindNormalTexture();
         m_GBuffer->BindColorTexture();
 
+        // Process directional lighting before any fragments have been marked by stencil buffer
         for (const auto& light : lights)
-        {
             if (auto dirLight = std::dynamic_pointer_cast<DirectionalLight>(light))
-            {
                 DrawDirLight(dirLight);
-            }
-            else if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light))
-            {
-//                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::SPHERE);
-//                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
-//
-//                const auto mvp = camera->GetPerspective() * camera->GetView() * pointLight->GetLightVolumeModelMatrix();
-//
-//                shader.Bind();
-//                shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
-//                shader.SetUniformMat4("u_MVP", true, mvp);
-//                mesh.DrawElements();
-            }
-            else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(light))
-            {
-//                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
-//                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
-//
-//                const auto mvp = camera->GetPerspective() * camera->GetView() * spotLight->GetLightVolumeModelMatrix();
-//
-//                shader.Bind();
-//                shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
-//                shader.SetUniformMat4("u_MVP", true, mvp);
-//                mesh.DrawElements();
-            }
-        }
+
+        glEnable(GL_STENCIL_TEST);
+        DoStencilPass();
+        DoFinalPass();
+        glDisable(GL_STENCIL_TEST);
 
         glDisable(GL_BLEND);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        DrawFinalDeferredScreen();
     }
 
     void Renderer::DoForwardPass()
@@ -208,14 +272,7 @@ namespace rgr
 
     }
 
-    void Renderer::DeleteDepthMapFBOs()
-    {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glDeleteFramebuffers(1, &m_DirLightsFBOHandle);
-        glDeleteFramebuffers(1, &m_SpotLightsFBOHandle);
-    }
-
-    void Renderer::InitializeDepthAtlases()
+    void Renderer::InitializeShadowAtlases()
     {
         constexpr float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -225,26 +282,38 @@ namespace rgr
         m_DirLightsDepthAtlas->SetWrap(rgr::Texture::WRAP::CLAMP_TO_BORDER, rgr::Texture::WRAP::CLAMP_TO_BORDER);
         m_DirLightsDepthAtlas->SetBorderColor(borderColor);
 
-        // Spotlights atlas
-        static const size_t SPOT_LIGHTS_ATLAS_SIZE = rgr::SpotLight::depthMapSize * 8; // total 64 maps
-        m_SpotLightsDepthAtlas = std::make_unique<rgr::Texture>(SPOT_LIGHTS_ATLAS_SIZE, SPOT_LIGHTS_ATLAS_SIZE, rgr::Texture::TYPE::DEPTH_COMPONENT);
-    }
-
-    void Renderer::InitializeDepthMapFBOs()
-    {
-        // Directional lights FBO
         glGenFramebuffers(1, &m_DirLightsFBOHandle);
         glBindFramebuffer(GL_FRAMEBUFFER, m_DirLightsFBOHandle);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DirLightsDepthAtlas->GetHandle(), 0);
 
-        // Spotlights FBO
+        // Spotlights atlas
+        static const size_t SPOT_LIGHTS_ATLAS_SIZE = rgr::SpotLight::depthMapSize * 8; // total 64 maps
+        m_SpotLightsDepthAtlas = std::make_unique<rgr::Texture>(SPOT_LIGHTS_ATLAS_SIZE, SPOT_LIGHTS_ATLAS_SIZE, rgr::Texture::TYPE::DEPTH_COMPONENT);
+
         glGenFramebuffers(1, &m_SpotLightsFBOHandle);
         glBindFramebuffer(GL_FRAMEBUFFER, m_SpotLightsFBOHandle);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_SpotLightsDepthAtlas->GetHandle(), 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    void Renderer::InitializeLightingPass()
+    {
+        const glm::vec2 size = rgr::Core::GetWindowSize();
+
+        glGenFramebuffers(1, &m_LightingPassFBOHandle);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_LightingPassFBOHandle);
+
+        m_LightingPassColorTexture = std::make_unique<rgr::Texture>(size.x, size.y, rgr::Texture::TYPE::RGBA);
+        m_LightingPassColorTexture->SetFilter(rgr::Texture::FILTER::NEAREST, rgr::Texture::FILTER::NEAREST);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_LightingPassColorTexture->GetHandle(), 0);
+
+        m_LightingPassStencilRenderbuffer = std::make_unique<rgr::Renderbuffer>(size.x, size.y, rgr::Renderbuffer::Type::DEPTH24_STENCIL8);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_LightingPassStencilRenderbuffer->GetHandle());
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
@@ -289,9 +358,43 @@ namespace rgr
     {
         m_Scene = scene;
 
+        // Methods must stay in this order
         GenerateDepthMaps();
         DoGeometryPass();
         DoLightingPass();
         DoForwardPass();
+    }
+
+    void Renderer::DrawFinalDeferredScreen() const
+    {
+        const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::QUAD_NDC_FULLSCREEN);
+        const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::FULLSCREEN_TEXTURE);
+
+        shader.Bind();
+
+        shader.BindTexture("u_Texture", m_LightingPassColorTexture.get(), 0);
+
+        mesh.DrawElements();
+    }
+
+    void Renderer::BlitForStencilPass() const
+    {
+        /*
+         * Copy the depth values from the GBuffer to the lighting pass framebuffer to be able
+         * to perform depth testing of light volume's fragments against the depth values stored in the GBuffer
+         */
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_GBuffer->GetFBOHandle());
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_LightingPassFBOHandle);
+
+        const glm::vec2 size = rgr::Core::GetWindowSize();
+        const auto width = static_cast<int>(size.x);
+        const auto height = static_cast<int>(size.y);
+
+        glBlitFramebuffer(0, 0, width, height,
+                          0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     }
 }

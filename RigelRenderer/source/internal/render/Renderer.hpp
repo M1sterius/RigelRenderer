@@ -11,6 +11,7 @@ namespace rgr
     class PointLight;
     class Shader;
     class Texture;
+    class Renderbuffer;
 
     class Renderer
     {
@@ -30,22 +31,28 @@ namespace rgr
         std::unique_ptr<Texture> m_DirLightsDepthAtlas;
         std::unique_ptr<Texture> m_SpotLightsDepthAtlas;
 
+        std::unique_ptr<Texture> m_LightingPassColorTexture;
+        std::unique_ptr<Renderbuffer> m_LightingPassStencilRenderbuffer;
+
         unsigned int m_DirLightsFBOHandle = 0;
         unsigned int m_SpotLightsFBOHandle = 0;
+        unsigned int m_LightingPassFBOHandle = 0;
 
         void GenerateDepthMaps();
         void DoGeometryPass();
         void DoLightingPass();
         void DoForwardPass();
 
-        void InitializeDepthMapFBOs();
-        void DeleteDepthMapFBOs();
-        void ClearDepthAtlases() const;
-        void InitializeDepthAtlases();
-        static void SetShadersConstantUniforms();
-
         void DoStencilPass();
         void DoFinalPass();
+
+        void ClearDepthAtlases() const;
+        void InitializeShadowAtlases();
+        void InitializeLightingPass();
+        void DrawFinalDeferredScreen() const;
+        void BlitForStencilPass() const;
+
+        static void SetShadersConstantUniforms();
 
         void DrawDirLight(const std::shared_ptr<DirectionalLight>& light);
         void SetDirLightCommonUniforms(const std::shared_ptr<DirectionalLight>& light, const rgr::Shader& shader);

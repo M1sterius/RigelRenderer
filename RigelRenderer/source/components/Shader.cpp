@@ -130,6 +130,8 @@ namespace rgr
                                                     builtInShadersPath + "/deferred_rendering/stencil_pass_fragment.glsl");
         static auto depthVisualization = Shader::FromFiles(builtInShadersPath + "/shadow_mapping/depth_visualization_vertex.glsl",
                                                           builtInShadersPath + "/shadow_mapping/depth_visualization_fragment.glsl");
+        static auto fullscreenTexture = Shader::FromFiles(builtInShadersPath + "/fullscreen_texture_vertex.glsl",
+                                                          builtInShadersPath + "/fullscreen_texture_fragment.glsl");
 
         static auto dirLightNoShadows = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/directional_light/dir_light_vertex.glsl",
                                                           builtInShadersPath + "/deferred_rendering/directional_light/dir_light_no_shadows_fragment.glsl");
@@ -150,6 +152,8 @@ namespace rgr
                 return stencilPass;
             case BUILT_IN_SHADERS::DEPTH_VISUALIZATION:
                 return depthVisualization;
+            case BUILT_IN_SHADERS::FULLSCREEN_TEXTURE:
+                return fullscreenTexture;
 
             case BUILT_IN_SHADERS::DIR_LIGHT_NO_SHADOWS:
                 return dirLightNoShadows;

@@ -35,6 +35,7 @@ int main(int argc, char* argv[])
     auto camera = std::make_shared<rgr::Camera>(glm::radians(75.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
     camera->GetTransform().SetPosition(glm::vec3(-3.0f, 0, 0.0f));
     camera->FlagAsMain();
+    //camera->LookAt(backpack);
 
     auto dirLight = std::make_shared<rgr::DirectionalLight>(glm::vec3(1.0, 1.0, 1.0), 0.6f, glm::vec3(-0.1, -1, 1));
     dirLight->GetTransform().SetPosition(glm::vec3(0.1, 5, -5));
@@ -59,7 +60,7 @@ int main(int argc, char* argv[])
             0.9978f, 0.953f,
             1.0f, 0.22f, 0.2f
     );
-    sptLight->GetTransform().SetPosition(glm::vec3(5, 0, 0));
+    sptLight->GetTransform().SetPosition(glm::vec3(1, 0, 0));
 
     scene->AddObject(camera);
     scene->AddObject(backpack);
@@ -72,7 +73,7 @@ int main(int argc, char* argv[])
 
     const float sensitivity = 0.3f;
     const float flySpeed = 2.0f;
-    const float flySpeedBoost = 4.5f;
+    const float flySpeedBoost = 7.0f;
 
     float yaw = 0;
     float pitch = 0;
@@ -126,12 +127,8 @@ int main(int argc, char* argv[])
 
         rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::Time::GetDeltaTimeF();
 
-        auto x = (float)glm::cos(rgr::Time::GetTimeF() * 3);
-        auto z = (float)glm::sin(rgr::Time::GetTimeF() * 3);
-//        sptLight->direction = glm::vec3(x, 0, z);
-//
-//        sptLight1->GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0.0f, -1.0f, 0.0f));
-//        sptLight1->direction = camera->GetForwardVector();
+//        sptLight->GetTransform().SetPosition(camera->GetTransform().GetPosition());
+//        sptLight->direction = camera->GetForwardVector();
 
         rgr::Core::Update();
     }

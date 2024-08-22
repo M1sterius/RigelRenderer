@@ -54,6 +54,7 @@ namespace rgr
             GEOMETRY_PASS,
             STENCIL_PASS,
             DEPTH_VISUALIZATION,
+            FULLSCREEN_TEXTURE,
 
             DIR_LIGHT_NO_SHADOWS,
             DIR_LIGHT_SHADOWS_NO_PCF,
