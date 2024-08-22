@@ -153,6 +153,47 @@ namespace rgr
         quad.DrawElements();
     }
 
+    void Renderer::DrawPointLight(const std::shared_ptr<PointLight>& light)
+    {
+
+        auto camera = m_Scene->GetMainCamera();
+        const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::SPHERE);
+        const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::POINT_LIGHT_NO_SHADOWS);
+
+        const auto mvp = camera->GetPerspective() * camera->GetView() * light->GetLightVolumeModelMatrix();
+
+        shader.Bind();
+
+        shader.SetUniformMat4("u_MVP", true, mvp);
+
+        const std::string u_name = "u_PointLight.";
+        shader.SetUniformVec3(u_name + "color", light->color);
+        shader.SetUniform1f(u_name + "intensity", light->intensity);
+        shader.SetUniformVec3(u_name + "position", light->GetTransform().GetPosition());
+        shader.SetUniform1f(u_name + "constant", light->constant);
+        shader.SetUniform1f(u_name + "linear", light->linear);
+        shader.SetUniform1f(u_name + "quadratic", light->quadratic);
+
+        shader.SetUniformVec3("u_ViewPos", m_Scene->GetMainCamera()->GetTransform().GetPosition());
+        shader.SetUniformVec2("u_ScreenSize", glm::vec2(m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight()));
+
+        mesh.DrawElements();
+    }
+
+    void Renderer::DrawSpotLight(const std::shared_ptr<SpotLight>& light)
+    {
+        auto camera = m_Scene->GetMainCamera();
+        const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
+        const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
+
+        const auto mvp = camera->GetPerspective() * camera->GetView() * light->GetLightVolumeModelMatrix();
+
+        shader.Bind();
+        shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
+        shader.SetUniformMat4("u_MVP", true, mvp);
+        mesh.DrawElements();
+    }
+
     void Renderer::DoStencilPass()
     {
         glEnable(GL_DEPTH_TEST);
@@ -204,29 +245,9 @@ namespace rgr
         for (const auto& light : lights)
         {
             if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light))
-            {
-                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::SPHERE);
-                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
-
-                const auto mvp = camera->GetPerspective() * camera->GetView() * pointLight->GetLightVolumeModelMatrix();
-
-                shader.Bind();
-                shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
-                shader.SetUniformMat4("u_MVP", true, mvp);
-                mesh.DrawElements();
-            }
+                DrawPointLight(pointLight);
             else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(light))
-            {
-                const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
-                const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
-
-                const auto mvp = camera->GetPerspective() * camera->GetView() * spotLight->GetLightVolumeModelMatrix();
-
-                shader.Bind();
-                shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
-                shader.SetUniformMat4("u_MVP", true, mvp);
-                mesh.DrawElements();
-            }
+                DrawSpotLight(spotLight);
         }
 
         glDisable(GL_CULL_FACE);
@@ -264,7 +285,7 @@ namespace rgr
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        DrawFinalDeferredScreen();
+        DrawDeferredRenderingResult();
     }
 
     void Renderer::DoForwardPass()
@@ -352,6 +373,15 @@ namespace rgr
         dirLightNoShadows.SetUniform1is("g_Position", 0);
         dirLightNoShadows.SetUniform1is("g_Normal", 1);
         dirLightNoShadows.SetUniform1is("g_AlbedoSpec", 2);
+
+        // Shader for point lights without shadows
+        const auto& pointLightNoShadows = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::POINT_LIGHT_NO_SHADOWS);
+        pointLightNoShadows.Bind();
+        pointLightNoShadows.SetUniform1is("g_Position", 0);
+        pointLightNoShadows.SetUniform1is("g_Normal", 1);
+        pointLightNoShadows.SetUniform1is("g_AlbedoSpec", 2);
+
+        pointLightNoShadows.Unbind();
     }
 
     void Renderer::RenderScene(rgr::Scene* scene)
@@ -365,7 +395,7 @@ namespace rgr
         DoForwardPass();
     }
 
-    void Renderer::DrawFinalDeferredScreen() const
+    void Renderer::DrawDeferredRenderingResult() const
     {
         const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::QUAD_NDC_FULLSCREEN);
         const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::FULLSCREEN_TEXTURE);

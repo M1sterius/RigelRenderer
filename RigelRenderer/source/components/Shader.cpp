@@ -140,6 +140,9 @@ namespace rgr
         static auto dirLightShadowsPcf = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/directional_light/dir_light_vertex.glsl",
                                                              builtInShadersPath + "/deferred_rendering/directional_light/dir_light_shadows_pcf_fragment.glsl");
 
+        static auto pointLightNoShadows = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/point_light/point_light_vertex.glsl",
+                                                            builtInShadersPath + "/deferred_rendering/point_light/point_light_no_shadows_fragment.glsl");
+
         switch (type)
         {
             case BUILT_IN_SHADERS::PLAIN_COLOR:
@@ -161,6 +164,9 @@ namespace rgr
                 return dirLightShadowsNoPcf;
             case BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_PCF:
                 return dirLightShadowsPcf;
+
+            case BUILT_IN_SHADERS::POINT_LIGHT_NO_SHADOWS:
+                return pointLightNoShadows;
         }
     }
 

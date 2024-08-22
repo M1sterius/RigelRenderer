@@ -49,14 +49,14 @@ namespace rgr
         void ClearDepthAtlases() const;
         void InitializeShadowAtlases();
         void InitializeLightingPass();
-        void DrawFinalDeferredScreen() const;
+        void DrawDeferredRenderingResult() const;
         void BlitForStencilPass() const;
 
         static void SetShadersConstantUniforms();
 
         void DrawDirLight(const std::shared_ptr<DirectionalLight>& light);
         void SetDirLightCommonUniforms(const std::shared_ptr<DirectionalLight>& light, const rgr::Shader& shader);
-//        static void DrawSpotLight(const std::shared_ptr<PointLight>& light);
-//        static void DrawPointLight(const std::shared_ptr<PointLight>& light);
+        void DrawSpotLight(const std::shared_ptr<SpotLight>& light);
+        void DrawPointLight(const std::shared_ptr<PointLight>& light);
     };
 }
