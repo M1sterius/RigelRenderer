@@ -112,19 +112,19 @@ namespace rgr
         glDepthMask(GL_FALSE);
     }
 
-    void Renderer::SetDirLightCommonUniforms(const std::shared_ptr<DirectionalLight>& light, const Shader& shader)
-    {
-        shader.SetUniformVec3("u_ViewPos", m_Scene->GetMainCamera()->GetTransform().GetPosition());
-        shader.SetUniformVec2("u_ScreenSize", glm::vec2(m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight()));
-
-        const std::string u_name = "u_DirectionalLight.";
-        shader.SetUniformVec3(u_name + "color", light->color);
-        shader.SetUniform1f(u_name + "intensity", light->intensity);
-        shader.SetUniformVec3(u_name + "direction", light->direction);
-    }
-
     void Renderer::DrawDirLight(const std::shared_ptr<DirectionalLight>& light)
     {
+        auto setCommonUniforms = [this](const std::shared_ptr<DirectionalLight>& light, const Shader& shader)
+        {
+            shader.SetUniformVec3("u_ViewPos", m_Scene->GetMainCamera()->GetTransform().GetPosition());
+            shader.SetUniformVec2("u_ScreenSize", glm::vec2(m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight()));
+
+            const std::string u_name = "u_DirectionalLight.";
+            shader.SetUniformVec3(u_name + "color", light->color);
+            shader.SetUniform1f(u_name + "intensity", light->intensity);
+            shader.SetUniformVec3(u_name + "direction", light->direction);
+        };
+
         const auto& quad = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::QUAD_NDC_FULLSCREEN);
 
         m_DirLightsDepthAtlas->BindToSlot(3);
@@ -133,7 +133,7 @@ namespace rgr
         {
             const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_NO_SHADOWS);
             shader.Bind();
-            SetDirLightCommonUniforms(light, shader);
+            setCommonUniforms(light, shader);
 
             quad.DrawElements();
             return;
@@ -148,14 +148,13 @@ namespace rgr
         const std::string u_name = "u_DirectionalLight.";
         shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
         shader.SetUniformVec2(u_name + "atlasOffset", light->atlasOffset);
-        SetDirLightCommonUniforms(light, shader);
+        setCommonUniforms(light, shader);
 
         quad.DrawElements();
     }
 
     void Renderer::DrawPointLight(const std::shared_ptr<PointLight>& light)
     {
-
         auto camera = m_Scene->GetMainCamera();
         const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::SPHERE);
         const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::POINT_LIGHT_NO_SHADOWS);
@@ -184,14 +183,41 @@ namespace rgr
     {
         auto camera = m_Scene->GetMainCamera();
         const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
-        const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
+        const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::SPOT_LIGHT_NO_SHADOWS);
 
         const auto mvp = camera->GetPerspective() * camera->GetView() * light->GetLightVolumeModelMatrix();
 
         shader.Bind();
-        shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
+
         shader.SetUniformMat4("u_MVP", true, mvp);
+
+        const std::string u_name = "u_SpotLight.";
+        shader.SetUniformVec3(u_name + "color", light->color);
+        shader.SetUniform1f(u_name + "intensity", light->intensity);
+        shader.SetUniformVec3(u_name + "position", light->GetTransform().GetPosition());
+        shader.SetUniformVec3(u_name + "direction", light->direction);
+        shader.SetUniform1f(u_name + "cutOff", light->GetCutOff());
+        shader.SetUniform1f(u_name + "outerCutOff", light->outerCutOff);
+        shader.SetUniform1f(u_name + "constant", light->constant);
+        shader.SetUniform1f(u_name + "linear", light->linear);
+        shader.SetUniform1f(u_name + "quadratic", light->quadratic);
+
+        shader.SetUniformVec3("u_ViewPos", camera->GetTransform().GetPosition());
+        shader.SetUniformVec2("u_ScreenSize", glm::vec2(m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight()));
+
         mesh.DrawElements();
+
+
+//        auto camera = m_Scene->GetMainCamera();
+//        const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
+//        const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
+//
+//        const auto mvp = camera->GetPerspective() * camera->GetView() * light->GetLightVolumeModelMatrix();
+//
+//        shader.Bind();
+//        shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
+//        shader.SetUniformMat4("u_MVP", true, mvp);
+//        mesh.DrawElements();
     }
 
     void Renderer::DoStencilPass()
@@ -381,7 +407,14 @@ namespace rgr
         pointLightNoShadows.SetUniform1is("g_Normal", 1);
         pointLightNoShadows.SetUniform1is("g_AlbedoSpec", 2);
 
-        pointLightNoShadows.Unbind();
+        // Shader for spot light without shadows
+        const auto& spotLightNoShadows = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::SPOT_LIGHT_NO_SHADOWS);
+        spotLightNoShadows.Bind();
+        spotLightNoShadows.SetUniform1is("g_Position", 0);
+        spotLightNoShadows.SetUniform1is("g_Normal", 1);
+        spotLightNoShadows.SetUniform1is("g_AlbedoSpec", 2);
+
+        spotLightNoShadows.Unbind();
     }
 
     void Renderer::RenderScene(rgr::Scene* scene)

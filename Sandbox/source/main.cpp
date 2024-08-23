@@ -56,11 +56,11 @@ int main(int argc, char* argv[])
 
     auto sptLight = std::make_shared<rgr::SpotLight>(
             glm::vec3(1.0f, 1.0f, 1.0f),
-            1.0f, glm::vec3(0, -1, 0),
-            0.953f, 0.9978f,
+            3.0f, glm::vec3(0, -1, 1),
+            0.9978f, 0.953f,
             1.0f, 0.22f, 0.2f
     );
-    sptLight->GetTransform().SetPosition(glm::vec3(0, 3, 2));
+    sptLight->GetTransform().SetPosition(glm::vec3(0, 1, 2));
 
     scene->AddObject(camera);
     scene->AddObject(backpack);
@@ -81,6 +81,8 @@ int main(int argc, char* argv[])
     glm::vec3 rot(0.0f);
 
     rgr::Cursor::CURSOR_STATE cursorState = rgr::Cursor::GetCursorState();
+
+    float rotX = 0.0f;
 
     while (rgr::Core::AppShouldRun())
     {
@@ -126,9 +128,12 @@ int main(int argc, char* argv[])
         camera->GetTransform().SetRotation(glm::quat(glm::vec3(pitch, yaw, 0.0f)));
 
         rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::Time::GetDeltaTimeF();
+        rotX += 10.0f * rgr::Time::GetDeltaTimeF();
 
-//        sptLight->GetTransform().SetPosition(camera->GetTransform().GetPosition());
-//        sptLight->direction = camera->GetForwardVector();
+        sptLight->GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0, 0, 0));
+        sptLight->direction = camera->GetForwardVector();
+
+//        sptLight->direction = glm::vec3(cos(rotX), 0, 0);
 
         rgr::Core::Update();
     }

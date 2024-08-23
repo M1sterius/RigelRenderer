@@ -61,6 +61,8 @@ namespace rgr
             DIR_LIGHT_SHADOWS_PCF,
 
             POINT_LIGHT_NO_SHADOWS,
+
+            SPOT_LIGHT_NO_SHADOWS,
         };
 
         static const Shader& GetBuiltInShader(BUILT_IN_SHADERS type);
