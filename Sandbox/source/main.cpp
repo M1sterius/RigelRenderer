@@ -55,14 +55,14 @@ int main(int argc, char* argv[])
     pntLight->GetTransform().SetPosition(glm::vec3(0, 0, 2));
 
     auto sptLight = std::make_shared<rgr::SpotLight>(
-            glm::vec3(1.0f, 1.0f, 1.0f),
+            glm::vec3(0.0f, 0.0f, 1.0f),
             3.0f, glm::vec3(0, -1, 1),
             0.9978f, 0.953f,
             1.0f, 0.22f, 0.2f
     );
     sptLight->GetTransform().SetPosition(glm::vec3(0, 1, 2));
     sptLight->castShadows = true;
-    sptLight->smoothShadows = false;
+    sptLight->smoothShadows = true;
 
     scene->AddObject(camera);
     scene->AddObject(backpack);

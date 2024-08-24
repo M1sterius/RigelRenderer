@@ -42,8 +42,8 @@ namespace rgr
         glDepthMask(GL_TRUE);
         ClearDepthAtlases();
 
-        size_t dirLightsCount = 0;
-        size_t spotLightsCount = 0;
+        size_t dirLightIndex = 0;
+        size_t spotLightIndex = 0;
 
         for (const auto& light : lights)
         {
@@ -51,8 +51,10 @@ namespace rgr
 
             if (auto dirLight = std::dynamic_pointer_cast<rgr::DirectionalLight>(light))
             {
-                const auto x_pos = static_cast<size_t>(dirLightsCount % DIR_LIGHT_MAPS_PER_ATLAS_AXIS) * DIR_LIGHT_SHADOW_MAP_SIZE;
-                const auto y_pos = static_cast<size_t>(dirLightsCount / DIR_LIGHT_MAPS_PER_ATLAS_AXIS) * DIR_LIGHT_SHADOW_MAP_SIZE;
+                if (dirLightIndex > (DIR_LIGHT_MAX_SHADOW_MAPS_IN_ATLAS - 1)) continue;
+
+                const auto x_pos = static_cast<size_t>(dirLightIndex % DIR_LIGHT_MAPS_PER_ATLAS_AXIS) * DIR_LIGHT_SHADOW_MAP_SIZE;
+                const auto y_pos = static_cast<size_t>(dirLightIndex / DIR_LIGHT_MAPS_PER_ATLAS_AXIS) * DIR_LIGHT_SHADOW_MAP_SIZE;
 
                 glBindFramebuffer(GL_FRAMEBUFFER, m_DirLightsFBOHandle);
                 glViewport(static_cast<int>(x_pos), static_cast<int>(y_pos), DIR_LIGHT_SHADOW_MAP_SIZE, DIR_LIGHT_SHADOW_MAP_SIZE);
@@ -60,12 +62,14 @@ namespace rgr
                 dirLight->GenerateDepthMap();
                 dirLight->atlasOffset = glm::vec2(x_pos / DIR_LIGHT_ATLAS_SIZE, y_pos / DIR_LIGHT_ATLAS_SIZE);
 
-                dirLightsCount++;
+                dirLightIndex++;
             }
             else if (auto spotLight = std::dynamic_pointer_cast<rgr::SpotLight>(light))
             {
-                const auto x_pos = static_cast<size_t>(spotLightsCount % SPOT_LIGHT_MAPS_PER_ATLAS_AXIS) * SPOT_LIGHT_SHADOW_MAP_SIZE;
-                const auto y_pos = static_cast<size_t>(spotLightsCount / SPOT_LIGHT_MAPS_PER_ATLAS_AXIS) * SPOT_LIGHT_SHADOW_MAP_SIZE;
+                if (spotLightIndex > (SPOT_LIGHT_MAX_SHADOW_MAPS_IN_ATLAS - 1)) continue;
+
+                const auto x_pos = static_cast<size_t>(spotLightIndex % SPOT_LIGHT_MAPS_PER_ATLAS_AXIS) * SPOT_LIGHT_SHADOW_MAP_SIZE;
+                const auto y_pos = static_cast<size_t>(spotLightIndex / SPOT_LIGHT_MAPS_PER_ATLAS_AXIS) * SPOT_LIGHT_SHADOW_MAP_SIZE;
 
                 glBindFramebuffer(GL_FRAMEBUFFER, m_SpotLightsFBOHandle);
                 glViewport(static_cast<int>(x_pos), static_cast<int>(y_pos), SPOT_LIGHT_SHADOW_MAP_SIZE, SPOT_LIGHT_SHADOW_MAP_SIZE);
@@ -73,7 +77,7 @@ namespace rgr
                 spotLight->GenerateDepthMap();
                 spotLight->atlasOffset = glm::vec2(x_pos / SPOT_LIGHT_ATLAS_SIZE, y_pos / SPOT_LIGHT_ATLAS_SIZE);
 
-                spotLightsCount++;
+                spotLightIndex++;
             }
         }
 
@@ -236,7 +240,10 @@ namespace rgr
         }
         else if (light->castShadows && light->smoothShadows) // light with smooth shadows (PCF)
         {
-
+            const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::SPOT_LIGHT_SHADOWS_PCF);
+            shader.Bind();
+            setCommonUniforms(light, shader);
+            setUniformsForShadows(light, shader);
         }
 
         mesh.DrawElements();
@@ -444,7 +451,16 @@ namespace rgr
         spotLightShadowsNoPcf.SetUniform1is("u_DepthMapAtlas", 3);
         spotLightShadowsNoPcf.SetUniform1f("u_OneShadowMapOffset", (1.0f / SPOT_LIGHT_MAPS_PER_ATLAS_AXIS));
 
-        spotLightShadowsNoPcf.Unbind();
+        // Shader for spot light with hard shadows (no PCF)
+        const auto& spotLightShadowsPcf = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::SPOT_LIGHT_SHADOWS_PCF);
+        spotLightShadowsPcf.Bind();
+        spotLightShadowsPcf.SetUniform1is("g_Position", 0);
+        spotLightShadowsPcf.SetUniform1is("g_Normal", 1);
+        spotLightShadowsPcf.SetUniform1is("g_AlbedoSpec", 2);
+        spotLightShadowsPcf.SetUniform1is("u_DepthMapAtlas", 3);
+        spotLightShadowsPcf.SetUniform1f("u_OneShadowMapOffset", (1.0f / SPOT_LIGHT_MAPS_PER_ATLAS_AXIS));
+
+        spotLightShadowsPcf.Unbind();
     }
 
     void Renderer::RenderScene(rgr::Scene* scene)
