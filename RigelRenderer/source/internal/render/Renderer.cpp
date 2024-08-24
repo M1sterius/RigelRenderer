@@ -51,8 +51,8 @@ namespace rgr
 
             if (auto dirLight = std::dynamic_pointer_cast<rgr::DirectionalLight>(light))
             {
-                const auto x_pos = static_cast<size_t>(dirLightsCount % 4) * DIR_LIGHT_SHADOW_MAP_SIZE;
-                const auto y_pos = static_cast<size_t>(dirLightsCount / 4) * DIR_LIGHT_SHADOW_MAP_SIZE;
+                const auto x_pos = static_cast<size_t>(dirLightsCount % DIR_LIGHT_MAPS_PER_ATLAS_AXIS) * DIR_LIGHT_SHADOW_MAP_SIZE;
+                const auto y_pos = static_cast<size_t>(dirLightsCount / DIR_LIGHT_MAPS_PER_ATLAS_AXIS) * DIR_LIGHT_SHADOW_MAP_SIZE;
 
                 glBindFramebuffer(GL_FRAMEBUFFER, m_DirLightsFBOHandle);
                 glViewport(static_cast<int>(x_pos), static_cast<int>(y_pos), DIR_LIGHT_SHADOW_MAP_SIZE, DIR_LIGHT_SHADOW_MAP_SIZE);
@@ -64,14 +64,14 @@ namespace rgr
             }
             else if (auto spotLight = std::dynamic_pointer_cast<rgr::SpotLight>(light))
             {
-                const size_t spotMapSize = rgr::SpotLight::depthMapSize;
-                const auto x_pos = static_cast<size_t>(spotLightsCount % 8) * spotMapSize;
-                const auto y_pos = static_cast<size_t>(spotLightsCount / 8) * spotMapSize;
+                const auto x_pos = static_cast<size_t>(spotLightsCount % SPOT_LIGHT_MAPS_PER_ATLAS_AXIS) * SPOT_LIGHT_SHADOW_MAP_SIZE;
+                const auto y_pos = static_cast<size_t>(spotLightsCount / SPOT_LIGHT_MAPS_PER_ATLAS_AXIS) * SPOT_LIGHT_SHADOW_MAP_SIZE;
 
                 glBindFramebuffer(GL_FRAMEBUFFER, m_SpotLightsFBOHandle);
-                glViewport(static_cast<int>(x_pos), static_cast<int>(y_pos), spotMapSize, spotMapSize);
+                glViewport(static_cast<int>(x_pos), static_cast<int>(y_pos), SPOT_LIGHT_SHADOW_MAP_SIZE, SPOT_LIGHT_SHADOW_MAP_SIZE);
 
                 spotLight->GenerateDepthMap();
+                spotLight->atlasOffset = glm::vec2(x_pos / SPOT_LIGHT_ATLAS_SIZE, y_pos / SPOT_LIGHT_ATLAS_SIZE);
 
                 spotLightsCount++;
             }
@@ -125,30 +125,37 @@ namespace rgr
             shader.SetUniformVec3(u_name + "direction", light->direction);
         };
 
+        auto setUniformsForShadows = [](const std::shared_ptr<DirectionalLight>& light, const Shader& shader)
+        {
+            const std::string u_name = "u_DirectionalLight.";
+            shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
+            shader.SetUniformVec2(u_name + "atlasOffset", light->atlasOffset);
+        };
+
         const auto& quad = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::QUAD_NDC_FULLSCREEN);
 
         m_DirLightsDepthAtlas->BindToSlot(3);
 
-        if (!light->castShadows)
+        if (!light->castShadows) // light without shadows
         {
             const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_NO_SHADOWS);
             shader.Bind();
             setCommonUniforms(light, shader);
-
-            quad.DrawElements();
-            return;
         }
-
-        const auto& shader = light->castShadows && !light->smoothShadows ?
-                 rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_NO_PCF) :
-                 rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_PCF);
-
-        shader.Bind();
-
-        const std::string u_name = "u_DirectionalLight.";
-        shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
-        shader.SetUniformVec2(u_name + "atlasOffset", light->atlasOffset);
-        setCommonUniforms(light, shader);
+        else if (light->castShadows && !light->smoothShadows) // light with hard shadows (no PCF)
+        {
+            const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_NO_PCF);
+            shader.Bind();
+            setUniformsForShadows(light, shader);
+            setCommonUniforms(light, shader);
+        }
+        else if (light->castShadows && light->smoothShadows) // light with smooth shadows (PCF)
+        {
+            const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::DIR_LIGHT_SHADOWS_PCF);
+            shader.Bind();
+            setUniformsForShadows(light, shader);
+            setCommonUniforms(light, shader);
+        }
 
         quad.DrawElements();
     }
@@ -181,43 +188,46 @@ namespace rgr
 
     void Renderer::DrawSpotLight(const std::shared_ptr<SpotLight>& light)
     {
-        auto camera = m_Scene->GetMainCamera();
+        auto setCommonUniforms = [this](const std::shared_ptr<SpotLight>& light, const Shader& shader)
+        {
+            auto camera = m_Scene->GetMainCamera();
+
+            const auto mvp = camera->GetPerspective() * camera->GetView() * light->GetLightVolumeModelMatrix();
+            shader.SetUniformMat4("u_MVP", true, mvp);
+
+            const std::string u_name = "u_SpotLight.";
+            shader.SetUniformVec3(u_name + "color", light->color);
+            shader.SetUniform1f(u_name + "intensity", light->intensity);
+            shader.SetUniformVec3(u_name + "position", light->GetTransform().GetPosition());
+            shader.SetUniformVec3(u_name + "direction", light->direction);
+            shader.SetUniform1f(u_name + "cutOff", light->GetCutOff());
+            shader.SetUniform1f(u_name + "outerCutOff", light->outerCutOff);
+            shader.SetUniform1f(u_name + "constant", light->constant);
+            shader.SetUniform1f(u_name + "linear", light->linear);
+            shader.SetUniform1f(u_name + "quadratic", light->quadratic);
+
+            shader.SetUniformVec3("u_ViewPos", camera->GetTransform().GetPosition());
+            shader.SetUniformVec2("u_ScreenSize", glm::vec2(m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight()));
+        };
+
         const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
-        const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::SPOT_LIGHT_NO_SHADOWS);
 
-        const auto mvp = camera->GetPerspective() * camera->GetView() * light->GetLightVolumeModelMatrix();
+        if (!light->castShadows) // light without shadows
+        {
+            const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::SPOT_LIGHT_NO_SHADOWS);
+            shader.Bind();
+            setCommonUniforms(light, shader);
+        }
+        else if (light->castShadows && !light->smoothShadows) // light with hard shadows (no PCF)
+        {
 
-        shader.Bind();
+        }
+        else if (light->castShadows && light->smoothShadows) // light with smooth shadows (PCF)
+        {
 
-        shader.SetUniformMat4("u_MVP", true, mvp);
-
-        const std::string u_name = "u_SpotLight.";
-        shader.SetUniformVec3(u_name + "color", light->color);
-        shader.SetUniform1f(u_name + "intensity", light->intensity);
-        shader.SetUniformVec3(u_name + "position", light->GetTransform().GetPosition());
-        shader.SetUniformVec3(u_name + "direction", light->direction);
-        shader.SetUniform1f(u_name + "cutOff", light->GetCutOff());
-        shader.SetUniform1f(u_name + "outerCutOff", light->outerCutOff);
-        shader.SetUniform1f(u_name + "constant", light->constant);
-        shader.SetUniform1f(u_name + "linear", light->linear);
-        shader.SetUniform1f(u_name + "quadratic", light->quadratic);
-
-        shader.SetUniformVec3("u_ViewPos", camera->GetTransform().GetPosition());
-        shader.SetUniformVec2("u_ScreenSize", glm::vec2(m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight()));
+        }
 
         mesh.DrawElements();
-
-
-//        auto camera = m_Scene->GetMainCamera();
-//        const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
-//        const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::PLAIN_COLOR);
-//
-//        const auto mvp = camera->GetPerspective() * camera->GetView() * light->GetLightVolumeModelMatrix();
-//
-//        shader.Bind();
-//        shader.SetUniformVec4("u_Color", glm::vec4(1, 1, 1, 1));
-//        shader.SetUniformMat4("u_MVP", true, mvp);
-//        mesh.DrawElements();
     }
 
     void Renderer::DoStencilPass()
@@ -336,8 +346,7 @@ namespace rgr
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DirLightsDepthAtlas->GetHandle(), 0);
 
         // Spotlights atlas
-        static const size_t SPOT_LIGHTS_ATLAS_SIZE = rgr::SpotLight::depthMapSize * 8; // total 64 maps
-        m_SpotLightsDepthAtlas = std::make_unique<rgr::Texture>(SPOT_LIGHTS_ATLAS_SIZE, SPOT_LIGHTS_ATLAS_SIZE, rgr::Texture::TYPE::DEPTH_COMPONENT);
+        m_SpotLightsDepthAtlas = std::make_unique<rgr::Texture>(SPOT_LIGHT_ATLAS_SIZE, SPOT_LIGHT_ATLAS_SIZE, rgr::Texture::TYPE::DEPTH_COMPONENT);
 
         glGenFramebuffers(1, &m_SpotLightsFBOHandle);
         glBindFramebuffer(GL_FRAMEBUFFER, m_SpotLightsFBOHandle);

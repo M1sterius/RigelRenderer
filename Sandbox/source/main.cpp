@@ -61,6 +61,8 @@ int main(int argc, char* argv[])
             1.0f, 0.22f, 0.2f
     );
     sptLight->GetTransform().SetPosition(glm::vec3(0, 1, 2));
+    sptLight->castShadows = false;
+    sptLight->smoothShadows = false;
 
     scene->AddObject(camera);
     scene->AddObject(backpack);

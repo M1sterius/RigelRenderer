@@ -16,8 +16,6 @@ namespace rgr
 
         void CalcProjMatrix();
 	public:
-        static const size_t depthMapSize = 1024;
-
 		glm::vec3 direction;
 		float outerCutOff;
 
@@ -41,6 +39,7 @@ namespace rgr
         inline float GetCutOff() const { return m_CutOff; }
 	INTERNAL:
 		void GenerateDepthMap() override;
+        glm::vec2 atlasOffset;
 	};
 }
 

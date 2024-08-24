@@ -21,10 +21,17 @@ namespace rgr
 
         void RenderScene(rgr::Scene* scene);
     private:
+        // Directional light shadow maps and atlas constants
         static constexpr size_t DIR_LIGHT_SHADOW_MAP_SIZE = 2048;
         static constexpr size_t DIR_LIGHT_MAPS_PER_ATLAS_AXIS = 3;
         static constexpr size_t DIR_LIGHT_ATLAS_SIZE = DIR_LIGHT_SHADOW_MAP_SIZE * DIR_LIGHT_MAPS_PER_ATLAS_AXIS;
         static constexpr size_t DIR_LIGHT_MAX_SHADOW_MAPS_IN_ATLAS = DIR_LIGHT_MAPS_PER_ATLAS_AXIS * DIR_LIGHT_MAPS_PER_ATLAS_AXIS;
+
+        // Spot light shadow maps and atlas constants
+        static constexpr size_t SPOT_LIGHT_SHADOW_MAP_SIZE = 1024;
+        static constexpr size_t SPOT_LIGHT_MAPS_PER_ATLAS_AXIS = 8;
+        static constexpr size_t SPOT_LIGHT_ATLAS_SIZE = SPOT_LIGHT_SHADOW_MAP_SIZE * SPOT_LIGHT_MAPS_PER_ATLAS_AXIS;
+        static constexpr size_t SPOT_LIGHT_MAX_SHADOW_MAPS_IN_ATLAS = SPOT_LIGHT_MAPS_PER_ATLAS_AXIS * SPOT_LIGHT_MAPS_PER_ATLAS_AXIS;
 
         rgr::Scene* m_Scene;
         std::unique_ptr<GBuffer> m_GBuffer;
