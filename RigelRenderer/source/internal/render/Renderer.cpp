@@ -210,7 +210,16 @@ namespace rgr
             shader.SetUniformVec2("u_ScreenSize", glm::vec2(m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight()));
         };
 
+        auto setUniformsForShadows = [this](const std::shared_ptr<SpotLight>& light, const Shader& shader)
+        {
+            const std::string u_name = "u_SpotLight.";
+            shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
+            shader.SetUniformVec2(u_name + "atlasOffset", light->atlasOffset);
+        };
+
         const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::CONE);
+
+        m_SpotLightsDepthAtlas->BindToSlot(3);
 
         if (!light->castShadows) // light without shadows
         {
@@ -220,7 +229,10 @@ namespace rgr
         }
         else if (light->castShadows && !light->smoothShadows) // light with hard shadows (no PCF)
         {
-
+            const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::SPOT_LIGHT_SHADOWS_NO_PCF);
+            shader.Bind();
+            setCommonUniforms(light, shader);
+            setUniformsForShadows(light, shader);
         }
         else if (light->castShadows && light->smoothShadows) // light with smooth shadows (PCF)
         {
@@ -423,7 +435,16 @@ namespace rgr
         spotLightNoShadows.SetUniform1is("g_Normal", 1);
         spotLightNoShadows.SetUniform1is("g_AlbedoSpec", 2);
 
-        spotLightNoShadows.Unbind();
+        // Shader for spot light with hard shadows (no PCF)
+        const auto& spotLightShadowsNoPcf = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::SPOT_LIGHT_SHADOWS_NO_PCF);
+        spotLightShadowsNoPcf.Bind();
+        spotLightShadowsNoPcf.SetUniform1is("g_Position", 0);
+        spotLightShadowsNoPcf.SetUniform1is("g_Normal", 1);
+        spotLightShadowsNoPcf.SetUniform1is("g_AlbedoSpec", 2);
+        spotLightShadowsNoPcf.SetUniform1is("u_DepthMapAtlas", 3);
+        spotLightShadowsNoPcf.SetUniform1f("u_OneShadowMapOffset", (1.0f / SPOT_LIGHT_MAPS_PER_ATLAS_AXIS));
+
+        spotLightShadowsNoPcf.Unbind();
     }
 
     void Renderer::RenderScene(rgr::Scene* scene)

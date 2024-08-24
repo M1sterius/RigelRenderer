@@ -253,6 +253,10 @@ namespace rgr
 
         static auto spotLightNoShadows = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/spot_light/spot_light_vertex.glsl",
                                                            builtInShadersPath + "/deferred_rendering/spot_light/spot_light_no_shadows_fragment.glsl");
+        static auto spotLightShadowsNoPcf = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/spot_light/spot_light_vertex.glsl",
+                                                           builtInShadersPath + "/deferred_rendering/spot_light/spot_light_shadows_no_pcf_fragment.glsl");
+        static auto spotLightShadowsPcf = Shader::FromFiles(builtInShadersPath + "/deferred_rendering/spot_light/spot_light_vertex.glsl",
+                                                              builtInShadersPath + "/deferred_rendering/spot_light/spot_light_shadows_pcf_fragment.glsl");
 
         switch (type)
         {
@@ -281,6 +285,10 @@ namespace rgr
 
             case BUILT_IN_SHADERS::SPOT_LIGHT_NO_SHADOWS:
                 return spotLightNoShadows;
+            case BUILT_IN_SHADERS::SPOT_LIGHT_SHADOWS_NO_PCF:
+                return spotLightShadowsNoPcf;
+            case BUILT_IN_SHADERS::SPOT_LIGHT_SHADOWS_PCF:
+                return spotLightShadowsPcf;
         }
     }
 }
