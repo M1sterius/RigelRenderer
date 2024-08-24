@@ -105,6 +105,8 @@ namespace rgr
                 bool foundLoadedTexture = false;
                 for (const auto loadedMesh : m_Meshes)
                 {
+                    if (loadedMesh->diffuseTexture == nullptr) continue;
+
                     if (loadedMesh->diffuseTexture->GetPath() == loadPath)
                     {
                         resMesh->diffuseTexture = loadedMesh->diffuseTexture;
@@ -128,6 +130,8 @@ namespace rgr
                 bool foundLoadedTexture = false;
                 for (const auto loadedMesh : m_Meshes)
                 {
+                    if (loadedMesh->specularTexture == nullptr) continue;
+
                     if (loadedMesh->specularTexture->GetPath() == loadPath)
                     {
                         resMesh->specularTexture = loadedMesh->specularTexture;

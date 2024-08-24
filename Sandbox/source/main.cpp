@@ -35,7 +35,6 @@ int main(int argc, char* argv[])
     auto camera = std::make_shared<rgr::Camera>(glm::radians(75.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
     camera->GetTransform().SetPosition(glm::vec3(-3.0f, 0, 0.0f));
     camera->FlagAsMain();
-    //camera->LookAt(backpack);
 
     auto dirLight = std::make_shared<rgr::DirectionalLight>(glm::vec3(1.0, 1.0, 1.0), 0.1f, glm::vec3(-0.1, -1, 1));
     dirLight->GetTransform().SetPosition(glm::vec3(0.1, 5, -5));
