@@ -26,7 +26,7 @@ namespace rgr
         void Draw(const rgr::Shader& shader) const;
 
         inline size_t VerticesCount() const { return m_VerticesCount; }
-        inline size_t TrisCount() const { return m_TrisCount; }
+        inline size_t TrianglesCount() const { return m_TrianglesCount; }
 
         rgr::Texture* diffuseTexture;
         rgr::Texture* specularTexture;
@@ -44,7 +44,7 @@ namespace rgr
         std::unique_ptr<rgr::IndexBuffer> m_IndexBuffer;
 
         size_t m_VerticesCount;
-        size_t m_TrisCount;
+        size_t m_TrianglesCount;
 
         explicit Mesh(const std::string& path);
     };

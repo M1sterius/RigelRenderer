@@ -46,6 +46,8 @@ namespace rgr
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 
+//        glfwWindowHint(GLFW_SAMPLES, 4);
+
         m_Window = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height), title, nullptr, nullptr);
         if (!m_Window)
         {
@@ -83,6 +85,7 @@ namespace rgr
 
         glViewport(0, 0, static_cast<int>(m_ScreenWidth), static_cast<int>(m_ScreenHeight));
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+//        glEnable(GL_MULTISAMPLE);
 
         m_Renderer = new rgr::Renderer();
 
@@ -179,10 +182,12 @@ namespace rgr
 
         const auto fpsText = "FPS: " + std::to_string(1 / rgr::Time::GetDeltaTimeF());
         const auto loadedSceneText = isSceneNotNull ? "Loaded Scene: " + m_LoadedScene->name : "Loaded Scene: None";
-        const auto sceneObjectCountText = isSceneNotNull ? "Loaded Objs Count: " + std::to_string(m_LoadedScene->GetObjectsCount()) : "Loaded Objs Count: None";
+        const auto sceneObjectCountText = isSceneNotNull ? "Loaded Objects: " + std::to_string(m_LoadedScene->GetObjectsCount()) : "Loaded Objects: None";
 
         std::string cameraPosText = "Cam Pos: None";
         std::string cameraDirText = "Cam Dir: None";
+        std::string vertsText = "Vertices: 0";
+        std::string trisText = "Triangles: 0";
 
         if (isSceneNotNull)
         {
@@ -192,6 +197,8 @@ namespace rgr
                 cameraPosText = "Cam Pos: " + glm::to_string(camera->GetTransform().GetPosition());
                 cameraDirText = "Cam Dir: " + glm::to_string(camera->GetForwardVector());
             }
+            vertsText = "Vertices: " + std::to_string(m_LoadedScene->GetVerticesCount());
+            trisText = "Triangles: " + std::to_string(m_LoadedScene->GetTrianglesCount());
         }
 
         const size_t frametimeSamples = 100;
@@ -206,6 +213,8 @@ namespace rgr
         ImGui::PlotLines("", frametimes.data(), static_cast<int>(frametimes.size()));
         ImGui::Text("%s", loadedSceneText.c_str());
         ImGui::Text("%s", sceneObjectCountText.c_str());
+        ImGui::Text("%s", vertsText.c_str());
+        ImGui::Text("%s", trisText.c_str());
         ImGui::Text("%s", cameraPosText.c_str());
         ImGui::Text("%s", cameraDirText.c_str());
 
@@ -288,6 +297,7 @@ namespace rgr
             case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "Source: Third Party"; break;
             case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Source: Application"; break;
             case GL_DEBUG_SOURCE_OTHER:           std::cout << "Source: Other"; break;
+            default: break;
         } std::cout << std::endl;
 
         switch (type)
@@ -301,6 +311,7 @@ namespace rgr
             case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "Type: Push Group"; break;
             case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "Type: Pop Group"; break;
             case GL_DEBUG_TYPE_OTHER:               std::cout << "Type: Other"; break;
+            default: break;
         } std::cout << std::endl;
 
         switch (severity)
@@ -309,6 +320,7 @@ namespace rgr
             case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Severity: medium"; break;
             case GL_DEBUG_SEVERITY_LOW:          std::cout << "Severity: low"; break;
             case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Severity: notification"; break;
+            default: break;
         } std::cout << std::endl;
         std::cout << std::endl;
     }

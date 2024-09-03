@@ -8,11 +8,9 @@
 #include "glad.h"
 
 #include <vector>
-#include <iostream>
 
 namespace rgr
 {
-
     Renderer::Renderer()
         : m_Scene(nullptr)
     {
@@ -91,7 +89,7 @@ namespace rgr
 
     void Renderer::DoGeometryPass()
     {
-        const auto& renderables = m_Scene->GetRenderablesInFrustum();
+        const auto& renderables = m_Scene->GetAllRenderables();
         const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::GEOMETRY_PASS);
         const glm::mat4 viewProj = m_Scene->GetMainCamera()->GetPerspective() * m_Scene->GetMainCamera()->GetView();
 
@@ -214,7 +212,7 @@ namespace rgr
             shader.SetUniformVec2("u_ScreenSize", glm::vec2(m_GBuffer->GetBufferWidth(), m_GBuffer->GetBufferHeight()));
         };
 
-        auto setUniformsForShadows = [this](const std::shared_ptr<SpotLight>& light, const Shader& shader)
+        auto setUniformsForShadows = [](const std::shared_ptr<SpotLight>& light, const Shader& shader)
         {
             const std::string u_name = "u_SpotLight.";
             shader.SetUniformMat4(u_name + "lightSpaceViewProj", false, light->GetLightSpaceViewProj());
@@ -326,7 +324,7 @@ namespace rgr
         m_GBuffer->BindNormalTexture();
         m_GBuffer->BindColorTexture();
 
-        // Process directional lighting before any fragments have been marked by stencil buffer
+        // Process directional lighting before any fragments have been marked by the stencil buffer
         for (const auto& light : lights)
             if (auto dirLight = std::dynamic_pointer_cast<DirectionalLight>(light))
                 DrawDirLight(dirLight);
@@ -340,7 +338,9 @@ namespace rgr
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        DrawDeferredRenderingResult();
+        DrawDeferredRenderingOutput();
+
+        BlitForForwardPass();
     }
 
     void Renderer::DoForwardPass()
@@ -467,14 +467,17 @@ namespace rgr
     {
         m_Scene = scene;
 
-        // Methods must stay in this order
+        /*
+         * This methods must stay in this exact order because of the way OpenGL
+         * state changes are implemented
+         */
         GenerateDepthMaps();
         DoGeometryPass();
         DoLightingPass();
         DoForwardPass();
     }
 
-    void Renderer::DrawDeferredRenderingResult() const
+    void Renderer::DrawDeferredRenderingOutput() const
     {
         const auto& mesh = rgr::Mesh::GetBuiltInMesh(rgr::Mesh::BUILT_IN_MESHES::QUAD_NDC_FULLSCREEN);
         const auto& shader = rgr::Shader::GetBuiltInShader(rgr::Shader::BUILT_IN_SHADERS::FULLSCREEN_TEXTURE);
@@ -501,7 +504,25 @@ namespace rgr
         const auto height = static_cast<int>(size.y);
 
         glBlitFramebuffer(0, 0, width, height,
-                          0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+                          0, 0, width, height,
+                          GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    }
+
+    void Renderer::BlitForForwardPass() const
+    {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_GBuffer->GetFBOHandle());
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+        const glm::vec2 size = rgr::Core::GetWindowSize();
+        const auto width = static_cast<int>(size.x);
+        const auto height = static_cast<int>(size.y);
+
+        glBlitFramebuffer(0, 0, width, height,
+                          0, 0, width, height,
+                          GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

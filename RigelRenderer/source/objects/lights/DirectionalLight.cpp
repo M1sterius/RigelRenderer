@@ -43,7 +43,7 @@ void rgr::DirectionalLight::SetDepthProjectionClip(const float near, const float
 
 void rgr::DirectionalLight::GenerateDepthMap()
 {
-	const auto& renderables = m_ScenePtr->GetRenderablesInFrustum();
+	const auto& renderables = m_ScenePtr->GetAllRenderables();
 
     const glm::mat4 lightSpaceViewProj = GetLightSpaceViewProj();
 

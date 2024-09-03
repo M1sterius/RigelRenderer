@@ -115,7 +115,14 @@ namespace rgr
                     }
                 }
                 if (!foundLoadedTexture)
+                {
                     resMesh->diffuseTexture = new rgr::Texture(loadPath);
+
+                    aiTextureMapping mapmodeu, mapmodev;
+                    material->Get(AI_MATKEY_MAPPINGMODE_U_DIFFUSE(0), mapmodeu);
+                    material->Get(AI_MATKEY_MAPPINGMODE_V_DIFFUSE(0), mapmodev);
+                    resMesh->diffuseTexture->SetWrap(rgr::Texture::WRAP::REPEAT, rgr::Texture::WRAP::REPEAT);
+                }
             }
 
             // Retrieve specular textures from mesh material
@@ -140,7 +147,11 @@ namespace rgr
                     }
                 }
                 if (!foundLoadedTexture)
+                {
                     resMesh->specularTexture = new rgr::Texture(loadPath);
+                    resMesh->specularTexture->SetWrap(rgr::Texture::WRAP::REPEAT, rgr::Texture::WRAP::REPEAT);
+                }
+
             }
 
             return resMesh;
@@ -164,5 +175,21 @@ namespace rgr
     {
         for (const auto mesh : m_Meshes)
             mesh->Draw(shader);
+    }
+
+    size_t Model::GetVerticesCount() const
+    {
+        size_t count = 0;
+        for(const auto mesh : m_Meshes)
+            count += mesh->VerticesCount();
+        return count;
+    }
+
+    size_t Model::GetTrianglesCount() const
+    {
+        size_t count = 0;
+        for(const auto mesh : m_Meshes)
+            count += mesh->TrianglesCount();
+        return count;
     }
 }

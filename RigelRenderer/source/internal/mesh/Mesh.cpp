@@ -29,7 +29,7 @@ namespace rgr
         m_IndexBuffer = std::make_unique<rgr::IndexBuffer>(indices.data(), indices.size());
 
         m_VerticesCount = positions.size() / 3;
-        m_TrisCount = indices.size() / 3;
+        m_TrianglesCount = indices.size() / 3;
     }
 
     Mesh::Mesh(const std::vector<float>& positions, const std::vector<float>& texCoords,
@@ -49,7 +49,7 @@ namespace rgr
         m_IndexBuffer = std::make_unique<rgr::IndexBuffer>(indices.data(), indices.size());
 
         m_VerticesCount = positions.size() / 3;
-        m_TrisCount = indices.size() / 3;
+        m_TrianglesCount = indices.size() / 3;
     }
 
     Mesh::~Mesh() = default;
@@ -125,7 +125,7 @@ namespace rgr
         m_IndexBuffer = std::make_unique<rgr::IndexBuffer>(loader.LoadedIndices.data(), loader.LoadedIndices.size());
 
         m_VerticesCount = loader.LoadedVertices.size() / 3;
-        m_TrisCount = loader.LoadedIndices.size() / 3;
+        m_TrianglesCount = loader.LoadedIndices.size() / 3;
     }
 
     rgr::Mesh& Mesh::GetBuiltInMesh(const Mesh::BUILT_IN_MESHES type)

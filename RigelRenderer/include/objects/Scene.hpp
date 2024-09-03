@@ -55,13 +55,16 @@ namespace rgr
 
         inline size_t GetObjectsCount() const {return m_Renderables.size() + m_Cameras.size() + m_Lights.size(); }
 
+        size_t GetVerticesCount() const;
+        size_t GetTrianglesCount() const;
+
         // Helps find a suitable rendering camera
         std::shared_ptr<Camera> GetMainCamera() const;
     INTERNAL:
 		// Returns all lights closer than radius around the point, up to maxCount of lights
 		const std::vector<std::shared_ptr<Light>>& GetLightsAround(const glm::vec3 point, const float radius, const size_t maxCount = 16) const;
 		
-		const std::vector<std::shared_ptr<Renderable>>& GetRenderablesInFrustum() const; // TODO: Add the frustum culling itself
+		const std::vector<std::shared_ptr<Renderable>>& GetAllRenderables() const;
 
 		const std::vector<std::shared_ptr<Renderable>>& GetRenderablesByCondition(bool(*func)(const std::shared_ptr<Renderable>&), const size_t maxCount = 64) const;
 	};

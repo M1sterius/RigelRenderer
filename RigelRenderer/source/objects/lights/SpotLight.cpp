@@ -36,7 +36,7 @@ const glm::mat4 rgr::SpotLight::GetLightSpaceViewProj()
 
 void rgr::SpotLight::GenerateDepthMap()
 {
-    const auto& renderables = m_ScenePtr->GetRenderablesInFrustum();
+    const auto& renderables = m_ScenePtr->GetAllRenderables();
 
     const glm::mat4 lightSpaceViewProj = GetLightSpaceViewProj();
 

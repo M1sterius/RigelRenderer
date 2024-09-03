@@ -22,6 +22,9 @@ namespace rgr
         explicit Model(const std::string& modelPath);
         // TODO: Add a constructor to instantiate model from a vector of meshes
         ~Model();
+
+        size_t GetVerticesCount() const;
+        size_t GetTrianglesCount() const;
     private:
         std::vector<rgr::Mesh*> m_Meshes;
         std::string m_Directory;

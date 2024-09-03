@@ -56,8 +56,9 @@ namespace rgr
         void ClearDepthAtlases() const;
         void InitializeShadowAtlases();
         void InitializeLightingPass();
-        void DrawDeferredRenderingResult() const;
+        void DrawDeferredRenderingOutput() const;
         void BlitForStencilPass() const;
+        void BlitForForwardPass() const;
 
         static void SetShadersConstantUniforms();
 

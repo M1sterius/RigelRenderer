@@ -6,6 +6,8 @@
 
 #include "glm.hpp"
 #include "glfw3.h"
+#include "Scene.hpp"
+
 
 #include <iostream>
 #include <algorithm>
@@ -17,29 +19,22 @@ namespace rgr
 
 	std::shared_ptr<Camera> Scene::FindMainCamera() const
 	{
-		bool noMainCameraFlag = true;
-		for (const auto& cameraIterated : m_Cameras)
+		for (const auto& camera : m_Cameras)
 		{
-			if (cameraIterated->IsMain())
-			{
-				noMainCameraFlag = false;
-				return cameraIterated;
-			}
+			if (camera->IsMain())
+                return camera;
 		}
-		if (noMainCameraFlag)
-		{
-			if (!m_Cameras.empty()) return m_Cameras[0];
-			else
-			{
-				std::cout << "Scene '" << this->name << "' does not contain a suitable rendering camera!" << '\n';
-				return nullptr;
-			}
-		}
+        if (!m_Cameras.empty()) return m_Cameras[0];
+        else
+        {
+            std::cout << "Scene '" << this->name << "' does not contain a suitable rendering camera!" << '\n';
+            return nullptr;
+        }
 	}
 
 	void Scene::Update()
 	{	
-		// Make sure that there always is a suitable rendering camera
+		// Make sure that there is always a suitable rendering camera
 		m_MainCamera = FindMainCamera();
 		if (m_MainCamera == nullptr)
 			return;
@@ -137,7 +132,7 @@ namespace rgr
 		return lights;
 	}
 
-	const std::vector<std::shared_ptr<Renderable>>& Scene::GetRenderablesInFrustum() const
+	const std::vector<std::shared_ptr<Renderable>>& Scene::GetAllRenderables() const
 	{
 		return m_Renderables;
 	}
@@ -155,4 +150,26 @@ namespace rgr
 
 		return renderables;
 	}
+
+    size_t Scene::GetVerticesCount() const
+    {
+        size_t count = 0;
+        for (auto& obj : m_Renderables)
+        {
+            if (auto model = std::static_pointer_cast<rgr::RenderableModel>(obj))
+                count += model->GetModel()->GetVerticesCount();
+        }
+        return count;
+    }
+
+    size_t Scene::GetTrianglesCount() const
+    {
+        size_t count = 0;
+        for (auto& obj : m_Renderables)
+        {
+            if (auto model = std::static_pointer_cast<rgr::RenderableModel>(obj))
+                count += model->GetModel()->GetTrianglesCount();
+        }
+        return count;
+    }
 }
