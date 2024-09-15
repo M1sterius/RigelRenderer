@@ -85,7 +85,7 @@ namespace rgr
 
         glViewport(0, 0, static_cast<int>(m_ScreenWidth), static_cast<int>(m_ScreenHeight));
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-//        glEnable(GL_MULTISAMPLE);
+        glEnable(GL_MULTISAMPLE);
 
         m_Renderer = new rgr::Renderer();
 

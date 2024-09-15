@@ -118,9 +118,9 @@ namespace rgr
                 {
                     resMesh->diffuseTexture = new rgr::Texture(loadPath);
 
-                    aiTextureMapping mapmodeu, mapmodev;
-                    material->Get(AI_MATKEY_MAPPINGMODE_U_DIFFUSE(0), mapmodeu);
-                    material->Get(AI_MATKEY_MAPPINGMODE_V_DIFFUSE(0), mapmodev);
+//                    aiTextureMapping mapmodeu, mapmodev;
+//                    material->Get(AI_MATKEY_MAPPINGMODE_U_DIFFUSE(0), mapmodeu);
+//                    material->Get(AI_MATKEY_MAPPINGMODE_V_DIFFUSE(0), mapmodev);
                     resMesh->diffuseTexture->SetWrap(rgr::Texture::WRAP::REPEAT, rgr::Texture::WRAP::REPEAT);
                 }
             }

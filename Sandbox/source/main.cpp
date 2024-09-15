@@ -1,20 +1,17 @@
 #include "RigelRenderer.hpp"
-#include "glm.hpp"
 
-#include <iostream>
 #include <vector>
 #include <memory>
 
-int main(int argc, char* argv[])
+int32_t main(int32_t argc, char* argv[])
 {
     const size_t WIDTH = 1600;
     const size_t HEIGHT = 900;
     const char* TITLE = "It works!";
 
-    if (!rgr::Core::Init(WIDTH, HEIGHT, TITLE, true))
+    if (!rgr::Core::Init(WIDTH, HEIGHT, TITLE, false))
         return -1;
-//    rgr::Core::DisableVSync();
-//    rgr::Core::SetTargetFPS(1000);
+    rgr::Core::SetTargetFPS(400);
 
     rgr::Cursor::SetCursorState(rgr::Cursor::CURSOR_STATE::DISABLED);
 
@@ -23,8 +20,8 @@ int main(int argc, char* argv[])
     rgr::Core::LoadScene(scene);
 
     auto camera = std::make_shared<rgr::Camera>(glm::radians(75.0f), WIDTH, HEIGHT, 0.1f, 100.0f);
-    camera->GetTransform().SetPosition(glm::vec3(-3.0f, 0, 0.0f));
-    //camera->FlagAsMain();
+    camera->GetTransform().SetPosition(glm::vec3(-3.0f, 1, 0.0f));
+    camera->FlagAsMain();
 
     auto backpackModel = std::make_shared<rgr::Model>("resources/models/backpack/backpack.obj");
     auto cubeModel = std::make_shared<rgr::Model>("resources/models/cube/cube.obj");
@@ -34,31 +31,11 @@ int main(int argc, char* argv[])
     sponza->GetTransform().SetScale(glm::vec3(0.005, 0.005, 0.005));
 
     auto backpack = std::make_shared<rgr::RenderableModel>(backpackModel);
-    backpack->GetTransform().SetPosition(glm::vec3(2, 0, 0));
+    backpack->GetTransform().SetPosition(glm::vec3(2, 1, 0.6));
     backpack->GetTransform().SetScale(glm::vec3(0.5, 0.5, 0.5));
 
-    auto backpack1 = std::make_shared<rgr::RenderableModel>(backpackModel);
-    backpack1->GetTransform().SetPosition(glm::vec3(0, 0, 0));
-    backpack1->GetTransform().SetScale(glm::vec3(0.5, 0.5, 0.5));
-
-    auto backpack2 = std::make_shared<rgr::RenderableModel>(backpackModel);
-    backpack2->GetTransform().SetPosition(glm::vec3(-2, 0, 0));
-    backpack2->GetTransform().SetScale(glm::vec3(0.5, 0.5, 0.5));
-
-    auto backpack3 = std::make_shared<rgr::RenderableModel>(backpackModel);
-    backpack3->GetTransform().SetPosition(glm::vec3(2, 0, -2));
-    backpack3->GetTransform().SetScale(glm::vec3(0.5, 0.5, 0.5));
-
-    auto backpack4 = std::make_shared<rgr::RenderableModel>(backpackModel);
-    backpack4->GetTransform().SetPosition(glm::vec3(0, 0, -2));
-    backpack4->GetTransform().SetScale(glm::vec3(0.5, 0.5, 0.5));
-
-    auto backpack5 = std::make_shared<rgr::RenderableModel>(backpackModel);
-    backpack5->GetTransform().SetPosition(glm::vec3(-2, 0, -2));
-    backpack5->GetTransform().SetScale(glm::vec3(0.5, 0.5, 0.5));
-
     auto cube = std::make_shared<rgr::RenderableModel>(cubeModel);
-    cube->GetTransform().SetPosition(glm::vec3(0, -0.6, 2));
+    cube->GetTransform().SetPosition(glm::vec3(0, 1, 0.6));
 
     auto dirLight = std::make_shared<rgr::DirectionalLight>(glm::vec3(1.0, 1.0, 1.0), 0.5f, glm::vec3(0.46, -0.88, 0.05));
     dirLight->GetTransform().SetPosition(glm::vec3(-5.84, 8.4, -0.18));
@@ -90,11 +67,6 @@ int main(int argc, char* argv[])
     scene->AddObject(camera);
     scene->AddObject(backpack);
     scene->AddObject(sponza);
-//    scene->AddObject(backpack1);
-//    scene->AddObject(backpack2);
-//    scene->AddObject(backpack3);
-//    scene->AddObject(backpack4);
-//    scene->AddObject(backpack5);
     scene->AddObject(cube);
 
     scene->AddObject(dirLight);
@@ -110,8 +82,6 @@ int main(int argc, char* argv[])
     float pitch = 0;
     glm::vec3 pos = camera->GetTransform().GetPosition();
     glm::vec3 rot(0.0f);
-
-    rgr::Cursor::CURSOR_STATE cursorState = rgr::Cursor::GetCursorState();
 
     while (rgr::Core::AppShouldRun())
     {
@@ -158,8 +128,8 @@ int main(int argc, char* argv[])
 
         rot += glm::vec3(1.0f, -1.0f, 0.5f) * rgr::Time::GetDeltaTimeF();
 
-        sptLight->GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0, -1, 0));
-        sptLight->direction = camera->GetForwardVector();
+//        sptLight->GetTransform().SetPosition(camera->GetTransform().GetPosition() + glm::vec3(0, -1, 0));
+//        sptLight->direction = camera->GetForwardVector();
 
         rgr::Core::Update();
     }
