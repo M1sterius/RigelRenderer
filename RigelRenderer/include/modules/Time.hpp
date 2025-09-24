@@ -2,6 +2,8 @@
 
 #include "Internal.hpp"
 
+#include <cstdint>
+
 namespace rgr
 {
     class Time

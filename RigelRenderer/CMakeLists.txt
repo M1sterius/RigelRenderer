@@ -84,7 +84,6 @@ target_include_directories(RigelRenderer PRIVATE
 )
 
 add_subdirectory(${DEPENDENCIES_DIR}/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
-add_subdirectory(${DEPENDENCIES_DIR}/freetype ${CMAKE_CURRENT_BINARY_DIR}/freetype)
 add_subdirectory(${DEPENDENCIES_DIR}/assimp ${CMAKE_CURRENT_BINARY_DIR}/assimp)
 
 find_package(OpenGL REQUIRED)
@@ -92,7 +91,6 @@ find_package(OpenGL REQUIRED)
 target_link_libraries(RigelRenderer PRIVATE
         OpenGL::GL
         glfw
-        freetype
         assimp
 )
 

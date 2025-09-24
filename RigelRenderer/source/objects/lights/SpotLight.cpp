@@ -91,7 +91,7 @@ glm::mat4 rgr::SpotLight::GetLightVolumeModelMatrix()
     constexpr auto initDirection = glm::vec3(0, -1.0f, 0);
     const auto rot = glm::cross(initDirection, direction);
     const auto angle = acos(glm::dot(glm::normalize(initDirection), glm::normalize(direction)));
-    model = glm::rotate(model, angle, glm::normalize(rot));
+    model = glm::rotate(model, (float)angle, glm::normalize(rot));
 
     constexpr float defaultConeAngleInRads = 0.463f;
     const float scaleXZ = range * (outerCutOff / defaultConeAngleInRads);
